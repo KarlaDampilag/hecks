@@ -101,7 +101,7 @@ const AddProductButton = () => {
 
         // Add the new product
         data.productsByUser.push(payload.data.createProduct);
-        data.productsByUser = _.sortBy(data.products, 'createdAt');
+        data.productsByUser = _.sortBy(data.productsByUser, 'createdAt');
 
         // Put the updated products back in the cache
         cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data })
