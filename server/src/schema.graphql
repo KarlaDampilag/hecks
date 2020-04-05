@@ -1,0 +1,59 @@
+type Mutation {
+    signup(email: String!, password: String!, confirmPassword: String!): User!
+    confirmEmail(confirmEmailToken: String!, email: String!): User!
+    logout: String
+    login(email: String!, password: String!): User!
+    # createProduct(name: String!, salePrice: String!, costPrice: String, unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
+    # createCategory(name: String!): Category!
+    # createCategories(names: [String!]!): [String!]!
+    # updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
+    # deleteProduct(id: ID!): Product!
+    # createInventory(name: String!): Inventory!
+    # updateInventory(id: ID!, name: String): Inventory!
+    # deleteInventory(id: ID!): Inventory!
+    # createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
+    # updateCustomer(id: ID!, name: String, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
+    # createSaleItem(saleId: String!, productId: String!, quantity: String!, discountType: SpecialSaleDeductionType, discountValue: String): SaleItem!
+    # createSaleAndItems(timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
+    # requestReset(email: String!): SuccessMessage
+    # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
+    # updatePermissions(permissions: [Permission], userId: ID!): User
+}
+
+type Query {
+    me: User
+    users: [User]!
+    # products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, first: Int): [Product]!
+    # product(id: ID!): Product
+    # categories: [Category]!
+    # inventories(orderBy: InventoryOrderByInput): [Inventory]!
+    # inventory(id: ID!): Inventory
+    # customers(orderBy: CustomerOrderByInput): [Customer]!
+    # customer(id: ID!): Customer
+    # sales(orderBy: SaleOrderByInput): [Sale]!
+    # saleItems(orderBy: SaleItemOrderByInput): [SaleItem]!
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  email: String!
+  role: String!
+  verified: Boolean!
+  name: String
+  permissions: [Permission!]!
+}
+
+enum Permission {
+  ADMIN
+  PRODUCT
+  SALES
+  EXPENSE
+  INVENTORY
+  CUSTOMER
+  PERMISSIONUPDATE
+}
