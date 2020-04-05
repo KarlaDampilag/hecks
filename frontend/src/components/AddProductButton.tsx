@@ -47,9 +47,9 @@ const CREATE_CATEGORIES_MUTATION = gql`
     }
 `;
 
-const ALL_CATEGORIES_QUERY = gql`
+const CATEGORIES_BY_USER_QUERY = gql`
     {
-        categories {
+        categoriesByUser {
             id
             name
         }
@@ -109,17 +109,17 @@ const AddProductButton = () => {
 
     const updateCategoriesCache = (cache: any, payload: any) => {
         // Read cache for the categories
-        const data = cache.readQuery({ query: ALL_CATEGORIES_QUERY });
+        const data = cache.readQuery({ query: CATEGORIES_BY_USER_QUERY });
 
         // Add the new categories
-        data.categories = [...data.categories, ...payload.data.createCategories];
+        data.categoriesByUser = [...data.categoriesByUser, ...payload.data.createCategories];
 
         // Put the updated categories back in the cache
-        cache.writeQuery({ query: ALL_CATEGORIES_QUERY, data })
+        cache.writeQuery({ query: CATEGORIES_BY_USER_QUERY, data })
     }
 
-    const { data, loading: queryCategoriesLoading, error: queryCategoriesError } = useQuery(ALL_CATEGORIES_QUERY);
-    const categoriesData = data ? data.categories : null;
+    const { data, loading: queryCategoriesLoading, error: queryCategoriesError } = useQuery(CATEGORIES_BY_USER_QUERY);
+    const categoriesData = data ? data.categoriesByUser : null;
     const options = _.map(categoriesData, category => category.name);
 
     const [createProduct, { loading: createProductLoading, error: createProductError }] = useMutation(CREATE_PRODUCT_MUTATION, {
@@ -243,4 +243,4 @@ const tailLayout = {
 };
 
 export default AddProductButton;
-export { layout, tailLayout, ALL_CATEGORIES_QUERY, CREATE_CATEGORIES_MUTATION };
+export { layout, tailLayout, CATEGORIES_BY_USER_QUERY, CREATE_CATEGORIES_MUTATION };

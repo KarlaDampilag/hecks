@@ -29,12 +29,24 @@ function categories(parent, args, ctx, info) {
     if (!ctx.request.userId) {
         throw new Error('You must be logged in to do that.');
     }
-    return ctx.prisma.categories({}); // TODO only return categories that belong to the user
+    return ctx.prisma.categories({});
+}
+
+async function categoriesByUser(parent, args, ctx, info) {
+    // if (!ctx.request.userId) {
+    //     throw new Error('You must be logged in to do that.');
+    // }
+    return await ctx.prisma.categories({
+        where: {
+            user: { id: ctx.request.userId }
+        }
+    });
 }
 
 module.exports = {
     me,
     products,
     categories,
-    productsByUser
+    productsByUser,
+    categoriesByUser
 }

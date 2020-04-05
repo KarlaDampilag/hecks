@@ -29,6 +29,7 @@ type Query {
     productsByUser(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, first: Int): [Product]!
     # product(id: ID!): Product
     categories: [Category]!
+    categoriesByUser: [Category]!
     # inventories(orderBy: InventoryOrderByInput): [Inventory]!
     # inventory(id: ID!): Inventory
     # customers(orderBy: CustomerOrderByInput): [Customer]!
