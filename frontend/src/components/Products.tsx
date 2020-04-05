@@ -28,65 +28,74 @@ const Products = () => {
     const products = data ? data.products : null;
 
     return (
-        <>
-            <AddProductButton />
-            <Table
-                loading={loading}
-                dataSource={products}
-                columns={[
-                    {
-                        dataIndex: 'image',
-                        render: (value, record) => {
-                            if (value) {
-                                return <img src={value} alt={record.name} width='150px' />
-                            }
-                            return null;
-                        }
-                    },
-                    {
-                        title: 'Name',
-                        dataIndex: 'name'
-                    },
-                    {
-                        title: 'Sale Price',
-                        dataIndex: 'salePrice'
-                    },
-                    {
-                        title: 'Cost Price',
-                        dataIndex: 'costPrice'
-                    },
-                    {
-                        title: 'Categories',
-                        dataIndex: 'categories',
-                        render: (value) => {
-                            return _.map(value, category => {
-                                return <Tag key={category}>{category}</Tag>
-                            })
-                        }
-                    },
-                    {
-                        title: 'Edit ✏️',
-                        dataIndex: 'id',
-                        key: 'edit',
-                        render: (value) => {
-                            return (
-                                <a href={`updateProduct?id${value}`}><Button>Edit</Button></a>
-                            );
-                        }
-                    },
-                    {
-                        title: 'Delete ',
-                        dataIndex: 'id',
-                        key: 'edit',
-                        render: (value) => {
-                            return (
-                                <Button>Delete</Button>
-                            );
-                        }
-                    }
-                ]}
-            />
-        </>
+        <userContext.Consumer>
+            {value => {
+                if (!value) {
+                    return <p>You must be logged in to access this page.</p>
+                }
+                return (
+                    <>
+                        <AddProductButton />
+                        <Table
+                            loading={loading}
+                            dataSource={products}
+                            columns={[
+                                {
+                                    dataIndex: 'image',
+                                    render: (value, record) => {
+                                        if (value) {
+                                            return <img src={value} alt={record.name} width='150px' />
+                                        }
+                                        return null;
+                                    }
+                                },
+                                {
+                                    title: 'Name',
+                                    dataIndex: 'name'
+                                },
+                                {
+                                    title: 'Sale Price',
+                                    dataIndex: 'salePrice'
+                                },
+                                {
+                                    title: 'Cost Price',
+                                    dataIndex: 'costPrice'
+                                },
+                                {
+                                    title: 'Categories',
+                                    dataIndex: 'categories',
+                                    render: (value) => {
+                                        return _.map(value, category => {
+                                            return <Tag key={category}>{category}</Tag>
+                                        })
+                                    }
+                                },
+                                {
+                                    title: 'Edit ✏️',
+                                    dataIndex: 'id',
+                                    key: 'edit',
+                                    render: (value) => {
+                                        return (
+                                            <a href={`updateProduct?id${value}`}><Button>Edit</Button></a>
+                                        );
+                                    }
+                                },
+                                {
+                                    title: 'Delete ',
+                                    dataIndex: 'id',
+                                    key: 'edit',
+                                    render: (value) => {
+                                        return (
+                                            <Button>Delete</Button>
+                                        );
+                                    }
+                                }
+                            ]}
+                        />
+                    </>
+                );
+            }}
+        </userContext.Consumer>
     )
 }
 export default Products;
