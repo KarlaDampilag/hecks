@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Modal, Button, Input, Form, Select, Spin, message } from 'antd';
 
-import { ALL_PRODUCTS_QUERY } from './Products';
+import { PRODUCTS_BY_USER_QUERY } from './Products';
 
 const CREATE_PRODUCT_MUTATION = gql`
 mutation CREATE_PRODUCT_MUTATION(
@@ -97,14 +97,14 @@ const AddProductButton = () => {
 
     const updateProductsCache = (cache: any, payload: any) => {
         // Read cache for the products
-        const data = cache.readQuery({ query: ALL_PRODUCTS_QUERY });
+        const data = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
 
         // Add the new product
-        data.products.push(payload.data.createProduct);
-        data.products = _.sortBy(data.products, 'createdAt');
+        data.productsByUser.push(payload.data.createProduct);
+        data.productsByUser = _.sortBy(data.products, 'createdAt');
 
         // Put the updated products back in the cache
-        cache.writeQuery({ query: ALL_PRODUCTS_QUERY, data })
+        cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data })
     }
 
     const updateCategoriesCache = (cache: any, payload: any) => {

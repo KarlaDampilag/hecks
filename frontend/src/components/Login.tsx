@@ -32,6 +32,8 @@ const Login = () => {
                     const result = await login();
                     if (!error) {
                         history.push('/');
+                    } else {
+                        message.error(error.message.replace('GraphQL error: ', ''));
                     }
                 }}
             >

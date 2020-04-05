@@ -7,9 +7,9 @@ import { Tag, Table, Button } from 'antd';
 import { userContext } from './App';
 import AddProductButton from './AddProductButton';
 
-const ALL_PRODUCTS_QUERY = gql`
+const PRODUCTS_BY_USER_QUERY = gql`
     {
-        products(orderBy: createdAt_DESC) {
+        productsByUser(orderBy: createdAt_DESC) {
             id
             name
             salePrice
@@ -24,8 +24,8 @@ const ALL_PRODUCTS_QUERY = gql`
 `;
 
 const Products = () => {
-    const { data, loading, error } = useQuery(ALL_PRODUCTS_QUERY);
-    const products = data ? data.products : null;
+    const { data, loading, error } = useQuery(PRODUCTS_BY_USER_QUERY);
+    const products = data ? data.productsByUser : null;
 
     return (
         <userContext.Consumer>
@@ -99,4 +99,4 @@ const Products = () => {
     )
 }
 export default Products;
-export { ALL_PRODUCTS_QUERY };
+export { PRODUCTS_BY_USER_QUERY };

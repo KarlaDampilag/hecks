@@ -8,9 +8,21 @@ async function me(parent, args, ctx, info) {
 
 function products(parent, args, ctx, info) {
     if (!ctx.request.userId) {
-        throw new Error('You must be logged in to do that.'); // TODO only return products that belong to the user
+        throw new Error('You must be logged in to do that.');
     }
     return ctx.prisma.products({});
+}
+
+async function productsByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    return await ctx.prisma.products({
+        where: {
+            user: { id: ctx.request.userId }
+        }
+    });
 }
 
 function categories(parent, args, ctx, info) {
@@ -23,5 +35,6 @@ function categories(parent, args, ctx, info) {
 module.exports = {
     me,
     products,
-    categories
+    categories,
+    productsByUser
 }
