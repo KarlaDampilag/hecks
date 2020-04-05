@@ -7,6 +7,7 @@ import { useQuery } from '@apollo/react-hooks';
 import Header from './Header';
 import SignUp from './SignUp';
 import Login from './Login';
+import Products from './Products';
 
 const CURRENT_USER_QUERY = gql`
   {
@@ -19,22 +20,26 @@ const CURRENT_USER_QUERY = gql`
 }
 `;
 
+const userContext = React.createContext({ user: {} });
+
 function App() {
   const { data, loading, error } = useQuery(CURRENT_USER_QUERY);
-  console.log(data);
   const user = data ? data.me : null;
 
   return (
-    <div className="App">
-      <Header user={user} />
-      Hi where is my hi
-      <Switch>
-        <Route exact path="/signup" component={SignUp} />
-        <Route exact path="/login" component={Login} />
-      </Switch>
-    </div>
+    <userContext.Provider value={user}>
+      <div className="App">
+        <Header user={user} />
+        <Switch>
+          <Route exact path="/signup" component={SignUp} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/products" component={Products} />
+        </Switch>
+      </div>
+    </userContext.Provider>
   );
 }
 
 export default withRouter(App);
+export { userContext };
 export { CURRENT_USER_QUERY };

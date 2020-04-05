@@ -75,8 +75,50 @@ function logout(parent, args, ctx, info) {
     return 'Goodbye!';
 }
 
+async function createProduct(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const product = await ctx.prisma.createProduct({
+        ...args,
+        // create a relationship between the product and the user
+        user: {
+            connect: {
+                id: ctx.request.userId
+            }
+        },
+        categories: { set: args.categories }
+
+    });
+
+    return product;
+}
+
+async function createCategories(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const newCategories = await Promise.all(args.names.map(async name => {
+        const newCategory = await ctx.prisma.createCategory({
+            // create a relationship between the category and the user
+            user: {
+                connect: {
+                    id: ctx.request.userId
+                }
+            },
+            name: name
+        });
+        return newCategory;
+    }));
+    return newCategories;
+}
+
 module.exports = {
     signup,
     login,
     logout,
+    createProduct,
+    createCategories
 }

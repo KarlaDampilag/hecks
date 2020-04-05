@@ -8,7 +8,6 @@ interface PropTypes {
 }
 
 const Header = (props: PropTypes) => {
-    console.log(props.user);
     return (
         <div>
             {props.user ? (
