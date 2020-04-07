@@ -7,7 +7,7 @@ type Mutation {
     login(email: String!, password: String!): User!
     createProduct(name: String!, salePrice: String!, costPrice: String, unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
     # createCategory(name: String!): Category!
-    createCategories(names: [String!]!): [String!]!
+    createCategories(names: [String!]!): [Category!]!
     # updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
     # deleteProduct(id: ID!): Product!
     # createInventory(name: String!): Inventory!

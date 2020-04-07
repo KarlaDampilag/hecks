@@ -43,13 +43,16 @@ mutation CREATE_PRODUCT_MUTATION(
 
 const CREATE_CATEGORIES_MUTATION = gql`
     mutation CREATE_CATEGORIES_MUTATION($names: [String!]!) {
-        createCategories(names: $names)
+        createCategories(names: $names) {
+            id
+            name
+        }
     }
 `;
 
 const CATEGORIES_BY_USER_QUERY = gql`
     {
-        categoriesByUser {
+        categoriesByUser{
             id
             name
         }
