@@ -8,6 +8,7 @@ import Header from './Header';
 import SignUp from './SignUp';
 import Login from './Login';
 import Products from './Products';
+import UpdateProduct from './UpdateProduct';
 
 const CURRENT_USER_QUERY = gql`
   {
@@ -19,6 +20,10 @@ const CURRENT_USER_QUERY = gql`
     }
 }
 `;
+
+const Page404 = () => (
+  <p>Page not found.</p>
+);
 
 const userContext = React.createContext({ user: {} });
 
@@ -36,6 +41,8 @@ function App() {
               <Route exact path="/signup" component={SignUp} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/products" component={Products} />
+              <Route exact path="/updateProduct" component={UpdateProduct} />
+              <Route component={Page404} />
             </Switch>
           </div>
         </div>

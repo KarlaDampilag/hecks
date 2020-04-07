@@ -76,7 +76,7 @@ const Products = () => {
                                     key: 'edit',
                                     render: (value) => {
                                         return (
-                                            <a href={`updateProduct?id${value}`}><Button>Edit</Button></a>
+                                            <a href={`updateProduct?id=${value}`}><Button>Edit</Button></a>
                                         );
                                     }
                                 },

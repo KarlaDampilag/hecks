@@ -8,7 +8,7 @@ type Mutation {
     createProduct(name: String!, salePrice: String!, costPrice: String, unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
     # createCategory(name: String!): Category!
     createCategories(names: [String!]!): [Category!]!
-    # updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
+    updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
     # deleteProduct(id: ID!): Product!
     # createInventory(name: String!): Inventory!
     # updateInventory(id: ID!, name: String): Inventory!
@@ -27,7 +27,7 @@ type Query {
     users: [User]!
     products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, first: Int): [Product]!
     productsByUser(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, first: Int): [Product]!
-    # product(id: ID!): Product
+    productByUser(id: ID!): Product
     categories: [Category]!
     categoriesByUser: [Category]!
     # inventories(orderBy: InventoryOrderByInput): [Inventory]!

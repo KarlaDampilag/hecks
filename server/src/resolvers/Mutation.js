@@ -115,10 +115,29 @@ async function createCategories(parent, args, ctx, info) {
     return newCategories;
 }
 
+async function updateProduct(parent, args, ctx, info) {
+    // first take a copy of the updates
+    const updates = { ...args };
+
+    // remove id from the updates so it won't get updated
+    delete updates.id
+
+    return await ctx.prisma.updateProduct({
+      data: {
+        ...updates,
+        categories: { set: args.categories }
+      },
+      where: {
+        id: args.id
+      }
+    });
+  }
+
 module.exports = {
     signup,
     login,
     logout,
     createProduct,
-    createCategories
+    createCategories,
+    updateProduct
 }

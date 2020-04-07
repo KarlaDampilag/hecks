@@ -25,6 +25,19 @@ async function productsByUser(parent, args, ctx, info) {
     });
 }
 
+async function productByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+    const products = await ctx.prisma.products({
+        where: {
+            id: args.id,
+            user: { id: ctx.request.userId }
+        }
+    });
+    return products[0];
+}
+
 function categories(parent, args, ctx, info) {
     if (!ctx.request.userId) {
         throw new Error('You must be logged in to do that.');
@@ -33,9 +46,9 @@ function categories(parent, args, ctx, info) {
 }
 
 async function categoriesByUser(parent, args, ctx, info) {
-    // if (!ctx.request.userId) {
-    //     throw new Error('You must be logged in to do that.');
-    // }
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
     return await ctx.prisma.categories({
         where: {
             user: { id: ctx.request.userId }
@@ -46,7 +59,8 @@ async function categoriesByUser(parent, args, ctx, info) {
 module.exports = {
     me,
     products,
-    categories,
+    productByUser,
     productsByUser,
-    categoriesByUser
+    categories,
+    categoriesByUser,
 }
