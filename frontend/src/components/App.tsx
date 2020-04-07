@@ -28,13 +28,17 @@ function App() {
 
   return (
     <userContext.Provider value={user}>
-      <div className="App">
-        <Header user={user} />
-        <Switch>
-          <Route exact path="/signup" component={SignUp} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/products" component={Products} />
-        </Switch>
+      <div className='app-wrapper'>
+        <div className="App">
+          <Header user={user} />
+          <div className='page-wrapper'>
+            <Switch>
+              <Route exact path="/signup" component={SignUp} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/products" component={Products} />
+            </Switch>
+          </div>
+        </div>
       </div>
     </userContext.Provider>
   );

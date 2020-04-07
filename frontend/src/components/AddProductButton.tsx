@@ -3,6 +3,7 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Modal, Button, Input, Form, Select, Spin, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 import { PRODUCTS_BY_USER_QUERY } from './Products';
 
@@ -222,18 +223,25 @@ const AddProductButton = () => {
                         label="Image"
                         name="image"
                     >
-                        <Input type='file' placeholder='Upload an image' onChange={uploadFile} /> 
+                        <Input type='file' placeholder='Upload an image' onChange={uploadFile} />
                         {imageIsLoading && <Spin />}
                         {image && <img src={image} width='200' alt='upload preview' />}
                     </Form.Item>
 
                     <Form.Item {...tailLayout}>
-                        <Button type="primary" htmlType="submit" disabled={createProductLoading || imageIsLoading || createCategoriesLoading}>Add{createProductLoading || imageIsLoading || createCategoriesLoading ? 'ing ' : ' '} Product</Button>
+                        <Button type="primary" htmlType="submit" loading={createProductLoading || imageIsLoading || createCategoriesLoading}>Add{createProductLoading || imageIsLoading || createCategoriesLoading ? 'ing ' : ' '} Product</Button>
                         <Button onClick={() => setIsShowingModal(false)}>Cancel</Button>
                     </Form.Item>
                 </Form>
             </Modal>
-            <Button onClick={() => setIsShowingModal(true)}>Add Product</Button>
+            <Button
+                onClick={() => setIsShowingModal(true)}
+                size='large'
+                icon={<PlusOutlined />}
+                className='add-button'
+            >
+                Add Product
+            </Button>
         </>
     );
 }
