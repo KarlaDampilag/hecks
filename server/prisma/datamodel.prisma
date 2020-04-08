@@ -19,6 +19,12 @@ type User {
   confirmEmailToken: String
   resetToken: String
   resetTokenExpiry: String
+  products: [Product!]!
+  categories: [Category!]!
+  inventories: [Inventory!]!
+  customers: [Customer!]!
+  sales: [Sale!]!
+  saleItems: [SaleItem!]!
 }
 
 type Product {

@@ -116,6 +116,19 @@ async function createCategories(parent, args, ctx, info) {
 }
 
 async function updateProduct(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    // find the product
+    const products = await ctx.prisma.user({ id: ctx.request.userId }).products({
+        where: { id: args.id }
+    });
+
+    if (!products || products.length < 1 || !products[0]) {
+        throw new Error("Cannot find this product owned by your user id.");
+    }
+
     // first take a copy of the updates
     const updates = { ...args };
 
@@ -123,15 +136,31 @@ async function updateProduct(parent, args, ctx, info) {
     delete updates.id
 
     return await ctx.prisma.updateProduct({
-      data: {
-        ...updates,
-        categories: { set: args.categories }
-      },
-      where: {
-        id: args.id
-      }
+        data: {
+            ...updates,
+            categories: { set: args.categories }
+        },
+        where: {
+            id: args.id
+        }
     });
-  }
+}
+
+async function deleteProduct(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    // find the product
+    const products = await ctx.prisma.user({ id: ctx.request.userId }).products({
+        where: { id: args.id }
+    });
+
+    if (!products || products.length < 1 || !products[0]) {
+        throw new Error("Cannot find this product owned by your user id.");
+    }
+    return await ctx.prisma.deleteProduct({ id: args.id });
+}
 
 module.exports = {
     signup,
@@ -139,5 +168,6 @@ module.exports = {
     logout,
     createProduct,
     createCategories,
-    updateProduct
+    updateProduct,
+    deleteProduct
 }

@@ -9,7 +9,7 @@ type Mutation {
     # createCategory(name: String!): Category!
     createCategories(names: [String!]!): [Category!]!
     updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
-    # deleteProduct(id: ID!): Product!
+    deleteProduct(id: ID!): Product!
     # createInventory(name: String!): Inventory!
     # updateInventory(id: ID!, name: String): Inventory!
     # deleteInventory(id: ID!): Inventory!

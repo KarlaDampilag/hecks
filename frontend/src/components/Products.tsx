@@ -1,12 +1,13 @@
 import React from 'react';
 import * as _ from 'lodash';
 import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
-import { Tag, Table, Button } from 'antd';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Tag, Table, message } from 'antd';
 
 import { userContext } from './App';
 import AddProductButton from './AddProductButton';
 import UpdateProductButton from './UpdateProductButton';
+import DeleteButton from './DeleteButton';
 
 const PRODUCTS_BY_USER_QUERY = gql`
     {
@@ -42,12 +43,42 @@ const CATEGORIES_BY_USER_QUERY = gql`
     }
 `;
 
+const DELETE_PRODUCT_MUTATION = gql`
+    mutation DELETE_PRODUCT_MUTATION($id: ID!) {
+        deleteProduct(id: $id) {
+            id
+            name
+            salePrice
+            costPrice
+            unit
+            categories
+            notes
+            image
+            createdAt
+        }
+    }
+`;
+
+const deleteProductUpdateCache = (cache: any, payload: any) => {
+    // Read cache for the products
+    const data = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
+
+    const filteredItems = _.filter(data.productsByUser, product => product.id !== payload.data.deleteProduct.id);
+    cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data: { productsByUser: filteredItems } });
+}
+
 const Products = () => {
+    const [productIdForDeletion, setProductIdForDeletion] = React.useState<string>();
     const { data: productsData, loading, error } = useQuery(PRODUCTS_BY_USER_QUERY);
     const products = productsData ? productsData.productsByUser : null;
 
     const { data, loading: queryCategoriesLoading, error: queryCategoriesError } = useQuery(CATEGORIES_BY_USER_QUERY);
     const categoriesData = data ? data.categoriesByUser : null;
+
+    const [deleteProduct, { data: deleteProductData, loading: deleteProductLoading, error: deleteProductError }] = useMutation(DELETE_PRODUCT_MUTATION, {
+        variables: { id: productIdForDeletion },
+        update: deleteProductUpdateCache
+    });
 
     return (
         <userContext.Consumer>
@@ -98,7 +129,6 @@ const Products = () => {
                                     key: 'edit',
                                     render: (value, record) => {
                                         return (
-                                            //<a href={`updateProduct?id=${value}`}><Button>Edit</Button></a>
                                             <UpdateProductButton product={record} categories={categoriesData} />
                                         );
                                     }
@@ -109,7 +139,17 @@ const Products = () => {
                                     key: 'edit',
                                     render: (value) => {
                                         return (
-                                            <Button>Delete</Button>
+                                            <DeleteButton
+                                                onClick={() => setProductIdForDeletion(value)}
+                                                onDelete={async () => {
+                                                    await deleteProduct();
+                                                    if (deleteProductError) {
+                                                        message.error('Error: cannot delete product. Please contact SourceCodeXL.');
+                                                    } else {
+                                                        message.success('Product is successfully deleted.');
+                                                    }
+                                                }}
+                                            />
                                         );
                                     }
                                 }

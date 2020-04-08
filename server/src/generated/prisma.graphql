@@ -45,7 +45,17 @@ type CategoryConnection {
 input CategoryCreateInput {
   id: ID
   name: String!
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutCategoriesInput!
+}
+
+input CategoryCreateManyWithoutUserInput {
+  create: [CategoryCreateWithoutUserInput!]
+  connect: [CategoryWhereUniqueInput!]
+}
+
+input CategoryCreateWithoutUserInput {
+  id: ID
+  name: String!
 }
 
 type CategoryEdge {
@@ -63,6 +73,40 @@ enum CategoryOrderByInput {
 type CategoryPreviousValues {
   id: ID!
   name: String!
+}
+
+input CategoryScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [CategoryScalarWhereInput!]
+  OR: [CategoryScalarWhereInput!]
+  NOT: [CategoryScalarWhereInput!]
 }
 
 type CategorySubscriptionPayload {
@@ -85,11 +129,47 @@ input CategorySubscriptionWhereInput {
 
 input CategoryUpdateInput {
   name: String
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutCategoriesInput
+}
+
+input CategoryUpdateManyDataInput {
+  name: String
 }
 
 input CategoryUpdateManyMutationInput {
   name: String
+}
+
+input CategoryUpdateManyWithoutUserInput {
+  create: [CategoryCreateWithoutUserInput!]
+  delete: [CategoryWhereUniqueInput!]
+  connect: [CategoryWhereUniqueInput!]
+  set: [CategoryWhereUniqueInput!]
+  disconnect: [CategoryWhereUniqueInput!]
+  update: [CategoryUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [CategoryUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [CategoryScalarWhereInput!]
+  updateMany: [CategoryUpdateManyWithWhereNestedInput!]
+}
+
+input CategoryUpdateManyWithWhereNestedInput {
+  where: CategoryScalarWhereInput!
+  data: CategoryUpdateManyDataInput!
+}
+
+input CategoryUpdateWithoutUserDataInput {
+  name: String
+}
+
+input CategoryUpdateWithWhereUniqueWithoutUserInput {
+  where: CategoryWhereUniqueInput!
+  data: CategoryUpdateWithoutUserDataInput!
+}
+
+input CategoryUpsertWithWhereUniqueWithoutUserInput {
+  where: CategoryWhereUniqueInput!
+  update: CategoryUpdateWithoutUserDataInput!
+  create: CategoryCreateWithoutUserInput!
 }
 
 input CategoryWhereInput {
@@ -155,7 +235,7 @@ type CustomerConnection {
 
 input CustomerCreateInput {
   id: ID
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutCustomersInput!
   name: String!
   email: String
   phone: String
@@ -167,9 +247,27 @@ input CustomerCreateInput {
   country: String
 }
 
+input CustomerCreateManyWithoutUserInput {
+  create: [CustomerCreateWithoutUserInput!]
+  connect: [CustomerWhereUniqueInput!]
+}
+
 input CustomerCreateOneInput {
   create: CustomerCreateInput
   connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateWithoutUserInput {
+  id: ID
+  name: String!
+  email: String
+  phone: String
+  street1: String
+  street2: String
+  city: String
+  state: String
+  zipCode: String
+  country: String
 }
 
 type CustomerEdge {
@@ -219,6 +317,168 @@ type CustomerPreviousValues {
   updatedAt: DateTime!
 }
 
+input CustomerScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  phone: String
+  phone_not: String
+  phone_in: [String!]
+  phone_not_in: [String!]
+  phone_lt: String
+  phone_lte: String
+  phone_gt: String
+  phone_gte: String
+  phone_contains: String
+  phone_not_contains: String
+  phone_starts_with: String
+  phone_not_starts_with: String
+  phone_ends_with: String
+  phone_not_ends_with: String
+  street1: String
+  street1_not: String
+  street1_in: [String!]
+  street1_not_in: [String!]
+  street1_lt: String
+  street1_lte: String
+  street1_gt: String
+  street1_gte: String
+  street1_contains: String
+  street1_not_contains: String
+  street1_starts_with: String
+  street1_not_starts_with: String
+  street1_ends_with: String
+  street1_not_ends_with: String
+  street2: String
+  street2_not: String
+  street2_in: [String!]
+  street2_not_in: [String!]
+  street2_lt: String
+  street2_lte: String
+  street2_gt: String
+  street2_gte: String
+  street2_contains: String
+  street2_not_contains: String
+  street2_starts_with: String
+  street2_not_starts_with: String
+  street2_ends_with: String
+  street2_not_ends_with: String
+  city: String
+  city_not: String
+  city_in: [String!]
+  city_not_in: [String!]
+  city_lt: String
+  city_lte: String
+  city_gt: String
+  city_gte: String
+  city_contains: String
+  city_not_contains: String
+  city_starts_with: String
+  city_not_starts_with: String
+  city_ends_with: String
+  city_not_ends_with: String
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  state_lt: String
+  state_lte: String
+  state_gt: String
+  state_gte: String
+  state_contains: String
+  state_not_contains: String
+  state_starts_with: String
+  state_not_starts_with: String
+  state_ends_with: String
+  state_not_ends_with: String
+  zipCode: String
+  zipCode_not: String
+  zipCode_in: [String!]
+  zipCode_not_in: [String!]
+  zipCode_lt: String
+  zipCode_lte: String
+  zipCode_gt: String
+  zipCode_gte: String
+  zipCode_contains: String
+  zipCode_not_contains: String
+  zipCode_starts_with: String
+  zipCode_not_starts_with: String
+  zipCode_ends_with: String
+  zipCode_not_ends_with: String
+  country: String
+  country_not: String
+  country_in: [String!]
+  country_not_in: [String!]
+  country_lt: String
+  country_lte: String
+  country_gt: String
+  country_gte: String
+  country_contains: String
+  country_not_contains: String
+  country_starts_with: String
+  country_not_starts_with: String
+  country_ends_with: String
+  country_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [CustomerScalarWhereInput!]
+  OR: [CustomerScalarWhereInput!]
+  NOT: [CustomerScalarWhereInput!]
+}
+
 type CustomerSubscriptionPayload {
   mutation: MutationType!
   node: Customer
@@ -238,7 +498,7 @@ input CustomerSubscriptionWhereInput {
 }
 
 input CustomerUpdateDataInput {
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutCustomersInput
   name: String
   email: String
   phone: String
@@ -251,7 +511,19 @@ input CustomerUpdateDataInput {
 }
 
 input CustomerUpdateInput {
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutCustomersInput
+  name: String
+  email: String
+  phone: String
+  street1: String
+  street2: String
+  city: String
+  state: String
+  zipCode: String
+  country: String
+}
+
+input CustomerUpdateManyDataInput {
   name: String
   email: String
   phone: String
@@ -275,6 +547,23 @@ input CustomerUpdateManyMutationInput {
   country: String
 }
 
+input CustomerUpdateManyWithoutUserInput {
+  create: [CustomerCreateWithoutUserInput!]
+  delete: [CustomerWhereUniqueInput!]
+  connect: [CustomerWhereUniqueInput!]
+  set: [CustomerWhereUniqueInput!]
+  disconnect: [CustomerWhereUniqueInput!]
+  update: [CustomerUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [CustomerUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [CustomerScalarWhereInput!]
+  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
+}
+
+input CustomerUpdateManyWithWhereNestedInput {
+  where: CustomerScalarWhereInput!
+  data: CustomerUpdateManyDataInput!
+}
+
 input CustomerUpdateOneInput {
   create: CustomerCreateInput
   update: CustomerUpdateDataInput
@@ -284,9 +573,32 @@ input CustomerUpdateOneInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateWithoutUserDataInput {
+  name: String
+  email: String
+  phone: String
+  street1: String
+  street2: String
+  city: String
+  state: String
+  zipCode: String
+  country: String
+}
+
+input CustomerUpdateWithWhereUniqueWithoutUserInput {
+  where: CustomerWhereUniqueInput!
+  data: CustomerUpdateWithoutUserDataInput!
+}
+
 input CustomerUpsertNestedInput {
   update: CustomerUpdateDataInput!
   create: CustomerCreateInput!
+}
+
+input CustomerUpsertWithWhereUniqueWithoutUserInput {
+  where: CustomerWhereUniqueInput!
+  update: CustomerUpdateWithoutUserDataInput!
+  create: CustomerCreateWithoutUserInput!
 }
 
 input CustomerWhereInput {
@@ -474,7 +786,17 @@ type InventoryConnection {
 
 input InventoryCreateInput {
   id: ID
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutInventoriesInput!
+  name: String!
+}
+
+input InventoryCreateManyWithoutUserInput {
+  create: [InventoryCreateWithoutUserInput!]
+  connect: [InventoryWhereUniqueInput!]
+}
+
+input InventoryCreateWithoutUserInput {
+  id: ID
   name: String!
 }
 
@@ -501,6 +823,56 @@ type InventoryPreviousValues {
   updatedAt: DateTime!
 }
 
+input InventoryScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [InventoryScalarWhereInput!]
+  OR: [InventoryScalarWhereInput!]
+  NOT: [InventoryScalarWhereInput!]
+}
+
 type InventorySubscriptionPayload {
   mutation: MutationType!
   node: Inventory
@@ -520,12 +892,48 @@ input InventorySubscriptionWhereInput {
 }
 
 input InventoryUpdateInput {
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutInventoriesInput
+  name: String
+}
+
+input InventoryUpdateManyDataInput {
   name: String
 }
 
 input InventoryUpdateManyMutationInput {
   name: String
+}
+
+input InventoryUpdateManyWithoutUserInput {
+  create: [InventoryCreateWithoutUserInput!]
+  delete: [InventoryWhereUniqueInput!]
+  connect: [InventoryWhereUniqueInput!]
+  set: [InventoryWhereUniqueInput!]
+  disconnect: [InventoryWhereUniqueInput!]
+  update: [InventoryUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [InventoryUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [InventoryScalarWhereInput!]
+  updateMany: [InventoryUpdateManyWithWhereNestedInput!]
+}
+
+input InventoryUpdateManyWithWhereNestedInput {
+  where: InventoryScalarWhereInput!
+  data: InventoryUpdateManyDataInput!
+}
+
+input InventoryUpdateWithoutUserDataInput {
+  name: String
+}
+
+input InventoryUpdateWithWhereUniqueWithoutUserInput {
+  where: InventoryWhereUniqueInput!
+  data: InventoryUpdateWithoutUserDataInput!
+}
+
+input InventoryUpsertWithWhereUniqueWithoutUserInput {
+  where: InventoryWhereUniqueInput!
+  update: InventoryUpdateWithoutUserDataInput!
+  create: InventoryCreateWithoutUserInput!
 }
 
 input InventoryWhereInput {
@@ -696,12 +1104,31 @@ input ProductCreateInput {
   image: String
   largeImage: String
   categories: ProductCreatecategoriesInput
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutProductsInput!
+}
+
+input ProductCreateManyWithoutUserInput {
+  create: [ProductCreateWithoutUserInput!]
+  connect: [ProductWhereUniqueInput!]
 }
 
 input ProductCreateOneInput {
   create: ProductCreateInput
   connect: ProductWhereUniqueInput
+}
+
+input ProductCreateWithoutUserInput {
+  id: ID
+  name: String!
+  salePrice: String!
+  costPrice: String
+  unit: String
+  currency: String
+  notes: String
+  sku: String
+  image: String
+  largeImage: String
+  categories: ProductCreatecategoriesInput
 }
 
 type ProductEdge {
@@ -752,6 +1179,168 @@ type ProductPreviousValues {
   updatedAt: DateTime!
 }
 
+input ProductScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  salePrice: String
+  salePrice_not: String
+  salePrice_in: [String!]
+  salePrice_not_in: [String!]
+  salePrice_lt: String
+  salePrice_lte: String
+  salePrice_gt: String
+  salePrice_gte: String
+  salePrice_contains: String
+  salePrice_not_contains: String
+  salePrice_starts_with: String
+  salePrice_not_starts_with: String
+  salePrice_ends_with: String
+  salePrice_not_ends_with: String
+  costPrice: String
+  costPrice_not: String
+  costPrice_in: [String!]
+  costPrice_not_in: [String!]
+  costPrice_lt: String
+  costPrice_lte: String
+  costPrice_gt: String
+  costPrice_gte: String
+  costPrice_contains: String
+  costPrice_not_contains: String
+  costPrice_starts_with: String
+  costPrice_not_starts_with: String
+  costPrice_ends_with: String
+  costPrice_not_ends_with: String
+  unit: String
+  unit_not: String
+  unit_in: [String!]
+  unit_not_in: [String!]
+  unit_lt: String
+  unit_lte: String
+  unit_gt: String
+  unit_gte: String
+  unit_contains: String
+  unit_not_contains: String
+  unit_starts_with: String
+  unit_not_starts_with: String
+  unit_ends_with: String
+  unit_not_ends_with: String
+  currency: String
+  currency_not: String
+  currency_in: [String!]
+  currency_not_in: [String!]
+  currency_lt: String
+  currency_lte: String
+  currency_gt: String
+  currency_gte: String
+  currency_contains: String
+  currency_not_contains: String
+  currency_starts_with: String
+  currency_not_starts_with: String
+  currency_ends_with: String
+  currency_not_ends_with: String
+  notes: String
+  notes_not: String
+  notes_in: [String!]
+  notes_not_in: [String!]
+  notes_lt: String
+  notes_lte: String
+  notes_gt: String
+  notes_gte: String
+  notes_contains: String
+  notes_not_contains: String
+  notes_starts_with: String
+  notes_not_starts_with: String
+  notes_ends_with: String
+  notes_not_ends_with: String
+  sku: String
+  sku_not: String
+  sku_in: [String!]
+  sku_not_in: [String!]
+  sku_lt: String
+  sku_lte: String
+  sku_gt: String
+  sku_gte: String
+  sku_contains: String
+  sku_not_contains: String
+  sku_starts_with: String
+  sku_not_starts_with: String
+  sku_ends_with: String
+  sku_not_ends_with: String
+  image: String
+  image_not: String
+  image_in: [String!]
+  image_not_in: [String!]
+  image_lt: String
+  image_lte: String
+  image_gt: String
+  image_gte: String
+  image_contains: String
+  image_not_contains: String
+  image_starts_with: String
+  image_not_starts_with: String
+  image_ends_with: String
+  image_not_ends_with: String
+  largeImage: String
+  largeImage_not: String
+  largeImage_in: [String!]
+  largeImage_not_in: [String!]
+  largeImage_lt: String
+  largeImage_lte: String
+  largeImage_gt: String
+  largeImage_gte: String
+  largeImage_contains: String
+  largeImage_not_contains: String
+  largeImage_starts_with: String
+  largeImage_not_starts_with: String
+  largeImage_ends_with: String
+  largeImage_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ProductScalarWhereInput!]
+  OR: [ProductScalarWhereInput!]
+  NOT: [ProductScalarWhereInput!]
+}
+
 type ProductSubscriptionPayload {
   mutation: MutationType!
   node: Product
@@ -785,7 +1374,7 @@ input ProductUpdateDataInput {
   image: String
   largeImage: String
   categories: ProductUpdatecategoriesInput
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutProductsInput
 }
 
 input ProductUpdateInput {
@@ -799,7 +1388,20 @@ input ProductUpdateInput {
   image: String
   largeImage: String
   categories: ProductUpdatecategoriesInput
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutProductsInput
+}
+
+input ProductUpdateManyDataInput {
+  name: String
+  salePrice: String
+  costPrice: String
+  unit: String
+  currency: String
+  notes: String
+  sku: String
+  image: String
+  largeImage: String
+  categories: ProductUpdatecategoriesInput
 }
 
 input ProductUpdateManyMutationInput {
@@ -815,6 +1417,23 @@ input ProductUpdateManyMutationInput {
   categories: ProductUpdatecategoriesInput
 }
 
+input ProductUpdateManyWithoutUserInput {
+  create: [ProductCreateWithoutUserInput!]
+  delete: [ProductWhereUniqueInput!]
+  connect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  update: [ProductUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [ProductUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [ProductScalarWhereInput!]
+  updateMany: [ProductUpdateManyWithWhereNestedInput!]
+}
+
+input ProductUpdateManyWithWhereNestedInput {
+  where: ProductScalarWhereInput!
+  data: ProductUpdateManyDataInput!
+}
+
 input ProductUpdateOneRequiredInput {
   create: ProductCreateInput
   update: ProductUpdateDataInput
@@ -822,9 +1441,33 @@ input ProductUpdateOneRequiredInput {
   connect: ProductWhereUniqueInput
 }
 
+input ProductUpdateWithoutUserDataInput {
+  name: String
+  salePrice: String
+  costPrice: String
+  unit: String
+  currency: String
+  notes: String
+  sku: String
+  image: String
+  largeImage: String
+  categories: ProductUpdatecategoriesInput
+}
+
+input ProductUpdateWithWhereUniqueWithoutUserInput {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateWithoutUserDataInput!
+}
+
 input ProductUpsertNestedInput {
   update: ProductUpdateDataInput!
   create: ProductCreateInput!
+}
+
+input ProductUpsertWithWhereUniqueWithoutUserInput {
+  where: ProductWhereUniqueInput!
+  update: ProductUpdateWithoutUserDataInput!
+  create: ProductCreateWithoutUserInput!
 }
 
 input ProductWhereInput {
@@ -1042,7 +1685,7 @@ type SaleConnection {
 
 input SaleCreateInput {
   id: ID
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutSalesInput!
   customer: CustomerCreateOneInput
   timestamp: Int!
   discountType: SpecialSaleDeductionType
@@ -1053,9 +1696,26 @@ input SaleCreateInput {
   note: String
 }
 
+input SaleCreateManyWithoutUserInput {
+  create: [SaleCreateWithoutUserInput!]
+  connect: [SaleWhereUniqueInput!]
+}
+
 input SaleCreateOneInput {
   create: SaleCreateInput
   connect: SaleWhereUniqueInput
+}
+
+input SaleCreateWithoutUserInput {
+  id: ID
+  customer: CustomerCreateOneInput
+  timestamp: Int!
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+  taxType: SpecialSaleDeductionType
+  taxValue: String
+  shipping: String
+  note: String
 }
 
 type SaleEdge {
@@ -1089,6 +1749,11 @@ input SaleItemCreateInput {
   discountValue: String
 }
 
+input SaleItemCreateManyInput {
+  create: [SaleItemCreateInput!]
+  connect: [SaleItemWhereUniqueInput!]
+}
+
 type SaleItemEdge {
   node: SaleItem!
   cursor: String!
@@ -1118,6 +1783,74 @@ type SaleItemPreviousValues {
   updatedAt: DateTime!
 }
 
+input SaleItemScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  quantity: String
+  quantity_not: String
+  quantity_in: [String!]
+  quantity_not_in: [String!]
+  quantity_lt: String
+  quantity_lte: String
+  quantity_gt: String
+  quantity_gte: String
+  quantity_contains: String
+  quantity_not_contains: String
+  quantity_starts_with: String
+  quantity_not_starts_with: String
+  quantity_ends_with: String
+  quantity_not_ends_with: String
+  discountType: SpecialSaleDeductionType
+  discountType_not: SpecialSaleDeductionType
+  discountType_in: [SpecialSaleDeductionType!]
+  discountType_not_in: [SpecialSaleDeductionType!]
+  discountValue: String
+  discountValue_not: String
+  discountValue_in: [String!]
+  discountValue_not_in: [String!]
+  discountValue_lt: String
+  discountValue_lte: String
+  discountValue_gt: String
+  discountValue_gte: String
+  discountValue_contains: String
+  discountValue_not_contains: String
+  discountValue_starts_with: String
+  discountValue_not_starts_with: String
+  discountValue_ends_with: String
+  discountValue_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SaleItemScalarWhereInput!]
+  OR: [SaleItemScalarWhereInput!]
+  NOT: [SaleItemScalarWhereInput!]
+}
+
 type SaleItemSubscriptionPayload {
   mutation: MutationType!
   node: SaleItem
@@ -1136,6 +1869,14 @@ input SaleItemSubscriptionWhereInput {
   NOT: [SaleItemSubscriptionWhereInput!]
 }
 
+input SaleItemUpdateDataInput {
+  sale: SaleUpdateOneRequiredInput
+  product: ProductUpdateOneRequiredInput
+  quantity: String
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+}
+
 input SaleItemUpdateInput {
   sale: SaleUpdateOneRequiredInput
   product: ProductUpdateOneRequiredInput
@@ -1144,10 +1885,44 @@ input SaleItemUpdateInput {
   discountValue: String
 }
 
+input SaleItemUpdateManyDataInput {
+  quantity: String
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+}
+
+input SaleItemUpdateManyInput {
+  create: [SaleItemCreateInput!]
+  update: [SaleItemUpdateWithWhereUniqueNestedInput!]
+  upsert: [SaleItemUpsertWithWhereUniqueNestedInput!]
+  delete: [SaleItemWhereUniqueInput!]
+  connect: [SaleItemWhereUniqueInput!]
+  set: [SaleItemWhereUniqueInput!]
+  disconnect: [SaleItemWhereUniqueInput!]
+  deleteMany: [SaleItemScalarWhereInput!]
+  updateMany: [SaleItemUpdateManyWithWhereNestedInput!]
+}
+
 input SaleItemUpdateManyMutationInput {
   quantity: String
   discountType: SpecialSaleDeductionType
   discountValue: String
+}
+
+input SaleItemUpdateManyWithWhereNestedInput {
+  where: SaleItemScalarWhereInput!
+  data: SaleItemUpdateManyDataInput!
+}
+
+input SaleItemUpdateWithWhereUniqueNestedInput {
+  where: SaleItemWhereUniqueInput!
+  data: SaleItemUpdateDataInput!
+}
+
+input SaleItemUpsertWithWhereUniqueNestedInput {
+  where: SaleItemWhereUniqueInput!
+  update: SaleItemUpdateDataInput!
+  create: SaleItemCreateInput!
 }
 
 input SaleItemWhereInput {
@@ -1260,6 +2035,114 @@ type SalePreviousValues {
   updatedAt: DateTime!
 }
 
+input SaleScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  timestamp: Int
+  timestamp_not: Int
+  timestamp_in: [Int!]
+  timestamp_not_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  discountType: SpecialSaleDeductionType
+  discountType_not: SpecialSaleDeductionType
+  discountType_in: [SpecialSaleDeductionType!]
+  discountType_not_in: [SpecialSaleDeductionType!]
+  discountValue: String
+  discountValue_not: String
+  discountValue_in: [String!]
+  discountValue_not_in: [String!]
+  discountValue_lt: String
+  discountValue_lte: String
+  discountValue_gt: String
+  discountValue_gte: String
+  discountValue_contains: String
+  discountValue_not_contains: String
+  discountValue_starts_with: String
+  discountValue_not_starts_with: String
+  discountValue_ends_with: String
+  discountValue_not_ends_with: String
+  taxType: SpecialSaleDeductionType
+  taxType_not: SpecialSaleDeductionType
+  taxType_in: [SpecialSaleDeductionType!]
+  taxType_not_in: [SpecialSaleDeductionType!]
+  taxValue: String
+  taxValue_not: String
+  taxValue_in: [String!]
+  taxValue_not_in: [String!]
+  taxValue_lt: String
+  taxValue_lte: String
+  taxValue_gt: String
+  taxValue_gte: String
+  taxValue_contains: String
+  taxValue_not_contains: String
+  taxValue_starts_with: String
+  taxValue_not_starts_with: String
+  taxValue_ends_with: String
+  taxValue_not_ends_with: String
+  shipping: String
+  shipping_not: String
+  shipping_in: [String!]
+  shipping_not_in: [String!]
+  shipping_lt: String
+  shipping_lte: String
+  shipping_gt: String
+  shipping_gte: String
+  shipping_contains: String
+  shipping_not_contains: String
+  shipping_starts_with: String
+  shipping_not_starts_with: String
+  shipping_ends_with: String
+  shipping_not_ends_with: String
+  note: String
+  note_not: String
+  note_in: [String!]
+  note_not_in: [String!]
+  note_lt: String
+  note_lte: String
+  note_gt: String
+  note_gte: String
+  note_contains: String
+  note_not_contains: String
+  note_starts_with: String
+  note_not_starts_with: String
+  note_ends_with: String
+  note_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SaleScalarWhereInput!]
+  OR: [SaleScalarWhereInput!]
+  NOT: [SaleScalarWhereInput!]
+}
+
 type SaleSubscriptionPayload {
   mutation: MutationType!
   node: Sale
@@ -1279,7 +2162,7 @@ input SaleSubscriptionWhereInput {
 }
 
 input SaleUpdateDataInput {
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutSalesInput
   customer: CustomerUpdateOneInput
   timestamp: Int
   discountType: SpecialSaleDeductionType
@@ -1291,8 +2174,18 @@ input SaleUpdateDataInput {
 }
 
 input SaleUpdateInput {
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutSalesInput
   customer: CustomerUpdateOneInput
+  timestamp: Int
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+  taxType: SpecialSaleDeductionType
+  taxValue: String
+  shipping: String
+  note: String
+}
+
+input SaleUpdateManyDataInput {
   timestamp: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -1312,6 +2205,23 @@ input SaleUpdateManyMutationInput {
   note: String
 }
 
+input SaleUpdateManyWithoutUserInput {
+  create: [SaleCreateWithoutUserInput!]
+  delete: [SaleWhereUniqueInput!]
+  connect: [SaleWhereUniqueInput!]
+  set: [SaleWhereUniqueInput!]
+  disconnect: [SaleWhereUniqueInput!]
+  update: [SaleUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [SaleUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [SaleScalarWhereInput!]
+  updateMany: [SaleUpdateManyWithWhereNestedInput!]
+}
+
+input SaleUpdateManyWithWhereNestedInput {
+  where: SaleScalarWhereInput!
+  data: SaleUpdateManyDataInput!
+}
+
 input SaleUpdateOneRequiredInput {
   create: SaleCreateInput
   update: SaleUpdateDataInput
@@ -1319,9 +2229,31 @@ input SaleUpdateOneRequiredInput {
   connect: SaleWhereUniqueInput
 }
 
+input SaleUpdateWithoutUserDataInput {
+  customer: CustomerUpdateOneInput
+  timestamp: Int
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+  taxType: SpecialSaleDeductionType
+  taxValue: String
+  shipping: String
+  note: String
+}
+
+input SaleUpdateWithWhereUniqueWithoutUserInput {
+  where: SaleWhereUniqueInput!
+  data: SaleUpdateWithoutUserDataInput!
+}
+
 input SaleUpsertNestedInput {
   update: SaleUpdateDataInput!
   create: SaleCreateInput!
+}
+
+input SaleUpsertWithWhereUniqueWithoutUserInput {
+  where: SaleWhereUniqueInput!
+  update: SaleUpdateWithoutUserDataInput!
+  create: SaleCreateWithoutUserInput!
 }
 
 input SaleWhereInput {
@@ -1464,6 +2396,12 @@ type User {
   confirmEmailToken: String
   resetToken: String
   resetTokenExpiry: String
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
+  inventories(where: InventoryWhereInput, orderBy: InventoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Inventory!]
+  customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer!]
+  sales(where: SaleWhereInput, orderBy: SaleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Sale!]
+  saleItems(where: SaleItemWhereInput, orderBy: SaleItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SaleItem!]
 }
 
 type UserConnection {
@@ -1483,15 +2421,131 @@ input UserCreateInput {
   confirmEmailToken: String
   resetToken: String
   resetTokenExpiry: String
+  products: ProductCreateManyWithoutUserInput
+  categories: CategoryCreateManyWithoutUserInput
+  inventories: InventoryCreateManyWithoutUserInput
+  customers: CustomerCreateManyWithoutUserInput
+  sales: SaleCreateManyWithoutUserInput
+  saleItems: SaleItemCreateManyInput
 }
 
-input UserCreateOneInput {
-  create: UserCreateInput
+input UserCreateOneWithoutCategoriesInput {
+  create: UserCreateWithoutCategoriesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutCustomersInput {
+  create: UserCreateWithoutCustomersInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutInventoriesInput {
+  create: UserCreateWithoutInventoriesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutProductsInput {
+  create: UserCreateWithoutProductsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutSalesInput {
+  create: UserCreateWithoutSalesInput
   connect: UserWhereUniqueInput
 }
 
 input UserCreatepermissionsInput {
   set: [Permission!]
+}
+
+input UserCreateWithoutCategoriesInput {
+  id: ID
+  email: String!
+  password: String!
+  role: String!
+  permissions: UserCreatepermissionsInput
+  verified: Boolean!
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductCreateManyWithoutUserInput
+  inventories: InventoryCreateManyWithoutUserInput
+  customers: CustomerCreateManyWithoutUserInput
+  sales: SaleCreateManyWithoutUserInput
+  saleItems: SaleItemCreateManyInput
+}
+
+input UserCreateWithoutCustomersInput {
+  id: ID
+  email: String!
+  password: String!
+  role: String!
+  permissions: UserCreatepermissionsInput
+  verified: Boolean!
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductCreateManyWithoutUserInput
+  categories: CategoryCreateManyWithoutUserInput
+  inventories: InventoryCreateManyWithoutUserInput
+  sales: SaleCreateManyWithoutUserInput
+  saleItems: SaleItemCreateManyInput
+}
+
+input UserCreateWithoutInventoriesInput {
+  id: ID
+  email: String!
+  password: String!
+  role: String!
+  permissions: UserCreatepermissionsInput
+  verified: Boolean!
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductCreateManyWithoutUserInput
+  categories: CategoryCreateManyWithoutUserInput
+  customers: CustomerCreateManyWithoutUserInput
+  sales: SaleCreateManyWithoutUserInput
+  saleItems: SaleItemCreateManyInput
+}
+
+input UserCreateWithoutProductsInput {
+  id: ID
+  email: String!
+  password: String!
+  role: String!
+  permissions: UserCreatepermissionsInput
+  verified: Boolean!
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  categories: CategoryCreateManyWithoutUserInput
+  inventories: InventoryCreateManyWithoutUserInput
+  customers: CustomerCreateManyWithoutUserInput
+  sales: SaleCreateManyWithoutUserInput
+  saleItems: SaleItemCreateManyInput
+}
+
+input UserCreateWithoutSalesInput {
+  id: ID
+  email: String!
+  password: String!
+  role: String!
+  permissions: UserCreatepermissionsInput
+  verified: Boolean!
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductCreateManyWithoutUserInput
+  categories: CategoryCreateManyWithoutUserInput
+  inventories: InventoryCreateManyWithoutUserInput
+  customers: CustomerCreateManyWithoutUserInput
+  saleItems: SaleItemCreateManyInput
 }
 
 type UserEdge {
@@ -1551,18 +2605,6 @@ input UserSubscriptionWhereInput {
   NOT: [UserSubscriptionWhereInput!]
 }
 
-input UserUpdateDataInput {
-  email: String
-  password: String
-  role: String
-  permissions: UserUpdatepermissionsInput
-  verified: Boolean
-  name: String
-  confirmEmailToken: String
-  resetToken: String
-  resetTokenExpiry: String
-}
-
 input UserUpdateInput {
   email: String
   password: String
@@ -1573,6 +2615,12 @@ input UserUpdateInput {
   confirmEmailToken: String
   resetToken: String
   resetTokenExpiry: String
+  products: ProductUpdateManyWithoutUserInput
+  categories: CategoryUpdateManyWithoutUserInput
+  inventories: InventoryUpdateManyWithoutUserInput
+  customers: CustomerUpdateManyWithoutUserInput
+  sales: SaleUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
 }
 
 input UserUpdateManyMutationInput {
@@ -1587,10 +2635,38 @@ input UserUpdateManyMutationInput {
   resetTokenExpiry: String
 }
 
-input UserUpdateOneRequiredInput {
-  create: UserCreateInput
-  update: UserUpdateDataInput
-  upsert: UserUpsertNestedInput
+input UserUpdateOneRequiredWithoutCategoriesInput {
+  create: UserCreateWithoutCategoriesInput
+  update: UserUpdateWithoutCategoriesDataInput
+  upsert: UserUpsertWithoutCategoriesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutCustomersInput {
+  create: UserCreateWithoutCustomersInput
+  update: UserUpdateWithoutCustomersDataInput
+  upsert: UserUpsertWithoutCustomersInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutInventoriesInput {
+  create: UserCreateWithoutInventoriesInput
+  update: UserUpdateWithoutInventoriesDataInput
+  upsert: UserUpsertWithoutInventoriesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutProductsInput {
+  create: UserCreateWithoutProductsInput
+  update: UserUpdateWithoutProductsDataInput
+  upsert: UserUpsertWithoutProductsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutSalesInput {
+  create: UserCreateWithoutSalesInput
+  update: UserUpdateWithoutSalesDataInput
+  upsert: UserUpsertWithoutSalesInput
   connect: UserWhereUniqueInput
 }
 
@@ -1598,9 +2674,114 @@ input UserUpdatepermissionsInput {
   set: [Permission!]
 }
 
-input UserUpsertNestedInput {
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+input UserUpdateWithoutCategoriesDataInput {
+  email: String
+  password: String
+  role: String
+  permissions: UserUpdatepermissionsInput
+  verified: Boolean
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductUpdateManyWithoutUserInput
+  inventories: InventoryUpdateManyWithoutUserInput
+  customers: CustomerUpdateManyWithoutUserInput
+  sales: SaleUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
+}
+
+input UserUpdateWithoutCustomersDataInput {
+  email: String
+  password: String
+  role: String
+  permissions: UserUpdatepermissionsInput
+  verified: Boolean
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductUpdateManyWithoutUserInput
+  categories: CategoryUpdateManyWithoutUserInput
+  inventories: InventoryUpdateManyWithoutUserInput
+  sales: SaleUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
+}
+
+input UserUpdateWithoutInventoriesDataInput {
+  email: String
+  password: String
+  role: String
+  permissions: UserUpdatepermissionsInput
+  verified: Boolean
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductUpdateManyWithoutUserInput
+  categories: CategoryUpdateManyWithoutUserInput
+  customers: CustomerUpdateManyWithoutUserInput
+  sales: SaleUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
+}
+
+input UserUpdateWithoutProductsDataInput {
+  email: String
+  password: String
+  role: String
+  permissions: UserUpdatepermissionsInput
+  verified: Boolean
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  categories: CategoryUpdateManyWithoutUserInput
+  inventories: InventoryUpdateManyWithoutUserInput
+  customers: CustomerUpdateManyWithoutUserInput
+  sales: SaleUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
+}
+
+input UserUpdateWithoutSalesDataInput {
+  email: String
+  password: String
+  role: String
+  permissions: UserUpdatepermissionsInput
+  verified: Boolean
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductUpdateManyWithoutUserInput
+  categories: CategoryUpdateManyWithoutUserInput
+  inventories: InventoryUpdateManyWithoutUserInput
+  customers: CustomerUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
+}
+
+input UserUpsertWithoutCategoriesInput {
+  update: UserUpdateWithoutCategoriesDataInput!
+  create: UserCreateWithoutCategoriesInput!
+}
+
+input UserUpsertWithoutCustomersInput {
+  update: UserUpdateWithoutCustomersDataInput!
+  create: UserCreateWithoutCustomersInput!
+}
+
+input UserUpsertWithoutInventoriesInput {
+  update: UserUpdateWithoutInventoriesDataInput!
+  create: UserCreateWithoutInventoriesInput!
+}
+
+input UserUpsertWithoutProductsInput {
+  update: UserUpdateWithoutProductsDataInput!
+  create: UserCreateWithoutProductsInput!
+}
+
+input UserUpsertWithoutSalesInput {
+  update: UserUpdateWithoutSalesDataInput!
+  create: UserCreateWithoutSalesInput!
 }
 
 input UserWhereInput {
@@ -1718,6 +2899,24 @@ input UserWhereInput {
   resetTokenExpiry_not_starts_with: String
   resetTokenExpiry_ends_with: String
   resetTokenExpiry_not_ends_with: String
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+  categories_every: CategoryWhereInput
+  categories_some: CategoryWhereInput
+  categories_none: CategoryWhereInput
+  inventories_every: InventoryWhereInput
+  inventories_some: InventoryWhereInput
+  inventories_none: InventoryWhereInput
+  customers_every: CustomerWhereInput
+  customers_some: CustomerWhereInput
+  customers_none: CustomerWhereInput
+  sales_every: SaleWhereInput
+  sales_some: SaleWhereInput
+  sales_none: SaleWhereInput
+  saleItems_every: SaleItemWhereInput
+  saleItems_some: SaleItemWhereInput
+  saleItems_none: SaleItemWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
