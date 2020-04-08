@@ -10,7 +10,7 @@ type Mutation {
     createCategories(names: [String!]!): [Category!]!
     updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
     deleteProduct(id: ID!): Product!
-    # createInventory(name: String!): Inventory!
+    createInventory(name: String!): Inventory!
     # updateInventory(id: ID!, name: String): Inventory!
     # deleteInventory(id: ID!): Inventory!
     # createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
@@ -30,7 +30,8 @@ type Query {
     productByUser(id: ID!): Product
     categories: [Category]!
     categoriesByUser: [Category]!
-    # inventories(orderBy: InventoryOrderByInput): [Inventory]!
+    inventoryItemsByProduct(id: ID!): [InventoryItem]!
+    inventoriesByUser(orderBy: InventoryOrderByInput): [Inventory]!
     # inventory(id: ID!): Inventory
     # customers(orderBy: CustomerOrderByInput): [Customer]!
     # customer(id: ID!): Customer

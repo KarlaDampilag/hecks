@@ -59,6 +59,12 @@ const DELETE_PRODUCT_MUTATION = gql`
     }
 `;
 
+const INVENTORY_ITEM_COUNT = gql`
+    query INVENTORY_ITEM_COUNT($id: ID!) {
+        inventoryItemCount(id: $id)
+    }
+`;
+
 const deleteProductUpdateCache = (cache: any, payload: any) => {
     // Read cache for the products
     const data = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
@@ -69,13 +75,13 @@ const deleteProductUpdateCache = (cache: any, payload: any) => {
 
 const Products = () => {
     const [productIdForDeletion, setProductIdForDeletion] = React.useState<string>();
-    const { data: productsData, loading, error } = useQuery(PRODUCTS_BY_USER_QUERY);
+    const { data: productsData, loading } = useQuery(PRODUCTS_BY_USER_QUERY);
     const products = productsData ? productsData.productsByUser : null;
 
-    const { data, loading: queryCategoriesLoading, error: queryCategoriesError } = useQuery(CATEGORIES_BY_USER_QUERY);
+    const { data } = useQuery(CATEGORIES_BY_USER_QUERY);
     const categoriesData = data ? data.categoriesByUser : null;
 
-    const [deleteProduct, { data: deleteProductData, loading: deleteProductLoading, error: deleteProductError }] = useMutation(DELETE_PRODUCT_MUTATION, {
+    const [deleteProduct, { error: deleteProductError }] = useMutation(DELETE_PRODUCT_MUTATION, {
         variables: { id: productIdForDeletion },
         update: deleteProductUpdateCache
     });
@@ -92,6 +98,7 @@ const Products = () => {
                         <Table
                             loading={loading}
                             dataSource={products}
+                            rowKey='id'
                             columns={[
                                 {
                                     dataIndex: 'image',
@@ -124,6 +131,13 @@ const Products = () => {
                                     }
                                 },
                                 {
+                                    title: 'Total Stock Count',
+                                    dataIndex: 'id',
+                                    render: (value) => {
+                                        return "Not yet implemented"
+                                    }
+                                },
+                                {
                                     title: 'Edit ✏️',
                                     dataIndex: 'id',
                                     key: 'edit',
@@ -140,7 +154,6 @@ const Products = () => {
                                     render: (value) => {
                                         return (
                                             <DeleteButton
-                                                deleteIsLoading={deleteProductLoading}
                                                 onClick={() => setProductIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     await deleteProduct();

@@ -19,6 +19,7 @@ const Header = (props: PropTypes) => {
             >
                 <Menu.Item key='products'><Link to="/products">Products</Link></Menu.Item>
                 <Menu.Item key='sales'><Link to="/sales">Sales</Link></Menu.Item>
+                <Menu.Item key='inventories'><Link to="/inventories">Inventories</Link></Menu.Item>
                 {props.user && <Menu.Item><LogoutButton /></Menu.Item>}
                 {!props.user && <Menu.Item><Link to="/signup">Sign Up</Link></Menu.Item>}
                 {!props.user && <Menu.Item><Link to="/login">Log In</Link></Menu.Item>}

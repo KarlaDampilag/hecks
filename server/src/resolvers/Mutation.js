@@ -89,7 +89,6 @@ async function createProduct(parent, args, ctx, info) {
             }
         },
         categories: { set: args.categories }
-
     });
 
     return product;
@@ -162,6 +161,26 @@ async function deleteProduct(parent, args, ctx, info) {
     return await ctx.prisma.deleteProduct({ id: args.id });
 }
 
+async function createInventory(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    // TODO do not allow creation of more than one, if user has free account
+
+    const inventory = await ctx.prisma.createInventory({
+        ...args,
+        // create a relationship between the inventory and the user
+        user: {
+            connect: {
+                id: ctx.request.userId
+            }
+        }
+    });
+
+    return inventory;
+}
+
 module.exports = {
     signup,
     login,
@@ -169,5 +188,6 @@ module.exports = {
     createProduct,
     createCategories,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    createInventory
 }

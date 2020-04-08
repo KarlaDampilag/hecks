@@ -19,6 +19,10 @@ export interface Exists {
   category: (where?: CategoryWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
   inventory: (where?: InventoryWhereInput) => Promise<boolean>;
+  inventoryItem: (where?: InventoryItemWhereInput) => Promise<boolean>;
+  inventoryItemTransaction: (
+    where?: InventoryItemTransactionWhereInput
+  ) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   sale: (where?: SaleWhereInput) => Promise<boolean>;
   saleItem: (where?: SaleItemWhereInput) => Promise<boolean>;
@@ -101,6 +105,48 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => InventoryConnectionPromise;
+  inventoryItem: (
+    where: InventoryItemWhereUniqueInput
+  ) => InventoryItemNullablePromise;
+  inventoryItems: (args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<InventoryItem>;
+  inventoryItemsConnection: (args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => InventoryItemConnectionPromise;
+  inventoryItemTransaction: (
+    where: InventoryItemTransactionWhereUniqueInput
+  ) => InventoryItemTransactionNullablePromise;
+  inventoryItemTransactions: (args?: {
+    where?: InventoryItemTransactionWhereInput;
+    orderBy?: InventoryItemTransactionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<InventoryItemTransaction>;
+  inventoryItemTransactionsConnection: (args?: {
+    where?: InventoryItemTransactionWhereInput;
+    orderBy?: InventoryItemTransactionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => InventoryItemTransactionConnectionPromise;
   product: (where: ProductWhereUniqueInput) => ProductNullablePromise;
   products: (args?: {
     where?: ProductWhereInput;
@@ -231,6 +277,48 @@ export interface Prisma {
   }) => InventoryPromise;
   deleteInventory: (where: InventoryWhereUniqueInput) => InventoryPromise;
   deleteManyInventories: (where?: InventoryWhereInput) => BatchPayloadPromise;
+  createInventoryItem: (data: InventoryItemCreateInput) => InventoryItemPromise;
+  updateInventoryItem: (args: {
+    data: InventoryItemUpdateInput;
+    where: InventoryItemWhereUniqueInput;
+  }) => InventoryItemPromise;
+  updateManyInventoryItems: (args: {
+    data: InventoryItemUpdateManyMutationInput;
+    where?: InventoryItemWhereInput;
+  }) => BatchPayloadPromise;
+  upsertInventoryItem: (args: {
+    where: InventoryItemWhereUniqueInput;
+    create: InventoryItemCreateInput;
+    update: InventoryItemUpdateInput;
+  }) => InventoryItemPromise;
+  deleteInventoryItem: (
+    where: InventoryItemWhereUniqueInput
+  ) => InventoryItemPromise;
+  deleteManyInventoryItems: (
+    where?: InventoryItemWhereInput
+  ) => BatchPayloadPromise;
+  createInventoryItemTransaction: (
+    data: InventoryItemTransactionCreateInput
+  ) => InventoryItemTransactionPromise;
+  updateInventoryItemTransaction: (args: {
+    data: InventoryItemTransactionUpdateInput;
+    where: InventoryItemTransactionWhereUniqueInput;
+  }) => InventoryItemTransactionPromise;
+  updateManyInventoryItemTransactions: (args: {
+    data: InventoryItemTransactionUpdateManyMutationInput;
+    where?: InventoryItemTransactionWhereInput;
+  }) => BatchPayloadPromise;
+  upsertInventoryItemTransaction: (args: {
+    where: InventoryItemTransactionWhereUniqueInput;
+    create: InventoryItemTransactionCreateInput;
+    update: InventoryItemTransactionUpdateInput;
+  }) => InventoryItemTransactionPromise;
+  deleteInventoryItemTransaction: (
+    where: InventoryItemTransactionWhereUniqueInput
+  ) => InventoryItemTransactionPromise;
+  deleteManyInventoryItemTransactions: (
+    where?: InventoryItemTransactionWhereInput
+  ) => BatchPayloadPromise;
   createProduct: (data: ProductCreateInput) => ProductPromise;
   updateProduct: (args: {
     data: ProductUpdateInput;
@@ -313,6 +401,12 @@ export interface Subscription {
   inventory: (
     where?: InventorySubscriptionWhereInput
   ) => InventorySubscriptionPayloadSubscription;
+  inventoryItem: (
+    where?: InventoryItemSubscriptionWhereInput
+  ) => InventoryItemSubscriptionPayloadSubscription;
+  inventoryItemTransaction: (
+    where?: InventoryItemTransactionSubscriptionWhereInput
+  ) => InventoryItemTransactionSubscriptionPayloadSubscription;
   product: (
     where?: ProductSubscriptionWhereInput
   ) => ProductSubscriptionPayloadSubscription;
@@ -343,6 +437,13 @@ export type Permission =
   | "INVENTORY"
   | "CUSTOMER"
   | "PERMISSIONUPDATE";
+
+export type InventoryItemTransactionAction =
+  | "MANUALLY"
+  | "ADDED"
+  | "DEDUCTED"
+  | "SALE"
+  | "DEDUCTION";
 
 export type SpecialSaleDeductionType = "FLAT" | "PERCENTAGE";
 
@@ -387,6 +488,22 @@ export type InventoryOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type InventoryItemOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "amount_ASC"
+  | "amount_DESC";
+
+export type InventoryItemTransactionOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "action_ASC"
+  | "action_DESC"
+  | "comment_ASC"
+  | "comment_DESC"
+  | "dateTime_ASC"
+  | "dateTime_DESC";
 
 export type CustomerOrderByInput =
   | "id_ASC"
@@ -763,6 +880,9 @@ export interface UserWhereInput {
   inventories_every?: Maybe<InventoryWhereInput>;
   inventories_some?: Maybe<InventoryWhereInput>;
   inventories_none?: Maybe<InventoryWhereInput>;
+  inventoryItems_every?: Maybe<InventoryItemWhereInput>;
+  inventoryItems_some?: Maybe<InventoryItemWhereInput>;
+  inventoryItems_none?: Maybe<InventoryItemWhereInput>;
   customers_every?: Maybe<CustomerWhereInput>;
   customers_some?: Maybe<CustomerWhereInput>;
   customers_none?: Maybe<CustomerWhereInput>;
@@ -842,6 +962,9 @@ export interface InventoryWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
+  inventoryItems_every?: Maybe<InventoryItemWhereInput>;
+  inventoryItems_some?: Maybe<InventoryItemWhereInput>;
+  inventoryItems_none?: Maybe<InventoryItemWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -861,6 +984,96 @@ export interface InventoryWhereInput {
   AND?: Maybe<InventoryWhereInput[] | InventoryWhereInput>;
   OR?: Maybe<InventoryWhereInput[] | InventoryWhereInput>;
   NOT?: Maybe<InventoryWhereInput[] | InventoryWhereInput>;
+}
+
+export interface InventoryItemWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  product?: Maybe<ProductWhereInput>;
+  inventory?: Maybe<InventoryWhereInput>;
+  amount?: Maybe<Float>;
+  amount_not?: Maybe<Float>;
+  amount_in?: Maybe<Float[] | Float>;
+  amount_not_in?: Maybe<Float[] | Float>;
+  amount_lt?: Maybe<Float>;
+  amount_lte?: Maybe<Float>;
+  amount_gt?: Maybe<Float>;
+  amount_gte?: Maybe<Float>;
+  transactions_every?: Maybe<InventoryItemTransactionWhereInput>;
+  transactions_some?: Maybe<InventoryItemTransactionWhereInput>;
+  transactions_none?: Maybe<InventoryItemTransactionWhereInput>;
+  AND?: Maybe<InventoryItemWhereInput[] | InventoryItemWhereInput>;
+  OR?: Maybe<InventoryItemWhereInput[] | InventoryItemWhereInput>;
+  NOT?: Maybe<InventoryItemWhereInput[] | InventoryItemWhereInput>;
+}
+
+export interface InventoryItemTransactionWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  actor?: Maybe<UserWhereInput>;
+  action?: Maybe<InventoryItemTransactionAction>;
+  action_not?: Maybe<InventoryItemTransactionAction>;
+  action_in?: Maybe<
+    InventoryItemTransactionAction[] | InventoryItemTransactionAction
+  >;
+  action_not_in?: Maybe<
+    InventoryItemTransactionAction[] | InventoryItemTransactionAction
+  >;
+  comment?: Maybe<String>;
+  comment_not?: Maybe<String>;
+  comment_in?: Maybe<String[] | String>;
+  comment_not_in?: Maybe<String[] | String>;
+  comment_lt?: Maybe<String>;
+  comment_lte?: Maybe<String>;
+  comment_gt?: Maybe<String>;
+  comment_gte?: Maybe<String>;
+  comment_contains?: Maybe<String>;
+  comment_not_contains?: Maybe<String>;
+  comment_starts_with?: Maybe<String>;
+  comment_not_starts_with?: Maybe<String>;
+  comment_ends_with?: Maybe<String>;
+  comment_not_ends_with?: Maybe<String>;
+  dateTime?: Maybe<DateTimeInput>;
+  dateTime_not?: Maybe<DateTimeInput>;
+  dateTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateTime_lt?: Maybe<DateTimeInput>;
+  dateTime_lte?: Maybe<DateTimeInput>;
+  dateTime_gt?: Maybe<DateTimeInput>;
+  dateTime_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    InventoryItemTransactionWhereInput[] | InventoryItemTransactionWhereInput
+  >;
+  OR?: Maybe<
+    InventoryItemTransactionWhereInput[] | InventoryItemTransactionWhereInput
+  >;
+  NOT?: Maybe<
+    InventoryItemTransactionWhereInput[] | InventoryItemTransactionWhereInput
+  >;
 }
 
 export interface CustomerWhereInput {
@@ -1222,6 +1435,14 @@ export type InventoryWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type InventoryItemWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type InventoryItemTransactionWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type ProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -1263,6 +1484,7 @@ export interface UserCreateWithoutCategoriesInput {
   resetTokenExpiry?: Maybe<String>;
   products?: Maybe<ProductCreateManyWithoutUserInput>;
   inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
   customers?: Maybe<CustomerCreateManyWithoutUserInput>;
   sales?: Maybe<SaleCreateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemCreateManyInput>;
@@ -1307,6 +1529,130 @@ export interface InventoryCreateManyWithoutUserInput {
 export interface InventoryCreateWithoutUserInput {
   id?: Maybe<ID_Input>;
   name: String;
+  inventoryItems?: Maybe<InventoryItemCreateManyWithoutInventoryInput>;
+}
+
+export interface InventoryItemCreateManyWithoutInventoryInput {
+  create?: Maybe<
+    | InventoryItemCreateWithoutInventoryInput[]
+    | InventoryItemCreateWithoutInventoryInput
+  >;
+  connect?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+}
+
+export interface InventoryItemCreateWithoutInventoryInput {
+  id?: Maybe<ID_Input>;
+  product: ProductCreateOneInput;
+  amount?: Maybe<Float>;
+  transactions?: Maybe<InventoryItemTransactionCreateManyInput>;
+}
+
+export interface ProductCreateOneInput {
+  create?: Maybe<ProductCreateInput>;
+  connect?: Maybe<ProductWhereUniqueInput>;
+}
+
+export interface ProductCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  salePrice: String;
+  costPrice?: Maybe<String>;
+  unit?: Maybe<String>;
+  currency?: Maybe<String>;
+  notes?: Maybe<String>;
+  sku?: Maybe<String>;
+  image?: Maybe<String>;
+  largeImage?: Maybe<String>;
+  categories?: Maybe<ProductCreatecategoriesInput>;
+  user: UserCreateOneWithoutProductsInput;
+}
+
+export interface UserCreateOneWithoutProductsInput {
+  create?: Maybe<UserCreateWithoutProductsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutProductsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  role: String;
+  permissions?: Maybe<UserCreatepermissionsInput>;
+  verified: Boolean;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  categories?: Maybe<CategoryCreateManyWithoutUserInput>;
+  inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
+  customers?: Maybe<CustomerCreateManyWithoutUserInput>;
+  sales?: Maybe<SaleCreateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemCreateManyInput>;
+}
+
+export interface CategoryCreateManyWithoutUserInput {
+  create?: Maybe<
+    CategoryCreateWithoutUserInput[] | CategoryCreateWithoutUserInput
+  >;
+  connect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+}
+
+export interface CategoryCreateWithoutUserInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+}
+
+export interface InventoryItemCreateManyInput {
+  create?: Maybe<InventoryItemCreateInput[] | InventoryItemCreateInput>;
+  connect?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+}
+
+export interface InventoryItemCreateInput {
+  id?: Maybe<ID_Input>;
+  product: ProductCreateOneInput;
+  inventory: InventoryCreateOneWithoutInventoryItemsInput;
+  amount?: Maybe<Float>;
+  transactions?: Maybe<InventoryItemTransactionCreateManyInput>;
+}
+
+export interface InventoryCreateOneWithoutInventoryItemsInput {
+  create?: Maybe<InventoryCreateWithoutInventoryItemsInput>;
+  connect?: Maybe<InventoryWhereUniqueInput>;
+}
+
+export interface InventoryCreateWithoutInventoryItemsInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneWithoutInventoriesInput;
+  name: String;
+}
+
+export interface UserCreateOneWithoutInventoriesInput {
+  create?: Maybe<UserCreateWithoutInventoriesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutInventoriesInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  role: String;
+  permissions?: Maybe<UserCreatepermissionsInput>;
+  verified: Boolean;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  products?: Maybe<ProductCreateManyWithoutUserInput>;
+  categories?: Maybe<CategoryCreateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
+  customers?: Maybe<CustomerCreateManyWithoutUserInput>;
+  sales?: Maybe<SaleCreateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemCreateManyInput>;
 }
 
 export interface CustomerCreateManyWithoutUserInput {
@@ -1384,20 +1730,9 @@ export interface UserCreateWithoutCustomersInput {
   products?: Maybe<ProductCreateManyWithoutUserInput>;
   categories?: Maybe<CategoryCreateManyWithoutUserInput>;
   inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
   sales?: Maybe<SaleCreateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemCreateManyInput>;
-}
-
-export interface CategoryCreateManyWithoutUserInput {
-  create?: Maybe<
-    CategoryCreateWithoutUserInput[] | CategoryCreateWithoutUserInput
-  >;
-  connect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-}
-
-export interface CategoryCreateWithoutUserInput {
-  id?: Maybe<ID_Input>;
-  name: String;
 }
 
 export interface SaleItemCreateManyInput {
@@ -1451,36 +1786,34 @@ export interface UserCreateWithoutSalesInput {
   products?: Maybe<ProductCreateManyWithoutUserInput>;
   categories?: Maybe<CategoryCreateManyWithoutUserInput>;
   inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
   customers?: Maybe<CustomerCreateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemCreateManyInput>;
 }
 
-export interface ProductCreateOneInput {
-  create?: Maybe<ProductCreateInput>;
-  connect?: Maybe<ProductWhereUniqueInput>;
+export interface InventoryItemTransactionCreateManyInput {
+  create?: Maybe<
+    InventoryItemTransactionCreateInput[] | InventoryItemTransactionCreateInput
+  >;
+  connect?: Maybe<
+    | InventoryItemTransactionWhereUniqueInput[]
+    | InventoryItemTransactionWhereUniqueInput
+  >;
 }
 
-export interface ProductCreateInput {
+export interface InventoryItemTransactionCreateInput {
   id?: Maybe<ID_Input>;
-  name: String;
-  salePrice: String;
-  costPrice?: Maybe<String>;
-  unit?: Maybe<String>;
-  currency?: Maybe<String>;
-  notes?: Maybe<String>;
-  sku?: Maybe<String>;
-  image?: Maybe<String>;
-  largeImage?: Maybe<String>;
-  categories?: Maybe<ProductCreatecategoriesInput>;
-  user: UserCreateOneWithoutProductsInput;
+  actor: UserCreateOneInput;
+  action: InventoryItemTransactionAction;
+  comment?: Maybe<String>;
 }
 
-export interface UserCreateOneWithoutProductsInput {
-  create?: Maybe<UserCreateWithoutProductsInput>;
+export interface UserCreateOneInput {
+  create?: Maybe<UserCreateInput>;
   connect?: Maybe<UserWhereUniqueInput>;
 }
 
-export interface UserCreateWithoutProductsInput {
+export interface UserCreateInput {
   id?: Maybe<ID_Input>;
   email: String;
   password: String;
@@ -1491,8 +1824,10 @@ export interface UserCreateWithoutProductsInput {
   confirmEmailToken?: Maybe<String>;
   resetToken?: Maybe<String>;
   resetTokenExpiry?: Maybe<String>;
+  products?: Maybe<ProductCreateManyWithoutUserInput>;
   categories?: Maybe<CategoryCreateManyWithoutUserInput>;
   inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
   customers?: Maybe<CustomerCreateManyWithoutUserInput>;
   sales?: Maybe<SaleCreateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemCreateManyInput>;
@@ -1522,6 +1857,7 @@ export interface UserUpdateWithoutCategoriesDataInput {
   resetTokenExpiry?: Maybe<String>;
   products?: Maybe<ProductUpdateManyWithoutUserInput>;
   inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
   customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
   sales?: Maybe<SaleUpdateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemUpdateManyInput>;
@@ -1792,15 +2128,137 @@ export interface InventoryUpdateWithWhereUniqueWithoutUserInput {
 
 export interface InventoryUpdateWithoutUserDataInput {
   name?: Maybe<String>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyWithoutInventoryInput>;
 }
 
-export interface InventoryUpsertWithWhereUniqueWithoutUserInput {
-  where: InventoryWhereUniqueInput;
-  update: InventoryUpdateWithoutUserDataInput;
-  create: InventoryCreateWithoutUserInput;
+export interface InventoryItemUpdateManyWithoutInventoryInput {
+  create?: Maybe<
+    | InventoryItemCreateWithoutInventoryInput[]
+    | InventoryItemCreateWithoutInventoryInput
+  >;
+  delete?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+  connect?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+  set?: Maybe<InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput>;
+  disconnect?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+  update?: Maybe<
+    | InventoryItemUpdateWithWhereUniqueWithoutInventoryInput[]
+    | InventoryItemUpdateWithWhereUniqueWithoutInventoryInput
+  >;
+  upsert?: Maybe<
+    | InventoryItemUpsertWithWhereUniqueWithoutInventoryInput[]
+    | InventoryItemUpsertWithWhereUniqueWithoutInventoryInput
+  >;
+  deleteMany?: Maybe<
+    InventoryItemScalarWhereInput[] | InventoryItemScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | InventoryItemUpdateManyWithWhereNestedInput[]
+    | InventoryItemUpdateManyWithWhereNestedInput
+  >;
 }
 
-export interface InventoryScalarWhereInput {
+export interface InventoryItemUpdateWithWhereUniqueWithoutInventoryInput {
+  where: InventoryItemWhereUniqueInput;
+  data: InventoryItemUpdateWithoutInventoryDataInput;
+}
+
+export interface InventoryItemUpdateWithoutInventoryDataInput {
+  product?: Maybe<ProductUpdateOneRequiredInput>;
+  amount?: Maybe<Float>;
+  transactions?: Maybe<InventoryItemTransactionUpdateManyInput>;
+}
+
+export interface ProductUpdateOneRequiredInput {
+  create?: Maybe<ProductCreateInput>;
+  update?: Maybe<ProductUpdateDataInput>;
+  upsert?: Maybe<ProductUpsertNestedInput>;
+  connect?: Maybe<ProductWhereUniqueInput>;
+}
+
+export interface ProductUpdateDataInput {
+  name?: Maybe<String>;
+  salePrice?: Maybe<String>;
+  costPrice?: Maybe<String>;
+  unit?: Maybe<String>;
+  currency?: Maybe<String>;
+  notes?: Maybe<String>;
+  sku?: Maybe<String>;
+  image?: Maybe<String>;
+  largeImage?: Maybe<String>;
+  categories?: Maybe<ProductUpdatecategoriesInput>;
+  user?: Maybe<UserUpdateOneRequiredWithoutProductsInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutProductsInput {
+  create?: Maybe<UserCreateWithoutProductsInput>;
+  update?: Maybe<UserUpdateWithoutProductsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutProductsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutProductsDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<String>;
+  permissions?: Maybe<UserUpdatepermissionsInput>;
+  verified?: Maybe<Boolean>;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
+  inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
+  customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
+  sales?: Maybe<SaleUpdateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemUpdateManyInput>;
+}
+
+export interface CategoryUpdateManyWithoutUserInput {
+  create?: Maybe<
+    CategoryCreateWithoutUserInput[] | CategoryCreateWithoutUserInput
+  >;
+  delete?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  connect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  set?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  disconnect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  update?: Maybe<
+    | CategoryUpdateWithWhereUniqueWithoutUserInput[]
+    | CategoryUpdateWithWhereUniqueWithoutUserInput
+  >;
+  upsert?: Maybe<
+    | CategoryUpsertWithWhereUniqueWithoutUserInput[]
+    | CategoryUpsertWithWhereUniqueWithoutUserInput
+  >;
+  deleteMany?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
+  updateMany?: Maybe<
+    | CategoryUpdateManyWithWhereNestedInput[]
+    | CategoryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CategoryUpdateWithWhereUniqueWithoutUserInput {
+  where: CategoryWhereUniqueInput;
+  data: CategoryUpdateWithoutUserDataInput;
+}
+
+export interface CategoryUpdateWithoutUserDataInput {
+  name?: Maybe<String>;
+}
+
+export interface CategoryUpsertWithWhereUniqueWithoutUserInput {
+  where: CategoryWhereUniqueInput;
+  update: CategoryUpdateWithoutUserDataInput;
+  create: CategoryCreateWithoutUserInput;
+}
+
+export interface CategoryScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -1829,34 +2287,96 @@ export interface InventoryScalarWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<InventoryScalarWhereInput[] | InventoryScalarWhereInput>;
-  OR?: Maybe<InventoryScalarWhereInput[] | InventoryScalarWhereInput>;
-  NOT?: Maybe<InventoryScalarWhereInput[] | InventoryScalarWhereInput>;
+  AND?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
+  OR?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
+  NOT?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
 }
 
-export interface InventoryUpdateManyWithWhereNestedInput {
-  where: InventoryScalarWhereInput;
-  data: InventoryUpdateManyDataInput;
+export interface CategoryUpdateManyWithWhereNestedInput {
+  where: CategoryScalarWhereInput;
+  data: CategoryUpdateManyDataInput;
 }
 
-export interface InventoryUpdateManyDataInput {
+export interface CategoryUpdateManyDataInput {
   name?: Maybe<String>;
+}
+
+export interface InventoryItemUpdateManyInput {
+  create?: Maybe<InventoryItemCreateInput[] | InventoryItemCreateInput>;
+  update?: Maybe<
+    | InventoryItemUpdateWithWhereUniqueNestedInput[]
+    | InventoryItemUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | InventoryItemUpsertWithWhereUniqueNestedInput[]
+    | InventoryItemUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+  connect?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+  set?: Maybe<InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput>;
+  disconnect?: Maybe<
+    InventoryItemWhereUniqueInput[] | InventoryItemWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    InventoryItemScalarWhereInput[] | InventoryItemScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | InventoryItemUpdateManyWithWhereNestedInput[]
+    | InventoryItemUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface InventoryItemUpdateWithWhereUniqueNestedInput {
+  where: InventoryItemWhereUniqueInput;
+  data: InventoryItemUpdateDataInput;
+}
+
+export interface InventoryItemUpdateDataInput {
+  product?: Maybe<ProductUpdateOneRequiredInput>;
+  inventory?: Maybe<InventoryUpdateOneRequiredWithoutInventoryItemsInput>;
+  amount?: Maybe<Float>;
+  transactions?: Maybe<InventoryItemTransactionUpdateManyInput>;
+}
+
+export interface InventoryUpdateOneRequiredWithoutInventoryItemsInput {
+  create?: Maybe<InventoryCreateWithoutInventoryItemsInput>;
+  update?: Maybe<InventoryUpdateWithoutInventoryItemsDataInput>;
+  upsert?: Maybe<InventoryUpsertWithoutInventoryItemsInput>;
+  connect?: Maybe<InventoryWhereUniqueInput>;
+}
+
+export interface InventoryUpdateWithoutInventoryItemsDataInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutInventoriesInput>;
+  name?: Maybe<String>;
+}
+
+export interface UserUpdateOneRequiredWithoutInventoriesInput {
+  create?: Maybe<UserCreateWithoutInventoriesInput>;
+  update?: Maybe<UserUpdateWithoutInventoriesDataInput>;
+  upsert?: Maybe<UserUpsertWithoutInventoriesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutInventoriesDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<String>;
+  permissions?: Maybe<UserUpdatepermissionsInput>;
+  verified?: Maybe<Boolean>;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  products?: Maybe<ProductUpdateManyWithoutUserInput>;
+  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
+  customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
+  sales?: Maybe<SaleUpdateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemUpdateManyInput>;
 }
 
 export interface CustomerUpdateManyWithoutUserInput {
@@ -2162,89 +2682,9 @@ export interface UserUpdateWithoutCustomersDataInput {
   products?: Maybe<ProductUpdateManyWithoutUserInput>;
   categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
   inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
   sales?: Maybe<SaleUpdateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemUpdateManyInput>;
-}
-
-export interface CategoryUpdateManyWithoutUserInput {
-  create?: Maybe<
-    CategoryCreateWithoutUserInput[] | CategoryCreateWithoutUserInput
-  >;
-  delete?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  connect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  set?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  disconnect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  update?: Maybe<
-    | CategoryUpdateWithWhereUniqueWithoutUserInput[]
-    | CategoryUpdateWithWhereUniqueWithoutUserInput
-  >;
-  upsert?: Maybe<
-    | CategoryUpsertWithWhereUniqueWithoutUserInput[]
-    | CategoryUpsertWithWhereUniqueWithoutUserInput
-  >;
-  deleteMany?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
-  updateMany?: Maybe<
-    | CategoryUpdateManyWithWhereNestedInput[]
-    | CategoryUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CategoryUpdateWithWhereUniqueWithoutUserInput {
-  where: CategoryWhereUniqueInput;
-  data: CategoryUpdateWithoutUserDataInput;
-}
-
-export interface CategoryUpdateWithoutUserDataInput {
-  name?: Maybe<String>;
-}
-
-export interface CategoryUpsertWithWhereUniqueWithoutUserInput {
-  where: CategoryWhereUniqueInput;
-  update: CategoryUpdateWithoutUserDataInput;
-  create: CategoryCreateWithoutUserInput;
-}
-
-export interface CategoryScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  AND?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
-  OR?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
-  NOT?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
-}
-
-export interface CategoryUpdateManyWithWhereNestedInput {
-  where: CategoryScalarWhereInput;
-  data: CategoryUpdateManyDataInput;
-}
-
-export interface CategoryUpdateManyDataInput {
-  name?: Maybe<String>;
 }
 
 export interface SaleItemUpdateManyInput {
@@ -2320,6 +2760,7 @@ export interface UserUpdateWithoutSalesDataInput {
   products?: Maybe<ProductUpdateManyWithoutUserInput>;
   categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
   inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
   customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemUpdateManyInput>;
 }
@@ -2332,61 +2773,6 @@ export interface UserUpsertWithoutSalesInput {
 export interface SaleUpsertNestedInput {
   update: SaleUpdateDataInput;
   create: SaleCreateInput;
-}
-
-export interface ProductUpdateOneRequiredInput {
-  create?: Maybe<ProductCreateInput>;
-  update?: Maybe<ProductUpdateDataInput>;
-  upsert?: Maybe<ProductUpsertNestedInput>;
-  connect?: Maybe<ProductWhereUniqueInput>;
-}
-
-export interface ProductUpdateDataInput {
-  name?: Maybe<String>;
-  salePrice?: Maybe<String>;
-  costPrice?: Maybe<String>;
-  unit?: Maybe<String>;
-  currency?: Maybe<String>;
-  notes?: Maybe<String>;
-  sku?: Maybe<String>;
-  image?: Maybe<String>;
-  largeImage?: Maybe<String>;
-  categories?: Maybe<ProductUpdatecategoriesInput>;
-  user?: Maybe<UserUpdateOneRequiredWithoutProductsInput>;
-}
-
-export interface UserUpdateOneRequiredWithoutProductsInput {
-  create?: Maybe<UserCreateWithoutProductsInput>;
-  update?: Maybe<UserUpdateWithoutProductsDataInput>;
-  upsert?: Maybe<UserUpsertWithoutProductsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserUpdateWithoutProductsDataInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<String>;
-  permissions?: Maybe<UserUpdatepermissionsInput>;
-  verified?: Maybe<Boolean>;
-  name?: Maybe<String>;
-  confirmEmailToken?: Maybe<String>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<String>;
-  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
-  inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
-  customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
-  sales?: Maybe<SaleUpdateManyWithoutUserInput>;
-  saleItems?: Maybe<SaleItemUpdateManyInput>;
-}
-
-export interface UserUpsertWithoutProductsInput {
-  update: UserUpdateWithoutProductsDataInput;
-  create: UserCreateWithoutProductsInput;
-}
-
-export interface ProductUpsertNestedInput {
-  update: ProductUpdateDataInput;
-  create: ProductCreateInput;
 }
 
 export interface SaleItemUpsertWithWhereUniqueNestedInput {
@@ -2621,6 +3007,295 @@ export interface SaleUpdateManyDataInput {
   note?: Maybe<String>;
 }
 
+export interface UserUpsertWithoutInventoriesInput {
+  update: UserUpdateWithoutInventoriesDataInput;
+  create: UserCreateWithoutInventoriesInput;
+}
+
+export interface InventoryUpsertWithoutInventoryItemsInput {
+  update: InventoryUpdateWithoutInventoryItemsDataInput;
+  create: InventoryCreateWithoutInventoryItemsInput;
+}
+
+export interface InventoryItemTransactionUpdateManyInput {
+  create?: Maybe<
+    InventoryItemTransactionCreateInput[] | InventoryItemTransactionCreateInput
+  >;
+  update?: Maybe<
+    | InventoryItemTransactionUpdateWithWhereUniqueNestedInput[]
+    | InventoryItemTransactionUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | InventoryItemTransactionUpsertWithWhereUniqueNestedInput[]
+    | InventoryItemTransactionUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<
+    | InventoryItemTransactionWhereUniqueInput[]
+    | InventoryItemTransactionWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | InventoryItemTransactionWhereUniqueInput[]
+    | InventoryItemTransactionWhereUniqueInput
+  >;
+  set?: Maybe<
+    | InventoryItemTransactionWhereUniqueInput[]
+    | InventoryItemTransactionWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | InventoryItemTransactionWhereUniqueInput[]
+    | InventoryItemTransactionWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    | InventoryItemTransactionScalarWhereInput[]
+    | InventoryItemTransactionScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | InventoryItemTransactionUpdateManyWithWhereNestedInput[]
+    | InventoryItemTransactionUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface InventoryItemTransactionUpdateWithWhereUniqueNestedInput {
+  where: InventoryItemTransactionWhereUniqueInput;
+  data: InventoryItemTransactionUpdateDataInput;
+}
+
+export interface InventoryItemTransactionUpdateDataInput {
+  actor?: Maybe<UserUpdateOneRequiredInput>;
+  action?: Maybe<InventoryItemTransactionAction>;
+  comment?: Maybe<String>;
+}
+
+export interface UserUpdateOneRequiredInput {
+  create?: Maybe<UserCreateInput>;
+  update?: Maybe<UserUpdateDataInput>;
+  upsert?: Maybe<UserUpsertNestedInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<String>;
+  permissions?: Maybe<UserUpdatepermissionsInput>;
+  verified?: Maybe<Boolean>;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  products?: Maybe<ProductUpdateManyWithoutUserInput>;
+  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
+  inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
+  customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
+  sales?: Maybe<SaleUpdateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemUpdateManyInput>;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface InventoryItemTransactionUpsertWithWhereUniqueNestedInput {
+  where: InventoryItemTransactionWhereUniqueInput;
+  update: InventoryItemTransactionUpdateDataInput;
+  create: InventoryItemTransactionCreateInput;
+}
+
+export interface InventoryItemTransactionScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  action?: Maybe<InventoryItemTransactionAction>;
+  action_not?: Maybe<InventoryItemTransactionAction>;
+  action_in?: Maybe<
+    InventoryItemTransactionAction[] | InventoryItemTransactionAction
+  >;
+  action_not_in?: Maybe<
+    InventoryItemTransactionAction[] | InventoryItemTransactionAction
+  >;
+  comment?: Maybe<String>;
+  comment_not?: Maybe<String>;
+  comment_in?: Maybe<String[] | String>;
+  comment_not_in?: Maybe<String[] | String>;
+  comment_lt?: Maybe<String>;
+  comment_lte?: Maybe<String>;
+  comment_gt?: Maybe<String>;
+  comment_gte?: Maybe<String>;
+  comment_contains?: Maybe<String>;
+  comment_not_contains?: Maybe<String>;
+  comment_starts_with?: Maybe<String>;
+  comment_not_starts_with?: Maybe<String>;
+  comment_ends_with?: Maybe<String>;
+  comment_not_ends_with?: Maybe<String>;
+  dateTime?: Maybe<DateTimeInput>;
+  dateTime_not?: Maybe<DateTimeInput>;
+  dateTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateTime_lt?: Maybe<DateTimeInput>;
+  dateTime_lte?: Maybe<DateTimeInput>;
+  dateTime_gt?: Maybe<DateTimeInput>;
+  dateTime_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | InventoryItemTransactionScalarWhereInput[]
+    | InventoryItemTransactionScalarWhereInput
+  >;
+  OR?: Maybe<
+    | InventoryItemTransactionScalarWhereInput[]
+    | InventoryItemTransactionScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | InventoryItemTransactionScalarWhereInput[]
+    | InventoryItemTransactionScalarWhereInput
+  >;
+}
+
+export interface InventoryItemTransactionUpdateManyWithWhereNestedInput {
+  where: InventoryItemTransactionScalarWhereInput;
+  data: InventoryItemTransactionUpdateManyDataInput;
+}
+
+export interface InventoryItemTransactionUpdateManyDataInput {
+  action?: Maybe<InventoryItemTransactionAction>;
+  comment?: Maybe<String>;
+}
+
+export interface InventoryItemUpsertWithWhereUniqueNestedInput {
+  where: InventoryItemWhereUniqueInput;
+  update: InventoryItemUpdateDataInput;
+  create: InventoryItemCreateInput;
+}
+
+export interface InventoryItemScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  amount?: Maybe<Float>;
+  amount_not?: Maybe<Float>;
+  amount_in?: Maybe<Float[] | Float>;
+  amount_not_in?: Maybe<Float[] | Float>;
+  amount_lt?: Maybe<Float>;
+  amount_lte?: Maybe<Float>;
+  amount_gt?: Maybe<Float>;
+  amount_gte?: Maybe<Float>;
+  AND?: Maybe<InventoryItemScalarWhereInput[] | InventoryItemScalarWhereInput>;
+  OR?: Maybe<InventoryItemScalarWhereInput[] | InventoryItemScalarWhereInput>;
+  NOT?: Maybe<InventoryItemScalarWhereInput[] | InventoryItemScalarWhereInput>;
+}
+
+export interface InventoryItemUpdateManyWithWhereNestedInput {
+  where: InventoryItemScalarWhereInput;
+  data: InventoryItemUpdateManyDataInput;
+}
+
+export interface InventoryItemUpdateManyDataInput {
+  amount?: Maybe<Float>;
+}
+
+export interface UserUpsertWithoutProductsInput {
+  update: UserUpdateWithoutProductsDataInput;
+  create: UserCreateWithoutProductsInput;
+}
+
+export interface ProductUpsertNestedInput {
+  update: ProductUpdateDataInput;
+  create: ProductCreateInput;
+}
+
+export interface InventoryItemUpsertWithWhereUniqueWithoutInventoryInput {
+  where: InventoryItemWhereUniqueInput;
+  update: InventoryItemUpdateWithoutInventoryDataInput;
+  create: InventoryItemCreateWithoutInventoryInput;
+}
+
+export interface InventoryUpsertWithWhereUniqueWithoutUserInput {
+  where: InventoryWhereUniqueInput;
+  update: InventoryUpdateWithoutUserDataInput;
+  create: InventoryCreateWithoutUserInput;
+}
+
+export interface InventoryScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<InventoryScalarWhereInput[] | InventoryScalarWhereInput>;
+  OR?: Maybe<InventoryScalarWhereInput[] | InventoryScalarWhereInput>;
+  NOT?: Maybe<InventoryScalarWhereInput[] | InventoryScalarWhereInput>;
+}
+
+export interface InventoryUpdateManyWithWhereNestedInput {
+  where: InventoryScalarWhereInput;
+  data: InventoryUpdateManyDataInput;
+}
+
+export interface InventoryUpdateManyDataInput {
+  name?: Maybe<String>;
+}
+
 export interface UserUpsertWithoutCategoriesInput {
   update: UserUpdateWithoutCategoriesDataInput;
   create: UserCreateWithoutCategoriesInput;
@@ -2659,67 +3334,39 @@ export interface InventoryCreateInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneWithoutInventoriesInput;
   name: String;
-}
-
-export interface UserCreateOneWithoutInventoriesInput {
-  create?: Maybe<UserCreateWithoutInventoriesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserCreateWithoutInventoriesInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  role: String;
-  permissions?: Maybe<UserCreatepermissionsInput>;
-  verified: Boolean;
-  name?: Maybe<String>;
-  confirmEmailToken?: Maybe<String>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<String>;
-  products?: Maybe<ProductCreateManyWithoutUserInput>;
-  categories?: Maybe<CategoryCreateManyWithoutUserInput>;
-  customers?: Maybe<CustomerCreateManyWithoutUserInput>;
-  sales?: Maybe<SaleCreateManyWithoutUserInput>;
-  saleItems?: Maybe<SaleItemCreateManyInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyWithoutInventoryInput>;
 }
 
 export interface InventoryUpdateInput {
   user?: Maybe<UserUpdateOneRequiredWithoutInventoriesInput>;
   name?: Maybe<String>;
-}
-
-export interface UserUpdateOneRequiredWithoutInventoriesInput {
-  create?: Maybe<UserCreateWithoutInventoriesInput>;
-  update?: Maybe<UserUpdateWithoutInventoriesDataInput>;
-  upsert?: Maybe<UserUpsertWithoutInventoriesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserUpdateWithoutInventoriesDataInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<String>;
-  permissions?: Maybe<UserUpdatepermissionsInput>;
-  verified?: Maybe<Boolean>;
-  name?: Maybe<String>;
-  confirmEmailToken?: Maybe<String>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<String>;
-  products?: Maybe<ProductUpdateManyWithoutUserInput>;
-  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
-  customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
-  sales?: Maybe<SaleUpdateManyWithoutUserInput>;
-  saleItems?: Maybe<SaleItemUpdateManyInput>;
-}
-
-export interface UserUpsertWithoutInventoriesInput {
-  update: UserUpdateWithoutInventoriesDataInput;
-  create: UserCreateWithoutInventoriesInput;
+  inventoryItems?: Maybe<InventoryItemUpdateManyWithoutInventoryInput>;
 }
 
 export interface InventoryUpdateManyMutationInput {
   name?: Maybe<String>;
+}
+
+export interface InventoryItemUpdateInput {
+  product?: Maybe<ProductUpdateOneRequiredInput>;
+  inventory?: Maybe<InventoryUpdateOneRequiredWithoutInventoryItemsInput>;
+  amount?: Maybe<Float>;
+  transactions?: Maybe<InventoryItemTransactionUpdateManyInput>;
+}
+
+export interface InventoryItemUpdateManyMutationInput {
+  amount?: Maybe<Float>;
+}
+
+export interface InventoryItemTransactionUpdateInput {
+  actor?: Maybe<UserUpdateOneRequiredInput>;
+  action?: Maybe<InventoryItemTransactionAction>;
+  comment?: Maybe<String>;
+}
+
+export interface InventoryItemTransactionUpdateManyMutationInput {
+  action?: Maybe<InventoryItemTransactionAction>;
+  comment?: Maybe<String>;
 }
 
 export interface ProductUpdateInput {
@@ -2785,25 +3432,6 @@ export interface SaleItemUpdateManyMutationInput {
   discountValue?: Maybe<String>;
 }
 
-export interface UserCreateInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  role: String;
-  permissions?: Maybe<UserCreatepermissionsInput>;
-  verified: Boolean;
-  name?: Maybe<String>;
-  confirmEmailToken?: Maybe<String>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<String>;
-  products?: Maybe<ProductCreateManyWithoutUserInput>;
-  categories?: Maybe<CategoryCreateManyWithoutUserInput>;
-  inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
-  customers?: Maybe<CustomerCreateManyWithoutUserInput>;
-  sales?: Maybe<SaleCreateManyWithoutUserInput>;
-  saleItems?: Maybe<SaleItemCreateManyInput>;
-}
-
 export interface UserUpdateInput {
   email?: Maybe<String>;
   password?: Maybe<String>;
@@ -2817,6 +3445,7 @@ export interface UserUpdateInput {
   products?: Maybe<ProductUpdateManyWithoutUserInput>;
   categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
   inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
   customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
   sales?: Maybe<SaleUpdateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemUpdateManyInput>;
@@ -2878,6 +3507,43 @@ export interface InventorySubscriptionWhereInput {
   >;
   NOT?: Maybe<
     InventorySubscriptionWhereInput[] | InventorySubscriptionWhereInput
+  >;
+}
+
+export interface InventoryItemSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<InventoryItemWhereInput>;
+  AND?: Maybe<
+    InventoryItemSubscriptionWhereInput[] | InventoryItemSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    InventoryItemSubscriptionWhereInput[] | InventoryItemSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    InventoryItemSubscriptionWhereInput[] | InventoryItemSubscriptionWhereInput
+  >;
+}
+
+export interface InventoryItemTransactionSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<InventoryItemTransactionWhereInput>;
+  AND?: Maybe<
+    | InventoryItemTransactionSubscriptionWhereInput[]
+    | InventoryItemTransactionSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | InventoryItemTransactionSubscriptionWhereInput[]
+    | InventoryItemTransactionSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | InventoryItemTransactionSubscriptionWhereInput[]
+    | InventoryItemTransactionSubscriptionWhereInput
   >;
 }
 
@@ -3011,6 +3677,15 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  inventoryItems: <T = FragmentableArray<InventoryItem>>(args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   customers: <T = FragmentableArray<Customer>>(args?: {
     where?: CustomerWhereInput;
     orderBy?: CustomerOrderByInput;
@@ -3080,6 +3755,17 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  inventoryItems: <
+    T = Promise<AsyncIterator<InventoryItemSubscription>>
+  >(args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   customers: <T = Promise<AsyncIterator<CustomerSubscription>>>(args?: {
     where?: CustomerWhereInput;
     orderBy?: CustomerOrderByInput;
@@ -3143,6 +3829,15 @@ export interface UserNullablePromise
   inventories: <T = FragmentableArray<Inventory>>(args?: {
     where?: InventoryWhereInput;
     orderBy?: InventoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  inventoryItems: <T = FragmentableArray<InventoryItem>>(args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -3260,6 +3955,15 @@ export interface InventoryPromise extends Promise<Inventory>, Fragmentable {
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
   name: () => Promise<String>;
+  inventoryItems: <T = FragmentableArray<InventoryItem>>(args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -3270,6 +3974,17 @@ export interface InventorySubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   user: <T = UserSubscription>() => T;
   name: () => Promise<AsyncIterator<String>>;
+  inventoryItems: <
+    T = Promise<AsyncIterator<InventoryItemSubscription>>
+  >(args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -3280,8 +3995,115 @@ export interface InventoryNullablePromise
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
   name: () => Promise<String>;
+  inventoryItems: <T = FragmentableArray<InventoryItem>>(args?: {
+    where?: InventoryItemWhereInput;
+    orderBy?: InventoryItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface InventoryItem {
+  id: ID_Output;
+  amount?: Float;
+}
+
+export interface InventoryItemPromise
+  extends Promise<InventoryItem>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  product: <T = ProductPromise>() => T;
+  inventory: <T = InventoryPromise>() => T;
+  amount: () => Promise<Float>;
+  transactions: <T = FragmentableArray<InventoryItemTransaction>>(args?: {
+    where?: InventoryItemTransactionWhereInput;
+    orderBy?: InventoryItemTransactionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface InventoryItemSubscription
+  extends Promise<AsyncIterator<InventoryItem>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  product: <T = ProductSubscription>() => T;
+  inventory: <T = InventorySubscription>() => T;
+  amount: () => Promise<AsyncIterator<Float>>;
+  transactions: <
+    T = Promise<AsyncIterator<InventoryItemTransactionSubscription>>
+  >(args?: {
+    where?: InventoryItemTransactionWhereInput;
+    orderBy?: InventoryItemTransactionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface InventoryItemNullablePromise
+  extends Promise<InventoryItem | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  product: <T = ProductPromise>() => T;
+  inventory: <T = InventoryPromise>() => T;
+  amount: () => Promise<Float>;
+  transactions: <T = FragmentableArray<InventoryItemTransaction>>(args?: {
+    where?: InventoryItemTransactionWhereInput;
+    orderBy?: InventoryItemTransactionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface InventoryItemTransaction {
+  id: ID_Output;
+  action: InventoryItemTransactionAction;
+  comment?: String;
+  dateTime: DateTimeOutput;
+}
+
+export interface InventoryItemTransactionPromise
+  extends Promise<InventoryItemTransaction>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  actor: <T = UserPromise>() => T;
+  action: () => Promise<InventoryItemTransactionAction>;
+  comment: () => Promise<String>;
+  dateTime: () => Promise<DateTimeOutput>;
+}
+
+export interface InventoryItemTransactionSubscription
+  extends Promise<AsyncIterator<InventoryItemTransaction>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  actor: <T = UserSubscription>() => T;
+  action: () => Promise<AsyncIterator<InventoryItemTransactionAction>>;
+  comment: () => Promise<AsyncIterator<String>>;
+  dateTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface InventoryItemTransactionNullablePromise
+  extends Promise<InventoryItemTransaction | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  actor: <T = UserPromise>() => T;
+  action: () => Promise<InventoryItemTransactionAction>;
+  comment: () => Promise<String>;
+  dateTime: () => Promise<DateTimeOutput>;
 }
 
 export interface Customer {
@@ -3646,6 +4468,120 @@ export interface AggregateInventoryPromise
 
 export interface AggregateInventorySubscription
   extends Promise<AsyncIterator<AggregateInventory>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface InventoryItemConnection {
+  pageInfo: PageInfo;
+  edges: InventoryItemEdge[];
+}
+
+export interface InventoryItemConnectionPromise
+  extends Promise<InventoryItemConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<InventoryItemEdge>>() => T;
+  aggregate: <T = AggregateInventoryItemPromise>() => T;
+}
+
+export interface InventoryItemConnectionSubscription
+  extends Promise<AsyncIterator<InventoryItemConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<InventoryItemEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateInventoryItemSubscription>() => T;
+}
+
+export interface InventoryItemEdge {
+  node: InventoryItem;
+  cursor: String;
+}
+
+export interface InventoryItemEdgePromise
+  extends Promise<InventoryItemEdge>,
+    Fragmentable {
+  node: <T = InventoryItemPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface InventoryItemEdgeSubscription
+  extends Promise<AsyncIterator<InventoryItemEdge>>,
+    Fragmentable {
+  node: <T = InventoryItemSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateInventoryItem {
+  count: Int;
+}
+
+export interface AggregateInventoryItemPromise
+  extends Promise<AggregateInventoryItem>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateInventoryItemSubscription
+  extends Promise<AsyncIterator<AggregateInventoryItem>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface InventoryItemTransactionConnection {
+  pageInfo: PageInfo;
+  edges: InventoryItemTransactionEdge[];
+}
+
+export interface InventoryItemTransactionConnectionPromise
+  extends Promise<InventoryItemTransactionConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<InventoryItemTransactionEdge>>() => T;
+  aggregate: <T = AggregateInventoryItemTransactionPromise>() => T;
+}
+
+export interface InventoryItemTransactionConnectionSubscription
+  extends Promise<AsyncIterator<InventoryItemTransactionConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<InventoryItemTransactionEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateInventoryItemTransactionSubscription>() => T;
+}
+
+export interface InventoryItemTransactionEdge {
+  node: InventoryItemTransaction;
+  cursor: String;
+}
+
+export interface InventoryItemTransactionEdgePromise
+  extends Promise<InventoryItemTransactionEdge>,
+    Fragmentable {
+  node: <T = InventoryItemTransactionPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface InventoryItemTransactionEdgeSubscription
+  extends Promise<AsyncIterator<InventoryItemTransactionEdge>>,
+    Fragmentable {
+  node: <T = InventoryItemTransactionSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateInventoryItemTransaction {
+  count: Int;
+}
+
+export interface AggregateInventoryItemTransactionPromise
+  extends Promise<AggregateInventoryItemTransaction>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateInventoryItemTransactionSubscription
+  extends Promise<AsyncIterator<AggregateInventoryItemTransaction>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -4052,6 +4988,102 @@ export interface InventoryPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface InventoryItemSubscriptionPayload {
+  mutation: MutationType;
+  node: InventoryItem;
+  updatedFields: String[];
+  previousValues: InventoryItemPreviousValues;
+}
+
+export interface InventoryItemSubscriptionPayloadPromise
+  extends Promise<InventoryItemSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = InventoryItemPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = InventoryItemPreviousValuesPromise>() => T;
+}
+
+export interface InventoryItemSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<InventoryItemSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = InventoryItemSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = InventoryItemPreviousValuesSubscription>() => T;
+}
+
+export interface InventoryItemPreviousValues {
+  id: ID_Output;
+  amount?: Float;
+}
+
+export interface InventoryItemPreviousValuesPromise
+  extends Promise<InventoryItemPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  amount: () => Promise<Float>;
+}
+
+export interface InventoryItemPreviousValuesSubscription
+  extends Promise<AsyncIterator<InventoryItemPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  amount: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface InventoryItemTransactionSubscriptionPayload {
+  mutation: MutationType;
+  node: InventoryItemTransaction;
+  updatedFields: String[];
+  previousValues: InventoryItemTransactionPreviousValues;
+}
+
+export interface InventoryItemTransactionSubscriptionPayloadPromise
+  extends Promise<InventoryItemTransactionSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = InventoryItemTransactionPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = InventoryItemTransactionPreviousValuesPromise>() => T;
+}
+
+export interface InventoryItemTransactionSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<InventoryItemTransactionSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = InventoryItemTransactionSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = InventoryItemTransactionPreviousValuesSubscription
+  >() => T;
+}
+
+export interface InventoryItemTransactionPreviousValues {
+  id: ID_Output;
+  action: InventoryItemTransactionAction;
+  comment?: String;
+  dateTime: DateTimeOutput;
+}
+
+export interface InventoryItemTransactionPreviousValuesPromise
+  extends Promise<InventoryItemTransactionPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  action: () => Promise<InventoryItemTransactionAction>;
+  comment: () => Promise<String>;
+  dateTime: () => Promise<DateTimeOutput>;
+}
+
+export interface InventoryItemTransactionPreviousValuesSubscription
+  extends Promise<AsyncIterator<InventoryItemTransactionPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  action: () => Promise<AsyncIterator<InventoryItemTransactionAction>>;
+  comment: () => Promise<AsyncIterator<String>>;
+  dateTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface ProductSubscriptionPayload {
   mutation: MutationType;
   node: Product;
@@ -4348,6 +5380,11 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
+*/
+export type Float = number;
+
+/*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 */
 export type Int = number;
@@ -4377,6 +5414,18 @@ export const models: Model[] = [
   },
   {
     name: "Inventory",
+    embedded: false
+  },
+  {
+    name: "InventoryItem",
+    embedded: false
+  },
+  {
+    name: "InventoryItemTransactionAction",
+    embedded: false
+  },
+  {
+    name: "InventoryItemTransaction",
     embedded: false
   },
   {

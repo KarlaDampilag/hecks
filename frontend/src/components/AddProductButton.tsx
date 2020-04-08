@@ -89,39 +89,32 @@ const AddProductButton = (props: PropTypes) => {
         setImageIsLoading(false);
     }
 
-    const updateProductsCache = (cache: any, payload: any) => {
-        // Read cache for the products
-        const data = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
-
-        // Add the new product
-        data.productsByUser.push(payload.data.createProduct);
-        data.productsByUser = _.sortBy(data.productsByUser, 'createdAt');
-
-        // Put the updated products back in the cache
-        cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data })
-    }
-
-    const updateCategoriesCache = (cache: any, payload: any) => {
-        // Read cache for the categories
-        const data = cache.readQuery({ query: CATEGORIES_BY_USER_QUERY });
-
-        // Add the new categories
-        data.categoriesByUser = [...data.categoriesByUser, ...payload.data.createCategories];
-
-        // Put the updated categories back in the cache
-        cache.writeQuery({ query: CATEGORIES_BY_USER_QUERY, data })
-    }
-
-
-
     const [createProduct, { loading: createProductLoading, error: createProductError }] = useMutation(CREATE_PRODUCT_MUTATION, {
         variables: { name, salePrice, costPrice, unit, notes, image, largeImage, categories },
-        update: updateProductsCache
+        update: (cache, payload) => {
+            const data: any = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
+
+            // Add the new product
+            data.productsByUser.push(payload.data.createProduct);
+            data.productsByUser = _.sortBy(data.productsByUser, 'createdAt');
+
+            // Put the updated products back in the cache
+            cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data })
+        }
     });
 
     const [createCategories, { loading: createCategoriesLoading, error: createCategoriesError }] = useMutation(CREATE_CATEGORIES_MUTATION, {
         variables: { names: newCategories },
-        update: updateCategoriesCache
+        update: (cache, payload) => {
+            // Read cache for the categories
+            const data: any = cache.readQuery({ query: CATEGORIES_BY_USER_QUERY });
+
+            // Add the new categories
+            data.categoriesByUser = [...data.categoriesByUser, ...payload.data.createCategories];
+
+            // Put the updated categories back in the cache
+            cache.writeQuery({ query: CATEGORIES_BY_USER_QUERY, data })
+        }
     });
 
     return (

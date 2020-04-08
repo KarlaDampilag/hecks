@@ -15,6 +15,14 @@ type AggregateInventory {
   count: Int!
 }
 
+type AggregateInventoryItem {
+  count: Int!
+}
+
+type AggregateInventoryItemTransaction {
+  count: Int!
+}
+
 type AggregateProduct {
   count: Int!
 }
@@ -779,6 +787,7 @@ type Inventory {
   id: ID!
   user: User!
   name: String!
+  inventoryItems(where: InventoryItemWhereInput, orderBy: InventoryItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryItem!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -793,6 +802,7 @@ input InventoryCreateInput {
   id: ID
   user: UserCreateOneWithoutInventoriesInput!
   name: String!
+  inventoryItems: InventoryItemCreateManyWithoutInventoryInput
 }
 
 input InventoryCreateManyWithoutUserInput {
@@ -800,14 +810,466 @@ input InventoryCreateManyWithoutUserInput {
   connect: [InventoryWhereUniqueInput!]
 }
 
+input InventoryCreateOneWithoutInventoryItemsInput {
+  create: InventoryCreateWithoutInventoryItemsInput
+  connect: InventoryWhereUniqueInput
+}
+
+input InventoryCreateWithoutInventoryItemsInput {
+  id: ID
+  user: UserCreateOneWithoutInventoriesInput!
+  name: String!
+}
+
 input InventoryCreateWithoutUserInput {
   id: ID
   name: String!
+  inventoryItems: InventoryItemCreateManyWithoutInventoryInput
 }
 
 type InventoryEdge {
   node: Inventory!
   cursor: String!
+}
+
+type InventoryItem {
+  id: ID!
+  product: Product!
+  inventory: Inventory!
+  amount: Float
+  transactions(where: InventoryItemTransactionWhereInput, orderBy: InventoryItemTransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryItemTransaction!]
+}
+
+type InventoryItemConnection {
+  pageInfo: PageInfo!
+  edges: [InventoryItemEdge]!
+  aggregate: AggregateInventoryItem!
+}
+
+input InventoryItemCreateInput {
+  id: ID
+  product: ProductCreateOneInput!
+  inventory: InventoryCreateOneWithoutInventoryItemsInput!
+  amount: Float
+  transactions: InventoryItemTransactionCreateManyInput
+}
+
+input InventoryItemCreateManyInput {
+  create: [InventoryItemCreateInput!]
+  connect: [InventoryItemWhereUniqueInput!]
+}
+
+input InventoryItemCreateManyWithoutInventoryInput {
+  create: [InventoryItemCreateWithoutInventoryInput!]
+  connect: [InventoryItemWhereUniqueInput!]
+}
+
+input InventoryItemCreateWithoutInventoryInput {
+  id: ID
+  product: ProductCreateOneInput!
+  amount: Float
+  transactions: InventoryItemTransactionCreateManyInput
+}
+
+type InventoryItemEdge {
+  node: InventoryItem!
+  cursor: String!
+}
+
+enum InventoryItemOrderByInput {
+  id_ASC
+  id_DESC
+  amount_ASC
+  amount_DESC
+}
+
+type InventoryItemPreviousValues {
+  id: ID!
+  amount: Float
+}
+
+input InventoryItemScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  amount: Float
+  amount_not: Float
+  amount_in: [Float!]
+  amount_not_in: [Float!]
+  amount_lt: Float
+  amount_lte: Float
+  amount_gt: Float
+  amount_gte: Float
+  AND: [InventoryItemScalarWhereInput!]
+  OR: [InventoryItemScalarWhereInput!]
+  NOT: [InventoryItemScalarWhereInput!]
+}
+
+type InventoryItemSubscriptionPayload {
+  mutation: MutationType!
+  node: InventoryItem
+  updatedFields: [String!]
+  previousValues: InventoryItemPreviousValues
+}
+
+input InventoryItemSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: InventoryItemWhereInput
+  AND: [InventoryItemSubscriptionWhereInput!]
+  OR: [InventoryItemSubscriptionWhereInput!]
+  NOT: [InventoryItemSubscriptionWhereInput!]
+}
+
+type InventoryItemTransaction {
+  id: ID!
+  actor: User!
+  action: InventoryItemTransactionAction!
+  comment: String
+  dateTime: DateTime!
+}
+
+enum InventoryItemTransactionAction {
+  MANUALLY
+  ADDED
+  DEDUCTED
+  SALE
+  DEDUCTION
+}
+
+type InventoryItemTransactionConnection {
+  pageInfo: PageInfo!
+  edges: [InventoryItemTransactionEdge]!
+  aggregate: AggregateInventoryItemTransaction!
+}
+
+input InventoryItemTransactionCreateInput {
+  id: ID
+  actor: UserCreateOneInput!
+  action: InventoryItemTransactionAction!
+  comment: String
+}
+
+input InventoryItemTransactionCreateManyInput {
+  create: [InventoryItemTransactionCreateInput!]
+  connect: [InventoryItemTransactionWhereUniqueInput!]
+}
+
+type InventoryItemTransactionEdge {
+  node: InventoryItemTransaction!
+  cursor: String!
+}
+
+enum InventoryItemTransactionOrderByInput {
+  id_ASC
+  id_DESC
+  action_ASC
+  action_DESC
+  comment_ASC
+  comment_DESC
+  dateTime_ASC
+  dateTime_DESC
+}
+
+type InventoryItemTransactionPreviousValues {
+  id: ID!
+  action: InventoryItemTransactionAction!
+  comment: String
+  dateTime: DateTime!
+}
+
+input InventoryItemTransactionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  action: InventoryItemTransactionAction
+  action_not: InventoryItemTransactionAction
+  action_in: [InventoryItemTransactionAction!]
+  action_not_in: [InventoryItemTransactionAction!]
+  comment: String
+  comment_not: String
+  comment_in: [String!]
+  comment_not_in: [String!]
+  comment_lt: String
+  comment_lte: String
+  comment_gt: String
+  comment_gte: String
+  comment_contains: String
+  comment_not_contains: String
+  comment_starts_with: String
+  comment_not_starts_with: String
+  comment_ends_with: String
+  comment_not_ends_with: String
+  dateTime: DateTime
+  dateTime_not: DateTime
+  dateTime_in: [DateTime!]
+  dateTime_not_in: [DateTime!]
+  dateTime_lt: DateTime
+  dateTime_lte: DateTime
+  dateTime_gt: DateTime
+  dateTime_gte: DateTime
+  AND: [InventoryItemTransactionScalarWhereInput!]
+  OR: [InventoryItemTransactionScalarWhereInput!]
+  NOT: [InventoryItemTransactionScalarWhereInput!]
+}
+
+type InventoryItemTransactionSubscriptionPayload {
+  mutation: MutationType!
+  node: InventoryItemTransaction
+  updatedFields: [String!]
+  previousValues: InventoryItemTransactionPreviousValues
+}
+
+input InventoryItemTransactionSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: InventoryItemTransactionWhereInput
+  AND: [InventoryItemTransactionSubscriptionWhereInput!]
+  OR: [InventoryItemTransactionSubscriptionWhereInput!]
+  NOT: [InventoryItemTransactionSubscriptionWhereInput!]
+}
+
+input InventoryItemTransactionUpdateDataInput {
+  actor: UserUpdateOneRequiredInput
+  action: InventoryItemTransactionAction
+  comment: String
+}
+
+input InventoryItemTransactionUpdateInput {
+  actor: UserUpdateOneRequiredInput
+  action: InventoryItemTransactionAction
+  comment: String
+}
+
+input InventoryItemTransactionUpdateManyDataInput {
+  action: InventoryItemTransactionAction
+  comment: String
+}
+
+input InventoryItemTransactionUpdateManyInput {
+  create: [InventoryItemTransactionCreateInput!]
+  update: [InventoryItemTransactionUpdateWithWhereUniqueNestedInput!]
+  upsert: [InventoryItemTransactionUpsertWithWhereUniqueNestedInput!]
+  delete: [InventoryItemTransactionWhereUniqueInput!]
+  connect: [InventoryItemTransactionWhereUniqueInput!]
+  set: [InventoryItemTransactionWhereUniqueInput!]
+  disconnect: [InventoryItemTransactionWhereUniqueInput!]
+  deleteMany: [InventoryItemTransactionScalarWhereInput!]
+  updateMany: [InventoryItemTransactionUpdateManyWithWhereNestedInput!]
+}
+
+input InventoryItemTransactionUpdateManyMutationInput {
+  action: InventoryItemTransactionAction
+  comment: String
+}
+
+input InventoryItemTransactionUpdateManyWithWhereNestedInput {
+  where: InventoryItemTransactionScalarWhereInput!
+  data: InventoryItemTransactionUpdateManyDataInput!
+}
+
+input InventoryItemTransactionUpdateWithWhereUniqueNestedInput {
+  where: InventoryItemTransactionWhereUniqueInput!
+  data: InventoryItemTransactionUpdateDataInput!
+}
+
+input InventoryItemTransactionUpsertWithWhereUniqueNestedInput {
+  where: InventoryItemTransactionWhereUniqueInput!
+  update: InventoryItemTransactionUpdateDataInput!
+  create: InventoryItemTransactionCreateInput!
+}
+
+input InventoryItemTransactionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  actor: UserWhereInput
+  action: InventoryItemTransactionAction
+  action_not: InventoryItemTransactionAction
+  action_in: [InventoryItemTransactionAction!]
+  action_not_in: [InventoryItemTransactionAction!]
+  comment: String
+  comment_not: String
+  comment_in: [String!]
+  comment_not_in: [String!]
+  comment_lt: String
+  comment_lte: String
+  comment_gt: String
+  comment_gte: String
+  comment_contains: String
+  comment_not_contains: String
+  comment_starts_with: String
+  comment_not_starts_with: String
+  comment_ends_with: String
+  comment_not_ends_with: String
+  dateTime: DateTime
+  dateTime_not: DateTime
+  dateTime_in: [DateTime!]
+  dateTime_not_in: [DateTime!]
+  dateTime_lt: DateTime
+  dateTime_lte: DateTime
+  dateTime_gt: DateTime
+  dateTime_gte: DateTime
+  AND: [InventoryItemTransactionWhereInput!]
+  OR: [InventoryItemTransactionWhereInput!]
+  NOT: [InventoryItemTransactionWhereInput!]
+}
+
+input InventoryItemTransactionWhereUniqueInput {
+  id: ID
+}
+
+input InventoryItemUpdateDataInput {
+  product: ProductUpdateOneRequiredInput
+  inventory: InventoryUpdateOneRequiredWithoutInventoryItemsInput
+  amount: Float
+  transactions: InventoryItemTransactionUpdateManyInput
+}
+
+input InventoryItemUpdateInput {
+  product: ProductUpdateOneRequiredInput
+  inventory: InventoryUpdateOneRequiredWithoutInventoryItemsInput
+  amount: Float
+  transactions: InventoryItemTransactionUpdateManyInput
+}
+
+input InventoryItemUpdateManyDataInput {
+  amount: Float
+}
+
+input InventoryItemUpdateManyInput {
+  create: [InventoryItemCreateInput!]
+  update: [InventoryItemUpdateWithWhereUniqueNestedInput!]
+  upsert: [InventoryItemUpsertWithWhereUniqueNestedInput!]
+  delete: [InventoryItemWhereUniqueInput!]
+  connect: [InventoryItemWhereUniqueInput!]
+  set: [InventoryItemWhereUniqueInput!]
+  disconnect: [InventoryItemWhereUniqueInput!]
+  deleteMany: [InventoryItemScalarWhereInput!]
+  updateMany: [InventoryItemUpdateManyWithWhereNestedInput!]
+}
+
+input InventoryItemUpdateManyMutationInput {
+  amount: Float
+}
+
+input InventoryItemUpdateManyWithoutInventoryInput {
+  create: [InventoryItemCreateWithoutInventoryInput!]
+  delete: [InventoryItemWhereUniqueInput!]
+  connect: [InventoryItemWhereUniqueInput!]
+  set: [InventoryItemWhereUniqueInput!]
+  disconnect: [InventoryItemWhereUniqueInput!]
+  update: [InventoryItemUpdateWithWhereUniqueWithoutInventoryInput!]
+  upsert: [InventoryItemUpsertWithWhereUniqueWithoutInventoryInput!]
+  deleteMany: [InventoryItemScalarWhereInput!]
+  updateMany: [InventoryItemUpdateManyWithWhereNestedInput!]
+}
+
+input InventoryItemUpdateManyWithWhereNestedInput {
+  where: InventoryItemScalarWhereInput!
+  data: InventoryItemUpdateManyDataInput!
+}
+
+input InventoryItemUpdateWithoutInventoryDataInput {
+  product: ProductUpdateOneRequiredInput
+  amount: Float
+  transactions: InventoryItemTransactionUpdateManyInput
+}
+
+input InventoryItemUpdateWithWhereUniqueNestedInput {
+  where: InventoryItemWhereUniqueInput!
+  data: InventoryItemUpdateDataInput!
+}
+
+input InventoryItemUpdateWithWhereUniqueWithoutInventoryInput {
+  where: InventoryItemWhereUniqueInput!
+  data: InventoryItemUpdateWithoutInventoryDataInput!
+}
+
+input InventoryItemUpsertWithWhereUniqueNestedInput {
+  where: InventoryItemWhereUniqueInput!
+  update: InventoryItemUpdateDataInput!
+  create: InventoryItemCreateInput!
+}
+
+input InventoryItemUpsertWithWhereUniqueWithoutInventoryInput {
+  where: InventoryItemWhereUniqueInput!
+  update: InventoryItemUpdateWithoutInventoryDataInput!
+  create: InventoryItemCreateWithoutInventoryInput!
+}
+
+input InventoryItemWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  product: ProductWhereInput
+  inventory: InventoryWhereInput
+  amount: Float
+  amount_not: Float
+  amount_in: [Float!]
+  amount_not_in: [Float!]
+  amount_lt: Float
+  amount_lte: Float
+  amount_gt: Float
+  amount_gte: Float
+  transactions_every: InventoryItemTransactionWhereInput
+  transactions_some: InventoryItemTransactionWhereInput
+  transactions_none: InventoryItemTransactionWhereInput
+  AND: [InventoryItemWhereInput!]
+  OR: [InventoryItemWhereInput!]
+  NOT: [InventoryItemWhereInput!]
+}
+
+input InventoryItemWhereUniqueInput {
+  id: ID
 }
 
 enum InventoryOrderByInput {
@@ -899,6 +1361,7 @@ input InventorySubscriptionWhereInput {
 input InventoryUpdateInput {
   user: UserUpdateOneRequiredWithoutInventoriesInput
   name: String
+  inventoryItems: InventoryItemUpdateManyWithoutInventoryInput
 }
 
 input InventoryUpdateManyDataInput {
@@ -926,13 +1389,31 @@ input InventoryUpdateManyWithWhereNestedInput {
   data: InventoryUpdateManyDataInput!
 }
 
+input InventoryUpdateOneRequiredWithoutInventoryItemsInput {
+  create: InventoryCreateWithoutInventoryItemsInput
+  update: InventoryUpdateWithoutInventoryItemsDataInput
+  upsert: InventoryUpsertWithoutInventoryItemsInput
+  connect: InventoryWhereUniqueInput
+}
+
+input InventoryUpdateWithoutInventoryItemsDataInput {
+  user: UserUpdateOneRequiredWithoutInventoriesInput
+  name: String
+}
+
 input InventoryUpdateWithoutUserDataInput {
   name: String
+  inventoryItems: InventoryItemUpdateManyWithoutInventoryInput
 }
 
 input InventoryUpdateWithWhereUniqueWithoutUserInput {
   where: InventoryWhereUniqueInput!
   data: InventoryUpdateWithoutUserDataInput!
+}
+
+input InventoryUpsertWithoutInventoryItemsInput {
+  update: InventoryUpdateWithoutInventoryItemsDataInput!
+  create: InventoryCreateWithoutInventoryItemsInput!
 }
 
 input InventoryUpsertWithWhereUniqueWithoutUserInput {
@@ -971,6 +1452,9 @@ input InventoryWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  inventoryItems_every: InventoryItemWhereInput
+  inventoryItems_some: InventoryItemWhereInput
+  inventoryItems_none: InventoryItemWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -1017,6 +1501,18 @@ type Mutation {
   upsertInventory(where: InventoryWhereUniqueInput!, create: InventoryCreateInput!, update: InventoryUpdateInput!): Inventory!
   deleteInventory(where: InventoryWhereUniqueInput!): Inventory
   deleteManyInventories(where: InventoryWhereInput): BatchPayload!
+  createInventoryItem(data: InventoryItemCreateInput!): InventoryItem!
+  updateInventoryItem(data: InventoryItemUpdateInput!, where: InventoryItemWhereUniqueInput!): InventoryItem
+  updateManyInventoryItems(data: InventoryItemUpdateManyMutationInput!, where: InventoryItemWhereInput): BatchPayload!
+  upsertInventoryItem(where: InventoryItemWhereUniqueInput!, create: InventoryItemCreateInput!, update: InventoryItemUpdateInput!): InventoryItem!
+  deleteInventoryItem(where: InventoryItemWhereUniqueInput!): InventoryItem
+  deleteManyInventoryItems(where: InventoryItemWhereInput): BatchPayload!
+  createInventoryItemTransaction(data: InventoryItemTransactionCreateInput!): InventoryItemTransaction!
+  updateInventoryItemTransaction(data: InventoryItemTransactionUpdateInput!, where: InventoryItemTransactionWhereUniqueInput!): InventoryItemTransaction
+  updateManyInventoryItemTransactions(data: InventoryItemTransactionUpdateManyMutationInput!, where: InventoryItemTransactionWhereInput): BatchPayload!
+  upsertInventoryItemTransaction(where: InventoryItemTransactionWhereUniqueInput!, create: InventoryItemTransactionCreateInput!, update: InventoryItemTransactionUpdateInput!): InventoryItemTransaction!
+  deleteInventoryItemTransaction(where: InventoryItemTransactionWhereUniqueInput!): InventoryItemTransaction
+  deleteManyInventoryItemTransactions(where: InventoryItemTransactionWhereInput): BatchPayload!
   createProduct(data: ProductCreateInput!): Product!
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -1652,6 +2148,12 @@ type Query {
   inventory(where: InventoryWhereUniqueInput!): Inventory
   inventories(where: InventoryWhereInput, orderBy: InventoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Inventory]!
   inventoriesConnection(where: InventoryWhereInput, orderBy: InventoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryConnection!
+  inventoryItem(where: InventoryItemWhereUniqueInput!): InventoryItem
+  inventoryItems(where: InventoryItemWhereInput, orderBy: InventoryItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryItem]!
+  inventoryItemsConnection(where: InventoryItemWhereInput, orderBy: InventoryItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryItemConnection!
+  inventoryItemTransaction(where: InventoryItemTransactionWhereUniqueInput!): InventoryItemTransaction
+  inventoryItemTransactions(where: InventoryItemTransactionWhereInput, orderBy: InventoryItemTransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryItemTransaction]!
+  inventoryItemTransactionsConnection(where: InventoryItemTransactionWhereInput, orderBy: InventoryItemTransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryItemTransactionConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
@@ -2384,6 +2886,8 @@ type Subscription {
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   inventory(where: InventorySubscriptionWhereInput): InventorySubscriptionPayload
+  inventoryItem(where: InventoryItemSubscriptionWhereInput): InventoryItemSubscriptionPayload
+  inventoryItemTransaction(where: InventoryItemTransactionSubscriptionWhereInput): InventoryItemTransactionSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   sale(where: SaleSubscriptionWhereInput): SaleSubscriptionPayload
   saleItem(where: SaleItemSubscriptionWhereInput): SaleItemSubscriptionPayload
@@ -2404,6 +2908,7 @@ type User {
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
   inventories(where: InventoryWhereInput, orderBy: InventoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Inventory!]
+  inventoryItems(where: InventoryItemWhereInput, orderBy: InventoryItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryItem!]
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer!]
   sales(where: SaleWhereInput, orderBy: SaleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Sale!]
   saleItems(where: SaleItemWhereInput, orderBy: SaleItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SaleItem!]
@@ -2429,9 +2934,15 @@ input UserCreateInput {
   products: ProductCreateManyWithoutUserInput
   categories: CategoryCreateManyWithoutUserInput
   inventories: InventoryCreateManyWithoutUserInput
+  inventoryItems: InventoryItemCreateManyInput
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutCategoriesInput {
@@ -2476,6 +2987,7 @@ input UserCreateWithoutCategoriesInput {
   resetTokenExpiry: String
   products: ProductCreateManyWithoutUserInput
   inventories: InventoryCreateManyWithoutUserInput
+  inventoryItems: InventoryItemCreateManyInput
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
@@ -2495,6 +3007,7 @@ input UserCreateWithoutCustomersInput {
   products: ProductCreateManyWithoutUserInput
   categories: CategoryCreateManyWithoutUserInput
   inventories: InventoryCreateManyWithoutUserInput
+  inventoryItems: InventoryItemCreateManyInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
 }
@@ -2512,6 +3025,7 @@ input UserCreateWithoutInventoriesInput {
   resetTokenExpiry: String
   products: ProductCreateManyWithoutUserInput
   categories: CategoryCreateManyWithoutUserInput
+  inventoryItems: InventoryItemCreateManyInput
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
@@ -2530,6 +3044,7 @@ input UserCreateWithoutProductsInput {
   resetTokenExpiry: String
   categories: CategoryCreateManyWithoutUserInput
   inventories: InventoryCreateManyWithoutUserInput
+  inventoryItems: InventoryItemCreateManyInput
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
@@ -2549,6 +3064,7 @@ input UserCreateWithoutSalesInput {
   products: ProductCreateManyWithoutUserInput
   categories: CategoryCreateManyWithoutUserInput
   inventories: InventoryCreateManyWithoutUserInput
+  inventoryItems: InventoryItemCreateManyInput
   customers: CustomerCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
 }
@@ -2610,6 +3126,25 @@ input UserSubscriptionWhereInput {
   NOT: [UserSubscriptionWhereInput!]
 }
 
+input UserUpdateDataInput {
+  email: String
+  password: String
+  role: String
+  permissions: UserUpdatepermissionsInput
+  verified: Boolean
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductUpdateManyWithoutUserInput
+  categories: CategoryUpdateManyWithoutUserInput
+  inventories: InventoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyInput
+  customers: CustomerUpdateManyWithoutUserInput
+  sales: SaleUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
+}
+
 input UserUpdateInput {
   email: String
   password: String
@@ -2623,6 +3158,7 @@ input UserUpdateInput {
   products: ProductUpdateManyWithoutUserInput
   categories: CategoryUpdateManyWithoutUserInput
   inventories: InventoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyInput
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
@@ -2638,6 +3174,13 @@ input UserUpdateManyMutationInput {
   confirmEmailToken: String
   resetToken: String
   resetTokenExpiry: String
+}
+
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneRequiredWithoutCategoriesInput {
@@ -2691,6 +3234,7 @@ input UserUpdateWithoutCategoriesDataInput {
   resetTokenExpiry: String
   products: ProductUpdateManyWithoutUserInput
   inventories: InventoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyInput
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
@@ -2709,6 +3253,7 @@ input UserUpdateWithoutCustomersDataInput {
   products: ProductUpdateManyWithoutUserInput
   categories: CategoryUpdateManyWithoutUserInput
   inventories: InventoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
 }
@@ -2725,6 +3270,7 @@ input UserUpdateWithoutInventoriesDataInput {
   resetTokenExpiry: String
   products: ProductUpdateManyWithoutUserInput
   categories: CategoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyInput
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
@@ -2742,6 +3288,7 @@ input UserUpdateWithoutProductsDataInput {
   resetTokenExpiry: String
   categories: CategoryUpdateManyWithoutUserInput
   inventories: InventoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyInput
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
@@ -2760,8 +3307,14 @@ input UserUpdateWithoutSalesDataInput {
   products: ProductUpdateManyWithoutUserInput
   categories: CategoryUpdateManyWithoutUserInput
   inventories: InventoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyInput
   customers: CustomerUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserUpsertWithoutCategoriesInput {
@@ -2913,6 +3466,9 @@ input UserWhereInput {
   inventories_every: InventoryWhereInput
   inventories_some: InventoryWhereInput
   inventories_none: InventoryWhereInput
+  inventoryItems_every: InventoryItemWhereInput
+  inventoryItems_some: InventoryItemWhereInput
+  inventoryItems_none: InventoryItemWhereInput
   customers_every: CustomerWhereInput
   customers_some: CustomerWhereInput
   customers_none: CustomerWhereInput

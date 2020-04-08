@@ -22,6 +22,7 @@ type User {
   products: [Product!]!
   categories: [Category!]!
   inventories: [Inventory!]!
+  inventoryItems: [InventoryItem!]!
   customers: [Customer!]!
   sales: [Sale!]!
   saleItems: [SaleItem!]!
@@ -54,8 +55,31 @@ type Inventory {
   id: ID! @id
   user: User!
   name: String!
+  inventoryItems: [InventoryItem!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type InventoryItem {
+  id: ID! @id
+  product: Product!
+  inventory: Inventory!
+  amount: Float
+  transactions: [InventoryItemTransaction!]
+}
+
+enum InventoryItemTransactionAction {
+  MANUALLY ADDED
+  MANUALLY DEDUCTED
+  SALE DEDUCTION
+}
+
+type InventoryItemTransaction {
+  id: ID! @id
+  actor: User!
+  action: InventoryItemTransactionAction!
+  comment: String
+  dateTime: DateTime! @createdAt
 }
 
 type Customer {

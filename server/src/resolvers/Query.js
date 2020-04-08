@@ -29,11 +29,9 @@ async function productByUser(parent, args, ctx, info) {
     const products = await ctx.prisma.user({ id: ctx.request.userId }).products({
         where: { id: args.id }
     });
-    console.log(products)
-    // const ownsProduct = product.user.id == ctx.request.userId;
-    // if (!ownsProduct) {
-    //     throw new Error("You don't have the required permissions to perform this action.");
-    // }
+    if (!products || products.length < 1 || !products[0]) {
+        throw new Error("Cannot find this product owned by your user id.");
+    }
     return products[0];
 }
 
@@ -55,6 +53,27 @@ async function categoriesByUser(parent, args, ctx, info) {
     });
 }
 
+async function inventoriesByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+    return await ctx.prisma.user({ id: ctx.request.userId }).inventories();
+}
+
+async function inventoryItemsByProduct(parent, args, ctx, info) {
+    // const products = await ctx.prisma.user({ id: screenTop.request.userId }).products({
+    //     where: { id: args.id }
+    // });
+    // if (!products || products.length < 1 || !products[0]) {
+    //     throw new Error("Cannot find this product owned by your user id.");
+    // }
+    // const product = products[0];
+    // console.log(product);
+    return await ctx.prisma.user({ id: "ck8j4gzqo9bxe0981lgqtvjzl" }).inventoryItems({
+        where: { product: { id: args.id } }
+    });
+}
+
 module.exports = {
     me,
     products,
@@ -62,4 +81,6 @@ module.exports = {
     productsByUser,
     categories,
     categoriesByUser,
+    inventoriesByUser,
+    inventoryItemsByProduct
 }

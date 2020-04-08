@@ -25,6 +25,18 @@ var models = [
     embedded: false
   },
   {
+    name: "InventoryItem",
+    embedded: false
+  },
+  {
+    name: "InventoryItemTransactionAction",
+    embedded: false
+  },
+  {
+    name: "InventoryItemTransaction",
+    embedded: false
+  },
+  {
     name: "Customer",
     embedded: false
   },
