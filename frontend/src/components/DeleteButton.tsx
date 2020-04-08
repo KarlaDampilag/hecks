@@ -2,7 +2,6 @@ import React from 'react';
 import { Popconfirm, Button } from 'antd';
 
 interface PropTypes {
-    deleteIsLoading: boolean;
     onDelete: () => void;
     onClick: () => void;
 }
@@ -14,7 +13,7 @@ const DeleteButton = (props: PropTypes) => {
             cancelText="Cancel"
             onConfirm={props.onDelete}
         >
-            <Button onClick={props.onClick} loading={props.deleteIsLoading}>Delet{props.deleteIsLoading ? "ing" : "e"}</Button>
+            <Button onClick={props.onClick}>Delete</Button>
         </Popconfirm>
     )
 }
