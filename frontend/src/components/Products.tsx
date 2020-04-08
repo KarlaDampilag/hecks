@@ -140,6 +140,7 @@ const Products = () => {
                                     render: (value) => {
                                         return (
                                             <DeleteButton
+                                                deleteIsLoading={deleteProductLoading}
                                                 onClick={() => setProductIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     await deleteProduct();
