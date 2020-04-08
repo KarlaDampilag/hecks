@@ -57,7 +57,7 @@ const Login = () => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button disabled={loading} type="primary" htmlType="submit" className="login-form-button">Log In</Button>
+                    <Button disabled={loading} loading={loading} type="primary" htmlType="submit" className="login-form-button">Log In</Button>
                     <div>Don't have an account? <a href="signup">Register</a></div>
                 </Form.Item>
             </Form>
