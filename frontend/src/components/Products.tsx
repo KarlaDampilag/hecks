@@ -6,6 +6,7 @@ import { Tag, Table, Button } from 'antd';
 
 import { userContext } from './App';
 import AddProductButton from './AddProductButton';
+import UpdateProductButton from './UpdateProductButton';
 
 const PRODUCTS_BY_USER_QUERY = gql`
     {
@@ -23,9 +24,30 @@ const PRODUCTS_BY_USER_QUERY = gql`
     }
 `;
 
+const CREATE_CATEGORIES_MUTATION = gql`
+    mutation CREATE_CATEGORIES_MUTATION($names: [String!]!) {
+        createCategories(names: $names) {
+            id
+            name
+        }
+    }
+`;
+
+const CATEGORIES_BY_USER_QUERY = gql`
+    {
+        categoriesByUser{
+            id
+            name
+        }
+    }
+`;
+
 const Products = () => {
-    const { data, loading, error } = useQuery(PRODUCTS_BY_USER_QUERY);
-    const products = data ? data.productsByUser : null;
+    const { data: productsData, loading, error } = useQuery(PRODUCTS_BY_USER_QUERY);
+    const products = productsData ? productsData.productsByUser : null;
+
+    const { data, loading: queryCategoriesLoading, error: queryCategoriesError } = useQuery(CATEGORIES_BY_USER_QUERY);
+    const categoriesData = data ? data.categoriesByUser : null;
 
     return (
         <userContext.Consumer>
@@ -35,7 +57,7 @@ const Products = () => {
                 }
                 return (
                     <>
-                        <AddProductButton />
+                        <AddProductButton categories={categoriesData} />
                         <Table
                             loading={loading}
                             dataSource={products}
@@ -74,9 +96,10 @@ const Products = () => {
                                     title: 'Edit ✏️',
                                     dataIndex: 'id',
                                     key: 'edit',
-                                    render: (value) => {
+                                    render: (value, record) => {
                                         return (
-                                            <a href={`updateProduct?id=${value}`}><Button>Edit</Button></a>
+                                            //<a href={`updateProduct?id=${value}`}><Button>Edit</Button></a>
+                                            <UpdateProductButton product={record} categories={categoriesData} />
                                         );
                                     }
                                 },
@@ -99,4 +122,4 @@ const Products = () => {
     )
 }
 export default Products;
-export { PRODUCTS_BY_USER_QUERY };
+export { PRODUCTS_BY_USER_QUERY, CATEGORIES_BY_USER_QUERY, CREATE_CATEGORIES_MUTATION };

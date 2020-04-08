@@ -5,7 +5,11 @@ import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Modal, Button, Input, Form, Select, Spin, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
-import { PRODUCTS_BY_USER_QUERY } from './Products';
+import { PRODUCTS_BY_USER_QUERY, CATEGORIES_BY_USER_QUERY, CREATE_CATEGORIES_MUTATION } from './Products';
+
+interface PropTypes {
+    categories: any; // FIXME how to use GraphQL types on frontend?
+}
 
 const CREATE_PRODUCT_MUTATION = gql`
 mutation CREATE_PRODUCT_MUTATION(
@@ -42,26 +46,7 @@ mutation CREATE_PRODUCT_MUTATION(
 }
 `;
 
-const CREATE_CATEGORIES_MUTATION = gql`
-    mutation CREATE_CATEGORIES_MUTATION($names: [String!]!) {
-        createCategories(names: $names) {
-            id
-            name
-        }
-    }
-`;
-
-const CATEGORIES_BY_USER_QUERY = gql`
-    {
-        categoriesByUser{
-            id
-            name
-        }
-    }
-`;
-
-
-const AddProductButton = () => {
+const AddProductButton = (props: PropTypes) => {
     const [name, setName] = React.useState<string>();
     const [salePrice, setSalePrice] = React.useState<string>();
     const [costPrice, setCostPrice] = React.useState<string>();
@@ -73,6 +58,11 @@ const AddProductButton = () => {
     const [newCategories, setNewCategories] = React.useState<string[]>([]);
     const [isShowingModal, setIsShowingModal] = React.useState<boolean>(false);
     const [imageIsLoading, setImageIsLoading] = React.useState<boolean>(false);
+
+    let options: string[] = [];
+    if (props.categories) {
+        options = _.map(props.categories, category => category.name);
+    }
 
     const [form] = Form.useForm();
 
@@ -122,9 +112,7 @@ const AddProductButton = () => {
         cache.writeQuery({ query: CATEGORIES_BY_USER_QUERY, data })
     }
 
-    const { data, loading: queryCategoriesLoading, error: queryCategoriesError } = useQuery(CATEGORIES_BY_USER_QUERY);
-    const categoriesData = data ? data.categoriesByUser : null;
-    const options = _.map(categoriesData, category => category.name);
+
 
     const [createProduct, { loading: createProductLoading, error: createProductError }] = useMutation(CREATE_PRODUCT_MUTATION, {
         variables: { name, salePrice, costPrice, unit, notes, image, largeImage, categories },
