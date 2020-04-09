@@ -18,6 +18,9 @@ mutation CREATE_INVENTORY_MUTATION(
         id
         name
         createdAt
+        inventoryItems {
+            id
+        }
     }
 }
 `;
@@ -30,11 +33,11 @@ const AddInventoryButton = () => {
 
     const [createInventory, { loading: createIventoryLoading, error: createInventoryError }] = useMutation(CREATE_INVENTORY_MUTATION, {
         variables: { name },
-        update: (cache, payload) => {
-            const data: any = cache.readQuery({ query: INVENTORIES_BY_USER_QUERY });
-            data.inventoriesByUser.push(payload.data.createInventory);
-            data.inventoriesByUser = _.sortBy(data.inventoriesByUser, 'createdAt');
-            cache.writeQuery({ query: INVENTORIES_BY_USER_QUERY, data });
+        update: (store, response) => {
+            let newData = response.data.createInventory;
+            let localStoreData: any = store.readQuery({ query: INVENTORIES_BY_USER_QUERY });
+            localStoreData = { inventoriesByUser: [...localStoreData.inventoriesByUser, newData] };
+            store.writeQuery({ query: INVENTORIES_BY_USER_QUERY, data: localStoreData });
         }
     });
 
@@ -43,7 +46,6 @@ const AddInventoryButton = () => {
             <Modal title='Add an Inventory' visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form {...layout} form={form} onFinish={async () => {
                     const response = await createInventory();
-
                     if (createInventoryError) {
                         message.error(createInventoryError.message.replace('GraphQL error: ', ''));
                     } else {
