@@ -6,6 +6,7 @@ import { Table, message } from 'antd';
 
 import { userContext } from './App';
 import AddInventoryButton from './AddInventoryButton';
+import UpdateInventoryButton from './UpdateInventoryButton';
 import DeleteButton from './DeleteButton';
 
 const INVENTORIES_BY_USER_QUERY = gql`
@@ -70,8 +71,7 @@ const Inventories = () => {
                                     key: 'edit',
                                     render: (value, record) => {
                                         return (
-                                            //<UpdateProductButton product={record} categories={categoriesData} />
-                                            <p>Not yet implemented.</p>
+                                            <UpdateInventoryButton inventory={record} />
                                         );
                                     }
                                 },

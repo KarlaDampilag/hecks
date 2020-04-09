@@ -11,7 +11,7 @@ type Mutation {
     updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
     deleteProduct(id: ID!): Product!
     createInventory(name: String!): Inventory!
-    # updateInventory(id: ID!, name: String): Inventory!
+    updateInventory(id: ID!, name: String): Inventory!
     deleteInventory(id: ID!): Inventory!
     createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
     # updateCustomer(id: ID!, name: String, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!

@@ -181,6 +181,35 @@ async function createInventory(parent, args, ctx, info) {
     return inventory;
 }
 
+async function updateInventory(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const inventory = await ctx.prisma.user({ id: ctx.request.userId }).inventories({
+        where: { id: args.id }
+    });
+
+    if (!inventory || inventory.length < 1 || !inventory[0]) {
+        throw new Error("Cannot find this inventory owned by your user id.");
+    }
+
+    // first take a copy of the updates
+    const updates = { ...args };
+
+    // remove id from the updates so it won't get updated
+    delete updates.id
+
+    return await ctx.prisma.updateInventory({
+        data: {
+            ...updates
+        },
+        where: {
+            id: args.id
+        }
+    });
+}
+
 async function deleteInventory(parent, args, ctx, info) {
     if (!ctx.request.userId) {
         throw new Error('You must be logged in to do that.');
@@ -224,6 +253,7 @@ module.exports = {
     updateProduct,
     deleteProduct,
     createInventory,
+    updateInventory,
     deleteInventory,
     createCustomer
 }

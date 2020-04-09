@@ -176,7 +176,7 @@ const UpdateProductButton = (props: PropTypes) => {
           </Form.Item>
 
           <Form.Item {...tailLayout}>
-            <Button type="primary" htmlType="submit" disabled={imageIsLoading} loading={updateProductLoading}>Updat{updateProductLoading ? 'ing' : 'e'} Product</Button>
+            <Button type="primary" htmlType="submit" disabled={imageIsLoading || updateProductLoading} loading={updateProductLoading}>Updat{updateProductLoading ? 'ing' : 'e'} Product</Button>
           </Form.Item>
         </Form>
       </Modal>
