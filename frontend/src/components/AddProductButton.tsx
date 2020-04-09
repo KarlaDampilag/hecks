@@ -93,12 +93,7 @@ const AddProductButton = (props: PropTypes) => {
         variables: { name, salePrice, costPrice, unit, notes, image, largeImage, categories },
         update: (cache, payload) => {
             const data: any = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
-
-            // Add the new product
             data.productsByUser.push(payload.data.createProduct);
-            data.productsByUser = _.sortBy(data.productsByUser, 'createdAt');
-
-            // Put the updated products back in the cache
             cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data })
         }
     });

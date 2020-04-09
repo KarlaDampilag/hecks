@@ -181,6 +181,40 @@ async function createInventory(parent, args, ctx, info) {
     return inventory;
 }
 
+async function deleteInventory(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    // find the product
+    const inventories = await ctx.prisma.user({ id: ctx.request.userId }).inventories({
+        where: { id: args.id }
+    });
+
+    if (!inventories || inventories.length < 1 || !inventories[0]) {
+        throw new Error("Cannot find this inventory owned by your user id.");
+    }
+    return await ctx.prisma.deleteInventory({ id: args.id });
+}
+
+async function createCustomer(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const customer = await ctx.prisma.createCustomer({
+        ...args,
+        // create a relationship between the product and the user
+        user: {
+            connect: {
+                id: ctx.request.userId
+            }
+        }
+    });
+
+    return customer;
+}
+
 module.exports = {
     signup,
     login,
@@ -189,5 +223,7 @@ module.exports = {
     createCategories,
     updateProduct,
     deleteProduct,
-    createInventory
+    createInventory,
+    deleteInventory,
+    createCustomer
 }

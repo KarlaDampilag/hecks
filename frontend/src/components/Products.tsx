@@ -11,7 +11,7 @@ import DeleteButton from './DeleteButton';
 
 const PRODUCTS_BY_USER_QUERY = gql`
     {
-        productsByUser(orderBy: createdAt_DESC) {
+        productsByUser {
             id
             name
             salePrice
@@ -65,14 +65,6 @@ const INVENTORY_ITEM_COUNT = gql`
     }
 `;
 
-const deleteProductUpdateCache = (cache: any, payload: any) => {
-    // Read cache for the products
-    const data = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
-
-    const filteredItems = _.filter(data.productsByUser, product => product.id !== payload.data.deleteProduct.id);
-    cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data: { productsByUser: filteredItems } });
-}
-
 const Products = () => {
     const [productIdForDeletion, setProductIdForDeletion] = React.useState<string>();
     const { data: productsData, loading } = useQuery(PRODUCTS_BY_USER_QUERY);
@@ -83,7 +75,13 @@ const Products = () => {
 
     const [deleteProduct, { error: deleteProductError }] = useMutation(DELETE_PRODUCT_MUTATION, {
         variables: { id: productIdForDeletion },
-        update: deleteProductUpdateCache
+        update: (cache: any, payload: any) => {
+            // Read cache for the products
+            const data = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
+        
+            const filteredItems = _.filter(data.productsByUser, product => product.id !== payload.data.deleteProduct.id);
+            cache.writeQuery({ query: PRODUCTS_BY_USER_QUERY, data: { productsByUser: filteredItems } });
+        }
     });
 
     return (

@@ -74,7 +74,7 @@ const SignUp = () => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button disabled={loading} loading={loading} type="primary" htmlType="submit" className="login-form-button">Sign Up</Button>
+                    <Button disabled={loading} loading={loading} type="primary" htmlType="submit" className="login-form-button">Sign{loading && "ing"} Up</Button>
                     <div>Have an account? <a href="login">Log In</a></div>
                 </Form.Item>
             </Form>

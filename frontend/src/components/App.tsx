@@ -9,6 +9,7 @@ import SignUp from './SignUp';
 import Login from './Login';
 import Products from './Products';
 import Inventories from './Inventories';
+import Customers from './Customers';
 
 const CURRENT_USER_QUERY = gql`
   {
@@ -42,6 +43,7 @@ function App() {
               <Route exact path="/login" component={Login} />
               <Route exact path="/products" component={Products} />
               <Route exact path="/inventories" component={Inventories} />
+              <Route exact path="/customers" component={Customers} />
               <Route component={Page404} />
             </Switch>
           </div>

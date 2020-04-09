@@ -12,8 +12,8 @@ type Mutation {
     deleteProduct(id: ID!): Product!
     createInventory(name: String!): Inventory!
     # updateInventory(id: ID!, name: String): Inventory!
-    # deleteInventory(id: ID!): Inventory!
-    # createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
+    deleteInventory(id: ID!): Inventory!
+    createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
     # updateCustomer(id: ID!, name: String, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
     # createSaleItem(saleId: String!, productId: String!, quantity: String!, discountType: SpecialSaleDeductionType, discountValue: String): SaleItem!
     # createSaleAndItems(timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
@@ -33,7 +33,7 @@ type Query {
     inventoryItemsByProduct(id: ID!): [InventoryItem]!
     inventoriesByUser(orderBy: InventoryOrderByInput): [Inventory]!
     # inventory(id: ID!): Inventory
-    # customers(orderBy: CustomerOrderByInput): [Customer]!
+    customersByUser(orderBy: CustomerOrderByInput): [Customer]!
     # customer(id: ID!): Customer
     # sales(orderBy: SaleOrderByInput): [Sale]!
     # saleItems(orderBy: SaleItemOrderByInput): [SaleItem]!

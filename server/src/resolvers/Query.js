@@ -74,6 +74,13 @@ async function inventoryItemsByProduct(parent, args, ctx, info) {
     });
 }
 
+async function customersByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+    return await ctx.prisma.user({ id: ctx.request.userId }).customers();
+}
+
 module.exports = {
     me,
     products,
@@ -82,5 +89,6 @@ module.exports = {
     categories,
     categoriesByUser,
     inventoriesByUser,
-    inventoryItemsByProduct
+    inventoryItemsByProduct,
+    customersByUser
 }
