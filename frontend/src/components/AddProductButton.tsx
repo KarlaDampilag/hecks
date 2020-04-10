@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import React from 'react';
 import gql from 'graphql-tag';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { Modal, Button, Input, Form, Select, Spin, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 

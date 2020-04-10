@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
 import React from 'react';
 import gql from 'graphql-tag';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { Button, Input, Form, Spin, Select, Modal, message } from 'antd';
 
 import { layout, tailLayout } from './AddProductButton';
-import { CATEGORIES_BY_USER_QUERY, CREATE_CATEGORIES_MUTATION } from './AddProductButton';
+import { CREATE_CATEGORIES_MUTATION } from './AddProductButton';
 
 interface PropTypes {
   product: any; // FIXME how to use GraphQL types on frontend?
@@ -70,7 +70,7 @@ const UpdateProductButton = (props: PropTypes) => {
     variables: { id: props.product.id, name, salePrice, costPrice, unit, notes, image, largeImage, categories }
   });
 
-  const [createCategories, { loading: createCategoriesLoading, error: createCategoriesError }] = useMutation(CREATE_CATEGORIES_MUTATION, {
+  const [createCategories] = useMutation(CREATE_CATEGORIES_MUTATION, {
     variables: { names: newCategories }
   });
 

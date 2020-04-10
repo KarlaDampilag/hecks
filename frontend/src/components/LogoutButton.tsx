@@ -14,7 +14,7 @@ const SIGN_OUT_MUTATION = gql`
 
 const LogoutButton = () => {
     const history = useHistory();  // FIXME pass this down as react context!
-    const [logout, { loading, error }] = useMutation(SIGN_OUT_MUTATION, {
+    const [logout] = useMutation(SIGN_OUT_MUTATION, {
         refetchQueries: [{ query: CURRENT_USER_QUERY }]
     });
     return (

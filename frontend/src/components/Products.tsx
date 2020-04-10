@@ -59,11 +59,11 @@ const DELETE_PRODUCT_MUTATION = gql`
     }
 `;
 
-const INVENTORY_ITEM_COUNT = gql`
-    query INVENTORY_ITEM_COUNT($id: ID!) {
-        inventoryItemCount(id: $id)
-    }
-`;
+// const INVENTORY_ITEM_COUNT = gql`
+//     query INVENTORY_ITEM_COUNT($id: ID!) {
+//         inventoryItemCount(id: $id)
+//     }
+// `;
 
 const Products = () => {
     const [productIdForDeletion, setProductIdForDeletion] = React.useState<string>();

@@ -34,7 +34,7 @@ const SignUp = () => {
                     if (password != confirmPassword) {
                         message.error('Passwords did not match');
                     } else {
-                        const result = await signup();
+                        await signup();
                         if (!error) {
                             history.push('/');
                         }

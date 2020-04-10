@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import React from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
@@ -75,7 +74,7 @@ const AddCustomerButton = () => {
         <>
             <Modal title='Add a Customer' visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form {...layout} form={form} onFinish={async () => {
-                    const response = await createCustomer();
+                    await createCustomer();
 
                     if (createCustomerError) {
                         message.error(createCustomerError.message.replace('GraphQL error: ', ''));

@@ -1,8 +1,7 @@
-import * as _ from 'lodash';
 import React from 'react';
 import gql from 'graphql-tag';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Button, Input, Form, Spin, Select, Modal, message } from 'antd';
+import { useMutation } from '@apollo/react-hooks';
+import { Button, Input, Form, Modal, message } from 'antd';
 
 import { layout, tailLayout } from './AddProductButton';
 

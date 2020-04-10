@@ -29,7 +29,7 @@ const Page404 = () => (
 const userContext = React.createContext({ user: {} });
 
 function App() {
-  const { data, loading, error } = useQuery(CURRENT_USER_QUERY);
+  const { data } = useQuery(CURRENT_USER_QUERY);
   const user = data ? data.me : null;
 
   return (

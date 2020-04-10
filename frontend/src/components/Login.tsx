@@ -20,7 +20,7 @@ const Login = () => {
     const [email, setEmail] = React.useState<string>();
     const [password, setPassword] = React.useState<string>();
 
-    const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION, {
+    const [login, { loading, error }] = useMutation(LOGIN_MUTATION, {
         variables: { email, password },
         refetchQueries: [{ query: CURRENT_USER_QUERY }]
     });
@@ -29,7 +29,7 @@ const Login = () => {
             <Form
                 initialValues={{ remember: true }}
                 onFinish={async () => {
-                    const result = await login();
+                    await login();
                     if (!error) {
                         history.push('/');
                     } else {

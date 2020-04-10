@@ -1,8 +1,7 @@
-import * as _ from 'lodash';
 import React from 'react';
 import gql from 'graphql-tag';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import { Modal, Button, Input, Form, Select, Spin, message } from 'antd';
+import { useMutation } from '@apollo/react-hooks';
+import { Modal, Button, Input, Form, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 import { INVENTORIES_BY_USER_QUERY } from './Inventories';
@@ -45,7 +44,7 @@ const AddInventoryButton = () => {
         <>
             <Modal title='Add an Inventory' visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form {...layout} form={form} onFinish={async () => {
-                    const response = await createInventory();
+                    await createInventory();
                     if (createInventoryError) {
                         message.error(createInventoryError.message.replace('GraphQL error: ', ''));
                     } else {
