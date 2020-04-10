@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import React from 'react';
 import gql from 'graphql-tag';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import { Modal, Button, Input, Form, Select, Spin, message } from 'antd';
+import { useMutation } from '@apollo/react-hooks';
+import { Modal, Button, Input, Form, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PhoneInput from 'react-phone-number-input';
 
@@ -18,7 +18,7 @@ mutation CREATE_CUSTOMER_MUTATION(
     $street2: String
     $city: String
     $state: String
-    $zipCode: Int
+    $zipCode: String
     $country: String
 ) {
     createCustomer(
@@ -63,13 +63,11 @@ const AddCustomerButton = () => {
 
     const [createCustomer, { loading: createCustomerLoading, error: createCustomerError }] = useMutation(CREATE_CUSTOMER_MUTATION, {
         variables: { name, email, phone, street1, street2, city, state, zipCode, country },
-        update: (cache, payload) => {
-            const data: any = cache.readQuery({ query: CUSTOMERS_BY_USER_QUERY });
-
-            data.customersByUser.push(payload.data.createCustomer);
-            data.customersByUser = _.sortBy(data.customersByUser, 'createdAt');
-
-            cache.writeQuery({ query: CUSTOMERS_BY_USER_QUERY, data })
+        update: (store, response) => {
+            let newData = response.data.createCustomer;
+            let localStoreData: any = store.readQuery({ query: CUSTOMERS_BY_USER_QUERY });
+            localStoreData = { customersByUser: [...localStoreData.customersByUser, newData] };
+            store.writeQuery({ query: CUSTOMERS_BY_USER_QUERY, data: localStoreData });
         }
     });
 
@@ -88,64 +86,65 @@ const AddCustomerButton = () => {
                     }
                 }}>
                     <Form.Item
-                                    label="Name"
-                                    name="name"
-                                    rules={[{ required: true, message: 'This field is required' }]}
-                                >
-                                    <Input value={name} onChange={e => setName(e.target.value)} />
-                                </Form.Item>
+                        label="Name"
+                        name="name"
+                        rules={[{ required: true, message: 'This field is required' }]}
+                    >
+                        <Input value={name} onChange={e => setName(e.target.value)} />
+                    </Form.Item>
 
-                                <Form.Item
-                                    label="Email"
-                                    name="email"
-                                    rules={[{ type: 'email' }]}
-                                >
-                                    <Input value={name} onChange={e => setEmail(e.target.value)} />
-                                </Form.Item>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[{ type: 'email' }]}
+                    >
+                        <Input value={name} onChange={e => setEmail(e.target.value)} />
+                    </Form.Item>
 
-                                <Form.Item
-                                    label="Phone"
-                                    name="phone"
-                                >
-                                    <PhoneInput value={phone} onChange={setPhone} />
-                                </Form.Item>
+                    <Form.Item
+                        label="Phone"
+                        name="phone"
+                    >
+                        <PhoneInput value={phone} onChange={setPhone} />
+                    </Form.Item>
 
-                                <Form.Item
-                                    label="Street1"
-                                    name="street1"
-                                >
-                                    <Input value={street1} onChange={e => setStreet1(e.target.value)} />
-                                </Form.Item>
-                                <Form.Item
-                                    label="Street2"
-                                    name="street2"
-                                >
-                                    <Input value={street2} onChange={e => setStreet2(e.target.value)} />
-                                </Form.Item>
-                                <Form.Item
-                                    label="City"
-                                    name="city"
-                                >
-                                    <Input value={city} onChange={e => setCity(e.target.value)} />
-                                </Form.Item>
-                                <Form.Item
-                                    label="State"
-                                    name="state"
-                                >
-                                    <Input value={state} onChange={e => setState(e.target.value)} />
-                                </Form.Item>
-                                <Form.Item
-                                    label="Zip Code"
-                                    name="zipCode"
-                                >
-                                    <Input type='number' value={zipCode} onChange={e => setZipCode(e.target.value)} />
-                                </Form.Item>
-                                <Form.Item
-                                    label="Country"
-                                    name="country"
-                                >
-                                    <Input value={country} onChange={e => setCountry(e.target.value)} />
-                                </Form.Item>
+                    <Form.Item
+                        label="Street1"
+                        name="street1"
+                    >
+                        <Input value={street1} onChange={e => setStreet1(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Street2"
+                        name="street2"
+                    >
+                        <Input value={street2} onChange={e => setStreet2(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item
+                        label="City"
+                        name="city"
+                    >
+                        <Input value={city} onChange={e => setCity(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item
+                        label="State"
+                        name="state"
+                    >
+                        <Input value={state} onChange={e => setState(e.target.value)} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Zip Code"
+                        name="zipCode"
+                    >
+                        <Input value={zipCode} onChange={e => setZipCode(e.target.value)} />
+                    </Form.Item>
+                    {/** TODO make country a dropdown */}
+                    <Form.Item
+                        label="Country"
+                        name="country"
+                    >
+                        <Input value={country} onChange={e => setCountry(e.target.value)} />
+                    </Form.Item>
 
                     <Form.Item {...tailLayout}>
                         <Button type="primary" htmlType="submit" loading={createCustomerLoading}>Add{createCustomerLoading ? 'ing ' : ' '} Customer</Button>

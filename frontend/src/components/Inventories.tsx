@@ -84,11 +84,12 @@ const Inventories = () => {
                                             <DeleteButton
                                                 onClick={() => setIdForDeletion(value)}
                                                 onDelete={async () => {
+                                                    message.info('Please wait...');
                                                     await deleteInventory();
                                                     if (deleteInventoryError) {
                                                         message.error('Error: cannot delete. Please contact SourceCodeXL.');
                                                     } else {
-                                                        message.success('Inventory is successfully deleted.');
+                                                        message.success('Inventory deleted');
                                                     }
                                                 }}
                                             />

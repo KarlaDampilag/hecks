@@ -244,6 +244,50 @@ async function createCustomer(parent, args, ctx, info) {
     return customer;
 }
 
+async function updateCustomer(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const customers = await ctx.prisma.user({ id: ctx.request.userId }).customers({
+        where: { id: args.id }
+    });
+
+    if (!customers || customers.length < 1 || !customers[0]) {
+        throw new Error("Cannot find this customer owned by your user id.");
+    }
+
+    // first take a copy of the updates
+    const updates = { ...args };
+
+    // remove id from the updates so it won't get updated
+    delete updates.id
+
+    return await ctx.prisma.updateCustomer({
+        data: {
+            ...updates
+        },
+        where: {
+            id: args.id
+        }
+    });
+}
+
+async function deleteCustomer(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const objects = await ctx.prisma.user({ id: ctx.request.userId }).customers({
+        where: { id: args.id }
+    });
+
+    if (!objects || objects.length < 1 || !objects[0]) {
+        throw new Error("Cannot find this customer owned by your user id.");
+    }
+    return await ctx.prisma.deleteCustomer({ id: args.id });
+}
+
 module.exports = {
     signup,
     login,
@@ -255,5 +299,7 @@ module.exports = {
     createInventory,
     updateInventory,
     deleteInventory,
-    createCustomer
+    createCustomer,
+    updateCustomer,
+    deleteCustomer
 }

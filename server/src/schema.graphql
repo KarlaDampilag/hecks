@@ -13,8 +13,9 @@ type Mutation {
     createInventory(name: String!): Inventory!
     updateInventory(id: ID!, name: String): Inventory!
     deleteInventory(id: ID!): Inventory!
-    createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
-    # updateCustomer(id: ID!, name: String, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: Int, country: String): Customer!
+    createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: String, country: String): Customer!
+    updateCustomer(id: ID!, name: String, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: String, country: String): Customer!
+    deleteCustomer(id: ID!): Customer!
     # createSaleItem(saleId: String!, productId: String!, quantity: String!, discountType: SpecialSaleDeductionType, discountValue: String): SaleItem!
     # createSaleAndItems(timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
     # requestReset(email: String!): SuccessMessage

@@ -54,7 +54,7 @@ const UpdateInventoryButton = (props: PropTypes) => {
           </Form.Item>
 
           <Form.Item {...tailLayout}>
-            <Button type="primary" htmlType="submit" disabled={updateInventoryLoading} loading={updateInventoryLoading}>Updat{updateInventoryLoading ? 'ing' : 'e'} inventory</Button>
+            <Button type="primary" htmlType="submit" disabled={updateInventoryLoading} loading={updateInventoryLoading}>Updat{updateInventoryLoading ? 'ing' : 'e'} Inventory</Button>
           </Form.Item>
         </Form>
       </Modal>

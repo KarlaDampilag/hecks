@@ -6,6 +6,7 @@ import { Table, message } from 'antd';
 
 import { userContext } from './App';
 import AddCustomerButton from './AddCustomerButton';
+import UpdateCustomerButton from './UpdateCustomerButton';
 import DeleteButton from './DeleteButton';
 
 const CUSTOMERS_BY_USER_QUERY = gql`
@@ -26,11 +27,30 @@ const CUSTOMERS_BY_USER_QUERY = gql`
     }
 `;
 
+const DELETE_CUSTOMER_MUTATION = gql`
+    mutation DELETE_CUSTOMER_MUTATION($id: ID!) {
+        deleteCustomer(id: $id) {
+            id
+            name
+            createdAt
+        }
+    }
+`;
+
 const Customers = () => {
     const [idForDeletion, setIdForDeletion] = React.useState<string>();
 
     const { data: customersData, loading: customersLoading } = useQuery(CUSTOMERS_BY_USER_QUERY);
     const customers = customersData ? customersData.customersByUser : null;
+
+    const [deleteCustomer, { error: deleteCustomerError }] = useMutation(DELETE_CUSTOMER_MUTATION, {
+        variables: { id: idForDeletion },
+        update: (cache: any, payload: any) => {
+            const data = cache.readQuery({ query: CUSTOMERS_BY_USER_QUERY });
+            const filteredItems = _.filter(data.customersByUser, item => item.id !== payload.data.deleteCustomer.id);
+            cache.writeQuery({ query: CUSTOMERS_BY_USER_QUERY, data: { customersByUser: filteredItems } });
+        }
+    });
 
     return (
         <userContext.Consumer>
@@ -51,13 +71,32 @@ const Customers = () => {
                                     dataIndex: 'name'
                                 },
                                 {
+                                    title: 'Email',
+                                    dataIndex: 'email'
+                                },
+                                {
+                                    title: 'Phone',
+                                    dataIndex: 'phone'
+                                },
+                                {
+                                    title: 'Address',
+                                    dataIndex: 'id',
+                                    key: 'address',
+                                    render: (value, record) => {
+                                        const allowed = ['street1','street2','city','state','zipCode','country'];
+                                        const filteredObj = _.pick(record, allowed)
+                                        return (
+                                            _.filter(Object.values(filteredObj), value => value).join(', ')
+                                        )
+                                    }
+                                },
+                                {
                                     title: 'Edit ✏️',
                                     dataIndex: 'id',
                                     key: 'edit',
                                     render: (value, record) => {
                                         return (
-                                            //<UpdateProductButton product={record} categories={categoriesData} />
-                                            <p>Not yet implemented.</p>
+                                            <UpdateCustomerButton customer={record} />
                                         );
                                     }
                                 },
@@ -67,18 +106,18 @@ const Customers = () => {
                                     key: 'edit',
                                     render: (value) => {
                                         return (
-                                            // <DeleteButton
-                                            //     onClick={() => setIdForDeletion(value)}
-                                            //     onDelete={async () => {
-                                            //         await deleteInventory();
-                                            //         if (deleteInventoryError) {
-                                            //             message.error('Error: cannot delete. Please contact SourceCodeXL.');
-                                            //         } else {
-                                            //             message.success('Ivnentory is successfully deleted.');
-                                            //         }
-                                            //     }}
-                                            // />
-                                            <p>Not yet implemented</p>
+                                            <DeleteButton
+                                                onClick={() => setIdForDeletion(value)}
+                                                onDelete={async () => {
+                                                    message.info('Please wait...');
+                                                    await deleteCustomer();
+                                                    if (deleteCustomerError) {
+                                                        message.error('Error: cannot delete. Please contact SourceCodeXL.');
+                                                    } else {
+                                                        message.success('Customer deleted');
+                                                    }
+                                                }}
+                                            />
                                         );
                                     }
                                 }

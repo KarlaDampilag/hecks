@@ -154,11 +154,12 @@ const Products = () => {
                                             <DeleteButton
                                                 onClick={() => setProductIdForDeletion(value)}
                                                 onDelete={async () => {
+                                                    message.info('Please wait...');
                                                     await deleteProduct();
                                                     if (deleteProductError) {
                                                         message.error('Error: cannot delete product. Please contact SourceCodeXL.');
                                                     } else {
-                                                        message.success('Product is successfully deleted.');
+                                                        message.success('Product deleted');
                                                     }
                                                 }}
                                             />
