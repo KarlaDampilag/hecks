@@ -287,6 +287,61 @@ async function deleteCustomer(parent, args, ctx, info) {
     }
     return await ctx.prisma.deleteCustomer({ id: args.id });
 }
+async function createSale(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const arguments = { ...args };
+    delete arguments.customerId;
+
+    const sale = await ctx.prisma.createCustomer({
+        user: {
+            connect: {
+                id: ctx.request.userId
+            }
+        },
+        customer: {
+            connect: {
+                id: args.customerId
+            }
+        },
+        ...arguments
+    });
+
+    return sale;
+}
+
+async function createSaleItem(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const arguments = { ...args };
+    delete arguments.saleId;
+    delete arguments.productId;
+
+    const saleItem = await ctx.prisma.createSaleItem({
+        user: {
+            connect: {
+                id: ctx.request.userId
+            }
+        },
+        sale: {
+            connect: {
+                id: args.saleId
+            }
+        },
+        product: {
+            connect: {
+                id: args.productId
+            }
+        },
+        ...arguments
+    });
+
+    return saleItem;
+}
 
 module.exports = {
     signup,
@@ -301,5 +356,7 @@ module.exports = {
     deleteInventory,
     createCustomer,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
+    createSale,
+    createSaleItem
 }

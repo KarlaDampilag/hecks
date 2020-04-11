@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.bold {
+  font-weight: 800;
+}
+
 .app-wrapper {
   max-width: 1500px;
   margin: 0 auto;
@@ -22,4 +26,37 @@ code {
 
 .add-button {
   margin-bottom: 1em;
+}
+
+.sale-item-form-row {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-evenly;
+}
+.sale-item-form-row label {
+  flex-grow: 1;
+  flex-basis: 0;
+  padding-left: 10px;
+}
+.sale-item-form-row .x-container {
+  flex-grow: 0;
+  align-self: flex-end;
+  padding: 5px;
+}
+.sale-item-form-row .first-label {
+  flex-grow: 4;
+  padding-left: 0;
+}
+
+.deduction-form-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+.deduction-form-row .deduction-value-col {
+  flex-grow: 2;
+  padding-left: 10px;
+}
+
+.deduction-value-col.padding-left-22 {
+  padding-left: 22px;
 }

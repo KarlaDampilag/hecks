@@ -116,6 +116,7 @@ type Sale {
   note: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  saleItems: [SaleItem!]!
 }
 
 type SaleItem {

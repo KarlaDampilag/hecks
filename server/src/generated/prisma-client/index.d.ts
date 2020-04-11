@@ -1348,6 +1348,9 @@ export interface SaleWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  saleItems_every?: Maybe<SaleItemWhereInput>;
+  saleItems_some?: Maybe<SaleItemWhereInput>;
+  saleItems_none?: Maybe<SaleItemWhereInput>;
   AND?: Maybe<SaleWhereInput[] | SaleWhereInput>;
   OR?: Maybe<SaleWhereInput[] | SaleWhereInput>;
   NOT?: Maybe<SaleWhereInput[] | SaleWhereInput>;
@@ -1690,6 +1693,7 @@ export interface SaleCreateWithoutUserInput {
   taxValue?: Maybe<String>;
   shipping?: Maybe<String>;
   note?: Maybe<String>;
+  saleItems?: Maybe<SaleItemCreateManyWithoutSaleInput>;
 }
 
 export interface CustomerCreateOneInput {
@@ -1742,19 +1746,19 @@ export interface SaleItemCreateManyInput {
 
 export interface SaleItemCreateInput {
   id?: Maybe<ID_Input>;
-  sale: SaleCreateOneInput;
+  sale: SaleCreateOneWithoutSaleItemsInput;
   product: ProductCreateOneInput;
   quantity: String;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
 }
 
-export interface SaleCreateOneInput {
-  create?: Maybe<SaleCreateInput>;
+export interface SaleCreateOneWithoutSaleItemsInput {
+  create?: Maybe<SaleCreateWithoutSaleItemsInput>;
   connect?: Maybe<SaleWhereUniqueInput>;
 }
 
-export interface SaleCreateInput {
+export interface SaleCreateWithoutSaleItemsInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneWithoutSalesInput;
   customer?: Maybe<CustomerCreateOneInput>;
@@ -1789,6 +1793,21 @@ export interface UserCreateWithoutSalesInput {
   inventoryItems?: Maybe<InventoryItemCreateManyInput>;
   customers?: Maybe<CustomerCreateManyWithoutUserInput>;
   saleItems?: Maybe<SaleItemCreateManyInput>;
+}
+
+export interface SaleItemCreateManyWithoutSaleInput {
+  create?: Maybe<
+    SaleItemCreateWithoutSaleInput[] | SaleItemCreateWithoutSaleInput
+  >;
+  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+}
+
+export interface SaleItemCreateWithoutSaleInput {
+  id?: Maybe<ID_Input>;
+  product: ProductCreateOneInput;
+  quantity: String;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
 }
 
 export interface InventoryItemTransactionCreateManyInput {
@@ -2638,6 +2657,7 @@ export interface SaleUpdateWithoutUserDataInput {
   taxValue?: Maybe<String>;
   shipping?: Maybe<String>;
   note?: Maybe<String>;
+  saleItems?: Maybe<SaleItemUpdateManyWithoutSaleInput>;
 }
 
 export interface CustomerUpdateOneInput {
@@ -2714,21 +2734,21 @@ export interface SaleItemUpdateWithWhereUniqueNestedInput {
 }
 
 export interface SaleItemUpdateDataInput {
-  sale?: Maybe<SaleUpdateOneRequiredInput>;
+  sale?: Maybe<SaleUpdateOneRequiredWithoutSaleItemsInput>;
   product?: Maybe<ProductUpdateOneRequiredInput>;
   quantity?: Maybe<String>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
 }
 
-export interface SaleUpdateOneRequiredInput {
-  create?: Maybe<SaleCreateInput>;
-  update?: Maybe<SaleUpdateDataInput>;
-  upsert?: Maybe<SaleUpsertNestedInput>;
+export interface SaleUpdateOneRequiredWithoutSaleItemsInput {
+  create?: Maybe<SaleCreateWithoutSaleItemsInput>;
+  update?: Maybe<SaleUpdateWithoutSaleItemsDataInput>;
+  upsert?: Maybe<SaleUpsertWithoutSaleItemsInput>;
   connect?: Maybe<SaleWhereUniqueInput>;
 }
 
-export interface SaleUpdateDataInput {
+export interface SaleUpdateWithoutSaleItemsDataInput {
   user?: Maybe<UserUpdateOneRequiredWithoutSalesInput>;
   customer?: Maybe<CustomerUpdateOneInput>;
   timestamp?: Maybe<Int>;
@@ -2770,9 +2790,9 @@ export interface UserUpsertWithoutSalesInput {
   create: UserCreateWithoutSalesInput;
 }
 
-export interface SaleUpsertNestedInput {
-  update: SaleUpdateDataInput;
-  create: SaleCreateInput;
+export interface SaleUpsertWithoutSaleItemsInput {
+  update: SaleUpdateWithoutSaleItemsDataInput;
+  create: SaleCreateWithoutSaleItemsInput;
 }
 
 export interface SaleItemUpsertWithWhereUniqueNestedInput {
@@ -2872,6 +2892,47 @@ export interface UserUpsertWithoutCustomersInput {
 export interface CustomerUpsertNestedInput {
   update: CustomerUpdateDataInput;
   create: CustomerCreateInput;
+}
+
+export interface SaleItemUpdateManyWithoutSaleInput {
+  create?: Maybe<
+    SaleItemCreateWithoutSaleInput[] | SaleItemCreateWithoutSaleInput
+  >;
+  delete?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  set?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  disconnect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  update?: Maybe<
+    | SaleItemUpdateWithWhereUniqueWithoutSaleInput[]
+    | SaleItemUpdateWithWhereUniqueWithoutSaleInput
+  >;
+  upsert?: Maybe<
+    | SaleItemUpsertWithWhereUniqueWithoutSaleInput[]
+    | SaleItemUpsertWithWhereUniqueWithoutSaleInput
+  >;
+  deleteMany?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
+  updateMany?: Maybe<
+    | SaleItemUpdateManyWithWhereNestedInput[]
+    | SaleItemUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SaleItemUpdateWithWhereUniqueWithoutSaleInput {
+  where: SaleItemWhereUniqueInput;
+  data: SaleItemUpdateWithoutSaleDataInput;
+}
+
+export interface SaleItemUpdateWithoutSaleDataInput {
+  product?: Maybe<ProductUpdateOneRequiredInput>;
+  quantity?: Maybe<String>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+}
+
+export interface SaleItemUpsertWithWhereUniqueWithoutSaleInput {
+  where: SaleItemWhereUniqueInput;
+  update: SaleItemUpdateWithoutSaleDataInput;
+  create: SaleItemCreateWithoutSaleInput;
 }
 
 export interface SaleUpsertWithWhereUniqueWithoutUserInput {
@@ -3396,6 +3457,20 @@ export interface ProductUpdateManyMutationInput {
   categories?: Maybe<ProductUpdatecategoriesInput>;
 }
 
+export interface SaleCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneWithoutSalesInput;
+  customer?: Maybe<CustomerCreateOneInput>;
+  timestamp: Int;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+  taxType?: Maybe<SpecialSaleDeductionType>;
+  taxValue?: Maybe<String>;
+  shipping?: Maybe<String>;
+  note?: Maybe<String>;
+  saleItems?: Maybe<SaleItemCreateManyWithoutSaleInput>;
+}
+
 export interface SaleUpdateInput {
   user?: Maybe<UserUpdateOneRequiredWithoutSalesInput>;
   customer?: Maybe<CustomerUpdateOneInput>;
@@ -3406,6 +3481,7 @@ export interface SaleUpdateInput {
   taxValue?: Maybe<String>;
   shipping?: Maybe<String>;
   note?: Maybe<String>;
+  saleItems?: Maybe<SaleItemUpdateManyWithoutSaleInput>;
 }
 
 export interface SaleUpdateManyMutationInput {
@@ -3419,7 +3495,7 @@ export interface SaleUpdateManyMutationInput {
 }
 
 export interface SaleItemUpdateInput {
-  sale?: Maybe<SaleUpdateOneRequiredInput>;
+  sale?: Maybe<SaleUpdateOneRequiredWithoutSaleItemsInput>;
   product?: Maybe<ProductUpdateOneRequiredInput>;
   quantity?: Maybe<String>;
   discountType?: Maybe<SpecialSaleDeductionType>;
@@ -4199,6 +4275,15 @@ export interface SalePromise extends Promise<Sale>, Fragmentable {
   note: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  saleItems: <T = FragmentableArray<SaleItem>>(args?: {
+    where?: SaleItemWhereInput;
+    orderBy?: SaleItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface SaleSubscription
@@ -4216,6 +4301,15 @@ export interface SaleSubscription
   note: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  saleItems: <T = Promise<AsyncIterator<SaleItemSubscription>>>(args?: {
+    where?: SaleItemWhereInput;
+    orderBy?: SaleItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface SaleNullablePromise
@@ -4233,6 +4327,15 @@ export interface SaleNullablePromise
   note: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  saleItems: <T = FragmentableArray<SaleItem>>(args?: {
+    where?: SaleItemWhereInput;
+    orderBy?: SaleItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface SaleItem {
