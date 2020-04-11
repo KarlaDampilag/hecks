@@ -33,6 +33,7 @@ type Query {
     categoriesByUser: [Category]!
     inventoryItemsByProduct(id: ID!): [InventoryItem]!
     inventoriesByUser(orderBy: InventoryOrderByInput): [Inventory]!
+    inventoryItemCount(id: ID!): Int!
     # inventory(id: ID!): Inventory
     customersByUser(orderBy: CustomerOrderByInput): [Customer]!
     # customer(id: ID!): Customer

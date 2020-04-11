@@ -74,6 +74,17 @@ async function inventoryItemsByProduct(parent, args, ctx, info) {
     });
 }
 
+async function inventoryItemCount(parent, args, ctx, info) {
+    let count = 0;
+    const inventoryItemsByProduct = await ctx.prisma.user({ id: ctx.request.userId }).inventoryItems({
+        where: { product: { id: args.id } }
+    });
+    if (inventoryItemsByProduct) {
+        count = inventoryItemsByProduct.length;
+    }
+    return count;
+}
+
 async function customersByUser(parent, args, ctx, info) {
     if (!ctx.request.userId) {
         throw new Error('You must be logged in to do that.');
@@ -90,5 +101,6 @@ module.exports = {
     categoriesByUser,
     inventoriesByUser,
     inventoryItemsByProduct,
+    inventoryItemCount,
     customersByUser
 }

@@ -8,6 +8,7 @@ import { userContext } from './App';
 import AddProductButton from './AddProductButton';
 import UpdateProductButton from './UpdateProductButton';
 import DeleteButton from './DeleteButton';
+import InventoryItemCount from './InventoryItemCount';
 
 const PRODUCTS_BY_USER_QUERY = gql`
     {
@@ -59,14 +60,14 @@ const DELETE_PRODUCT_MUTATION = gql`
     }
 `;
 
-// const INVENTORY_ITEM_COUNT = gql`
-//     query INVENTORY_ITEM_COUNT($id: ID!) {
-//         inventoryItemCount(id: $id)
-//     }
-// `;
+interface ProductWithCount {
+    product: any;
+    count: number;
+}
 
 const Products = () => {
     const [productIdForDeletion, setProductIdForDeletion] = React.useState<string>();
+
     const { data: productsData, loading } = useQuery(PRODUCTS_BY_USER_QUERY);
     const products = productsData ? productsData.productsByUser : null;
 
@@ -131,8 +132,8 @@ const Products = () => {
                                 {
                                     title: 'Total Stock Count',
                                     dataIndex: 'id',
-                                    render: (value) => {
-                                        return "Not yet implemented"
+                                    render: (value, record) => {
+                                        return <InventoryItemCount product={record} />
                                     }
                                 },
                                 {
