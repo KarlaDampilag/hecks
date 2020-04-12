@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, Spin } from 'antd';
+import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, Spin, InputNumber } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import * as _ from 'lodash';
@@ -99,17 +99,38 @@ const AddSaleButton = () => {
         },
         quantity: 1
     }]);
-    const [subTotal, setSubTotal] = React.useState<number>();
     const [customerId, setCustomerId] = React.useState<string>();
     const [timestamp, setTimestamp] = React.useState<number>(moment().unix());
     const [discountType, setDiscountType] = React.useState<string>('FLAT');
     const [discountValue, setDiscountValue] = React.useState<string | null>();
     const [taxType, setTaxType] = React.useState<string>('FLAT');
     const [taxValue, setTaxValue] = React.useState<string | null>();
-    const [shipping, setShipping] = React.useState<string>();
+    const [shipping, setShipping] = React.useState<string | null>();
     const [note, setNote] = React.useState<string>();
-
+    const [subTotal, setSubTotal] = React.useState<number>(0);
+    const [total, setTotal] = React.useState<number>();
     const [form] = Form.useForm();
+
+    React.useEffect(() => {
+        let total = subTotal;
+        let discountDeduction;
+        let taxDeduction;
+        const discountNumber = discountValue ? parseFloat(discountValue) : 0;
+        const taxNumber = taxValue ? parseFloat(taxValue) : 0;
+        const shippingNumber = shipping ? parseFloat(shipping) : 0;
+        if (discountType == 'FLAT') {
+            discountDeduction = discountNumber;
+        } else {
+            discountDeduction = subTotal * (discountNumber / 100);
+        }
+        if (taxType == 'FLAT') {
+            taxDeduction = taxNumber;
+        } else {
+            taxDeduction = subTotal * (taxNumber / 100);
+        }
+        total = total - discountDeduction -  taxDeduction - shippingNumber;
+        setTotal(total);
+    }, [saleItems, discountType, discountValue, taxType, taxValue, shipping]);
 
     const [createSale, { error: createSaleError, loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
         variables: { saleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
@@ -143,10 +164,10 @@ const AddSaleButton = () => {
         updateSubTotal(updatedSaleItems);
     }
 
-    const handleQuantityChange = (saleItem: SaleItemProps, value: number) => {
+    const handleQuantityChange = (saleItem: SaleItemProps, value: number | undefined) => {
         const updatedSaleItems = [...saleItems];
         const updatedSaleItem: SaleItemProps = { ...saleItem };
-        updatedSaleItem.quantity = value;
+        updatedSaleItem.quantity = value ? value : 0;
         const index = _.findIndex(updatedSaleItems, saleItem);
         updatedSaleItems.splice(index, 1, updatedSaleItem);
         setSaleItems(updatedSaleItems);
@@ -245,10 +266,9 @@ const AddSaleButton = () => {
 
                                     <label>
                                         <span>Quantity:</span>
-                                        <Input
-                                            type='number'
-                                            value={saleItem.quantity.toString()}
-                                            onChange={(e) => handleQuantityChange(saleItem, parseInt(e.target.value))}
+                                        <InputNumber
+                                            value={saleItem.quantity}
+                                            onChange={(value) => handleQuantityChange(saleItem, value)}
                                         />
                                     </label>
 
@@ -322,13 +342,12 @@ const AddSaleButton = () => {
                         </div>
                         <div className='deduction-value-col'>
                             <Form.Item>
-                                <Input
-                                    type='number'
-                                    value={discountValue ? discountValue.toString() : ''}
-                                    onChange={(e) => {
+                                <InputNumber
+                                    value={discountValue ? parseFloat(discountValue) : 0}
+                                    onChange={(value) => {
                                         let valueToSet = null;
-                                        if (e.target.value.length > 0) {
-                                            valueToSet = e.target.value;
+                                        if (value) {
+                                            valueToSet = value.toString();
                                         }
                                         setDiscountValue(valueToSet)
                                     }}
@@ -354,13 +373,12 @@ const AddSaleButton = () => {
                         </div>
                         <div className='deduction-value-col'>
                             <Form.Item>
-                                <Input
-                                    type='number'
-                                    value={taxValue ? taxValue.toString() : ''}
-                                    onChange={(e) => {
+                                <InputNumber
+                                    value={taxValue ? parseFloat(taxValue) : 0}
+                                    onChange={(value) => {
                                         let valueToSet = null;
-                                        if (e.target.value.length > 0) {
-                                            valueToSet = e.target.value;
+                                        if (value) {
+                                            valueToSet = value.toString();
                                         }
                                         setTaxValue(valueToSet)
                                     }}
@@ -374,8 +392,23 @@ const AddSaleButton = () => {
                         name='shipping'
                         {...layout}
                     >
-                        <Input type='number' value={shipping} onChange={e => setShipping(e.target.value.toString())} />
+                        <InputNumber
+                            value={shipping ? parseFloat(shipping) : 0}
+                            onChange={value => {
+                                let valueToSet = null;
+                                if (value) {
+                                    valueToSet = value.toString();
+                                }
+                                setShipping(valueToSet);
+                            }}
+                        />
                     </Form.Item>
+
+                    <Divider />
+
+                    <div>
+                        <span className='bold'>TOTAL: {total}</span>
+                    </div>
 
                     <Divider />
 
