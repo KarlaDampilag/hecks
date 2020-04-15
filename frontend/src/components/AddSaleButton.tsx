@@ -141,16 +141,9 @@ const AddSaleButton = () => {
     });
 
     const { data: productsByUserData } = useQuery(PRODUCTS_BY_USER_QUERY);
-    const products = productsByUserData ? productsByUserData.productsByUser : null;
-    // TODO use reduce
-    // FIXME filter out already used products
-    // const filteredProducts = _.filter(products, product => {
-    //     let check = false;
-    //     _.each(saleItems, saleItem => {
-    //         check = saleItem.product.id != product.id;
-    //     });
-    //     return check;
-    // });
+    const products = productsByUserData ? productsByUserData.productsByUser : [];
+    const saleItemIds = _.map(saleItems, saleItem => saleItem.product.id);
+
     const { data: customersByUserData } = useQuery(CUSTOMERS_BY_USER_QUERY);
     const customers = customersByUserData ? customersByUserData.customersByUser : null;
 
@@ -258,7 +251,13 @@ const AddSaleButton = () => {
                                         >
                                             {
                                                 _.map(products, product =>
-                                                    <Select.Option value={JSON.stringify(product)} key={product.id}>{product.name}</Select.Option>
+                                                    <Select.Option
+                                                        value={JSON.stringify(product)}
+                                                        disabled={_.includes(saleItemIds, product.id)}
+                                                        key={product.id}
+                                                    >
+                                                        {product.name}
+                                                    </Select.Option>
                                                 )
                                             }
                                         </Select>
