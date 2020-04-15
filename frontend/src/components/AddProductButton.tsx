@@ -16,6 +16,7 @@ mutation CREATE_PRODUCT_MUTATION(
     $name: String!
     $salePrice: String!
     $costPrice: String
+    $sku: String
     $unit: String
     $notes: String
     $image: String
@@ -26,6 +27,7 @@ mutation CREATE_PRODUCT_MUTATION(
         name: $name
         salePrice: $salePrice
         costPrice: $costPrice
+        sku: $sku
         unit: $unit
         notes: $notes
         image: $image

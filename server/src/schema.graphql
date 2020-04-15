@@ -5,7 +5,7 @@ type Mutation {
     confirmEmail(confirmEmailToken: String!, email: String!): User!
     logout: String
     login(email: String!, password: String!): User!
-    createProduct(name: String!, salePrice: String!, costPrice: String, unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
+    createProduct(name: String!, salePrice: String!, costPrice: String, sku: String, unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
     # createCategory(name: String!): Category!
     createCategories(names: [String!]!): [Category!]!
     updateProduct(id: ID!, name: String, salePrice: String, costPrice: String,  unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
