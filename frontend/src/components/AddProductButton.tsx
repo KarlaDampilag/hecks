@@ -36,6 +36,7 @@ mutation CREATE_PRODUCT_MUTATION(
         name
         salePrice
         costPrice
+        sku
         unit
         notes
         image
@@ -50,6 +51,7 @@ const AddProductButton = (props: PropTypes) => {
     const [name, setName] = React.useState<string>();
     const [salePrice, setSalePrice] = React.useState<string>();
     const [costPrice, setCostPrice] = React.useState<string>();
+    const [sku, setSKU] = React.useState<string>();
     const [unit, setUnit] = React.useState<string>();
     const [notes, setNotes] = React.useState<string>();
     const [image, setImage] = React.useState<string | null>(null);
@@ -90,7 +92,7 @@ const AddProductButton = (props: PropTypes) => {
     }
 
     const [createProduct, { loading: createProductLoading, error: createProductError }] = useMutation(CREATE_PRODUCT_MUTATION, {
-        variables: { name, salePrice, costPrice, unit, notes, image, largeImage, categories },
+        variables: { name, salePrice, costPrice, sku, unit, notes, image, largeImage, categories },
         update: (cache, payload) => {
             const data: any = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
             data.productsByUser.push(payload.data.createProduct);
@@ -160,6 +162,13 @@ const AddProductButton = (props: PropTypes) => {
                     </Form.Item>
 
                     <Form.Item
+                        label="SKU"
+                        name="sku"
+                    >
+                        <Input value={sku} onChange={e => setSKU(e.target.value)} />
+                    </Form.Item>
+
+                    <Form.Item
                         label="Unit"
                         name="unit"
                     >
@@ -205,7 +214,7 @@ const AddProductButton = (props: PropTypes) => {
                     </Form.Item>
 
                     <Form.Item {...tailLayout}>
-                        <Button type="primary" htmlType="submit" loading={createProductLoading || imageIsLoading || createCategoriesLoading}>Add{createProductLoading || imageIsLoading || createCategoriesLoading ? 'ing ' : ' '} Product</Button>
+                        <Button type="primary" htmlType="submit" loading={createProductLoading || createCategoriesLoading}>Add{createProductLoading || createCategoriesLoading ? 'ing ' : ' '} Product</Button>
                         <Button onClick={() => setIsShowingModal(false)}>Cancel</Button>
                     </Form.Item>
                 </Form>

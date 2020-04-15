@@ -18,6 +18,7 @@ const PRODUCTS_BY_USER_QUERY = gql`
             salePrice
             costPrice
             unit
+            sku
             categories
             notes
             image
@@ -119,6 +120,10 @@ const Products = () => {
                                 {
                                     title: 'Cost Price',
                                     dataIndex: 'costPrice'
+                                },
+                                {
+                                    title: 'SKU',
+                                    dataIndex: 'sku'
                                 },
                                 {
                                     title: 'Categories',
