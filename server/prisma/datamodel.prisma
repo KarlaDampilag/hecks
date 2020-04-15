@@ -96,6 +96,7 @@ type Customer {
   country: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  sales: [Sale!]
 }
 
 enum SpecialSaleDeductionType {
@@ -123,7 +124,7 @@ type SaleItem {
   id: ID! @id
   sale: Sale!
   product: Product!
-  quantity: String!
+  quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
   createdAt: DateTime! @createdAt

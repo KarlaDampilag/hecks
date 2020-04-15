@@ -1,5 +1,18 @@
 # import * from './generated/prisma.graphql'
 
+input SaleItemInput {
+  product: ProductInput!
+  quantity: Int!
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+}
+
+input ProductInput {
+  id: String!
+  salePrice: String!
+  name: String!
+}
+
 type Mutation {
     signup(email: String!, password: String!, confirmPassword: String!): User!
     confirmEmail(confirmEmailToken: String!, email: String!): User!
@@ -16,7 +29,7 @@ type Mutation {
     createCustomer(name: String!, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: String, country: String): Customer!
     updateCustomer(id: ID!, name: String, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: String, country: String): Customer!
     deleteCustomer(id: ID!): Customer!
-    createSale(timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
+    createSaleAndItems(saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
     createSaleItem(saleId: String!, productId: String!, quantity: String!, discountType: SpecialSaleDeductionType, discountValue: String): SaleItem!
     # requestReset(email: String!): SuccessMessage
     # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!

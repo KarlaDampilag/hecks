@@ -1234,6 +1234,9 @@ export interface CustomerWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  sales_every?: Maybe<SaleWhereInput>;
+  sales_some?: Maybe<SaleWhereInput>;
+  sales_none?: Maybe<SaleWhereInput>;
   AND?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   OR?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   NOT?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
@@ -1373,20 +1376,14 @@ export interface SaleItemWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   sale?: Maybe<SaleWhereInput>;
   product?: Maybe<ProductWhereInput>;
-  quantity?: Maybe<String>;
-  quantity_not?: Maybe<String>;
-  quantity_in?: Maybe<String[] | String>;
-  quantity_not_in?: Maybe<String[] | String>;
-  quantity_lt?: Maybe<String>;
-  quantity_lte?: Maybe<String>;
-  quantity_gt?: Maybe<String>;
-  quantity_gte?: Maybe<String>;
-  quantity_contains?: Maybe<String>;
-  quantity_not_contains?: Maybe<String>;
-  quantity_starts_with?: Maybe<String>;
-  quantity_not_starts_with?: Maybe<String>;
-  quantity_ends_with?: Maybe<String>;
-  quantity_not_ends_with?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  quantity_not?: Maybe<Int>;
+  quantity_in?: Maybe<Int[] | Int>;
+  quantity_not_in?: Maybe<Int[] | Int>;
+  quantity_lt?: Maybe<Int>;
+  quantity_lte?: Maybe<Int>;
+  quantity_gt?: Maybe<Int>;
+  quantity_gte?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountType_not?: Maybe<SpecialSaleDeductionType>;
   discountType_in?: Maybe<
@@ -1676,16 +1673,19 @@ export interface CustomerCreateWithoutUserInput {
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   country?: Maybe<String>;
+  sales?: Maybe<SaleCreateManyWithoutCustomerInput>;
 }
 
-export interface SaleCreateManyWithoutUserInput {
-  create?: Maybe<SaleCreateWithoutUserInput[] | SaleCreateWithoutUserInput>;
+export interface SaleCreateManyWithoutCustomerInput {
+  create?: Maybe<
+    SaleCreateWithoutCustomerInput[] | SaleCreateWithoutCustomerInput
+  >;
   connect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
 }
 
-export interface SaleCreateWithoutUserInput {
+export interface SaleCreateWithoutCustomerInput {
   id?: Maybe<ID_Input>;
-  customer?: Maybe<CustomerCreateOneInput>;
+  user: UserCreateOneWithoutSalesInput;
   timestamp: Int;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -1696,12 +1696,68 @@ export interface SaleCreateWithoutUserInput {
   saleItems?: Maybe<SaleItemCreateManyWithoutSaleInput>;
 }
 
-export interface CustomerCreateOneInput {
-  create?: Maybe<CustomerCreateInput>;
+export interface UserCreateOneWithoutSalesInput {
+  create?: Maybe<UserCreateWithoutSalesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutSalesInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  role: String;
+  permissions?: Maybe<UserCreatepermissionsInput>;
+  verified: Boolean;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  products?: Maybe<ProductCreateManyWithoutUserInput>;
+  categories?: Maybe<CategoryCreateManyWithoutUserInput>;
+  inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
+  customers?: Maybe<CustomerCreateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemCreateManyInput>;
+}
+
+export interface SaleItemCreateManyInput {
+  create?: Maybe<SaleItemCreateInput[] | SaleItemCreateInput>;
+  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+}
+
+export interface SaleItemCreateInput {
+  id?: Maybe<ID_Input>;
+  sale: SaleCreateOneWithoutSaleItemsInput;
+  product: ProductCreateOneInput;
+  quantity: Int;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+}
+
+export interface SaleCreateOneWithoutSaleItemsInput {
+  create?: Maybe<SaleCreateWithoutSaleItemsInput>;
+  connect?: Maybe<SaleWhereUniqueInput>;
+}
+
+export interface SaleCreateWithoutSaleItemsInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneWithoutSalesInput;
+  customer?: Maybe<CustomerCreateOneWithoutSalesInput>;
+  timestamp: Int;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+  taxType?: Maybe<SpecialSaleDeductionType>;
+  taxValue?: Maybe<String>;
+  shipping?: Maybe<String>;
+  note?: Maybe<String>;
+}
+
+export interface CustomerCreateOneWithoutSalesInput {
+  create?: Maybe<CustomerCreateWithoutSalesInput>;
   connect?: Maybe<CustomerWhereUniqueInput>;
 }
 
-export interface CustomerCreateInput {
+export interface CustomerCreateWithoutSalesInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneWithoutCustomersInput;
   name: String;
@@ -1739,29 +1795,14 @@ export interface UserCreateWithoutCustomersInput {
   saleItems?: Maybe<SaleItemCreateManyInput>;
 }
 
-export interface SaleItemCreateManyInput {
-  create?: Maybe<SaleItemCreateInput[] | SaleItemCreateInput>;
-  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+export interface SaleCreateManyWithoutUserInput {
+  create?: Maybe<SaleCreateWithoutUserInput[] | SaleCreateWithoutUserInput>;
+  connect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
 }
 
-export interface SaleItemCreateInput {
+export interface SaleCreateWithoutUserInput {
   id?: Maybe<ID_Input>;
-  sale: SaleCreateOneWithoutSaleItemsInput;
-  product: ProductCreateOneInput;
-  quantity: String;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountValue?: Maybe<String>;
-}
-
-export interface SaleCreateOneWithoutSaleItemsInput {
-  create?: Maybe<SaleCreateWithoutSaleItemsInput>;
-  connect?: Maybe<SaleWhereUniqueInput>;
-}
-
-export interface SaleCreateWithoutSaleItemsInput {
-  id?: Maybe<ID_Input>;
-  user: UserCreateOneWithoutSalesInput;
-  customer?: Maybe<CustomerCreateOneInput>;
+  customer?: Maybe<CustomerCreateOneWithoutSalesInput>;
   timestamp: Int;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -1769,30 +1810,7 @@ export interface SaleCreateWithoutSaleItemsInput {
   taxValue?: Maybe<String>;
   shipping?: Maybe<String>;
   note?: Maybe<String>;
-}
-
-export interface UserCreateOneWithoutSalesInput {
-  create?: Maybe<UserCreateWithoutSalesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserCreateWithoutSalesInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  role: String;
-  permissions?: Maybe<UserCreatepermissionsInput>;
-  verified: Boolean;
-  name?: Maybe<String>;
-  confirmEmailToken?: Maybe<String>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<String>;
-  products?: Maybe<ProductCreateManyWithoutUserInput>;
-  categories?: Maybe<CategoryCreateManyWithoutUserInput>;
-  inventories?: Maybe<InventoryCreateManyWithoutUserInput>;
-  inventoryItems?: Maybe<InventoryItemCreateManyInput>;
-  customers?: Maybe<CustomerCreateManyWithoutUserInput>;
-  saleItems?: Maybe<SaleItemCreateManyInput>;
+  saleItems?: Maybe<SaleItemCreateManyWithoutSaleInput>;
 }
 
 export interface SaleItemCreateManyWithoutSaleInput {
@@ -1805,7 +1823,7 @@ export interface SaleItemCreateManyWithoutSaleInput {
 export interface SaleItemCreateWithoutSaleInput {
   id?: Maybe<ID_Input>;
   product: ProductCreateOneInput;
-  quantity: String;
+  quantity: Int;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
 }
@@ -2436,6 +2454,491 @@ export interface CustomerUpdateWithoutUserDataInput {
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   country?: Maybe<String>;
+  sales?: Maybe<SaleUpdateManyWithoutCustomerInput>;
+}
+
+export interface SaleUpdateManyWithoutCustomerInput {
+  create?: Maybe<
+    SaleCreateWithoutCustomerInput[] | SaleCreateWithoutCustomerInput
+  >;
+  delete?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  connect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  set?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  disconnect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  update?: Maybe<
+    | SaleUpdateWithWhereUniqueWithoutCustomerInput[]
+    | SaleUpdateWithWhereUniqueWithoutCustomerInput
+  >;
+  upsert?: Maybe<
+    | SaleUpsertWithWhereUniqueWithoutCustomerInput[]
+    | SaleUpsertWithWhereUniqueWithoutCustomerInput
+  >;
+  deleteMany?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
+  updateMany?: Maybe<
+    SaleUpdateManyWithWhereNestedInput[] | SaleUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SaleUpdateWithWhereUniqueWithoutCustomerInput {
+  where: SaleWhereUniqueInput;
+  data: SaleUpdateWithoutCustomerDataInput;
+}
+
+export interface SaleUpdateWithoutCustomerDataInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutSalesInput>;
+  timestamp?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+  taxType?: Maybe<SpecialSaleDeductionType>;
+  taxValue?: Maybe<String>;
+  shipping?: Maybe<String>;
+  note?: Maybe<String>;
+  saleItems?: Maybe<SaleItemUpdateManyWithoutSaleInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutSalesInput {
+  create?: Maybe<UserCreateWithoutSalesInput>;
+  update?: Maybe<UserUpdateWithoutSalesDataInput>;
+  upsert?: Maybe<UserUpsertWithoutSalesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutSalesDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<String>;
+  permissions?: Maybe<UserUpdatepermissionsInput>;
+  verified?: Maybe<Boolean>;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  products?: Maybe<ProductUpdateManyWithoutUserInput>;
+  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
+  inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
+  customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemUpdateManyInput>;
+}
+
+export interface SaleItemUpdateManyInput {
+  create?: Maybe<SaleItemCreateInput[] | SaleItemCreateInput>;
+  update?: Maybe<
+    | SaleItemUpdateWithWhereUniqueNestedInput[]
+    | SaleItemUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | SaleItemUpsertWithWhereUniqueNestedInput[]
+    | SaleItemUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  set?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  disconnect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  deleteMany?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
+  updateMany?: Maybe<
+    | SaleItemUpdateManyWithWhereNestedInput[]
+    | SaleItemUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SaleItemUpdateWithWhereUniqueNestedInput {
+  where: SaleItemWhereUniqueInput;
+  data: SaleItemUpdateDataInput;
+}
+
+export interface SaleItemUpdateDataInput {
+  sale?: Maybe<SaleUpdateOneRequiredWithoutSaleItemsInput>;
+  product?: Maybe<ProductUpdateOneRequiredInput>;
+  quantity?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+}
+
+export interface SaleUpdateOneRequiredWithoutSaleItemsInput {
+  create?: Maybe<SaleCreateWithoutSaleItemsInput>;
+  update?: Maybe<SaleUpdateWithoutSaleItemsDataInput>;
+  upsert?: Maybe<SaleUpsertWithoutSaleItemsInput>;
+  connect?: Maybe<SaleWhereUniqueInput>;
+}
+
+export interface SaleUpdateWithoutSaleItemsDataInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutSalesInput>;
+  customer?: Maybe<CustomerUpdateOneWithoutSalesInput>;
+  timestamp?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+  taxType?: Maybe<SpecialSaleDeductionType>;
+  taxValue?: Maybe<String>;
+  shipping?: Maybe<String>;
+  note?: Maybe<String>;
+}
+
+export interface CustomerUpdateOneWithoutSalesInput {
+  create?: Maybe<CustomerCreateWithoutSalesInput>;
+  update?: Maybe<CustomerUpdateWithoutSalesDataInput>;
+  upsert?: Maybe<CustomerUpsertWithoutSalesInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerUpdateWithoutSalesDataInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutCustomersInput>;
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  phone?: Maybe<String>;
+  street1?: Maybe<String>;
+  street2?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipCode?: Maybe<String>;
+  country?: Maybe<String>;
+}
+
+export interface UserUpdateOneRequiredWithoutCustomersInput {
+  create?: Maybe<UserCreateWithoutCustomersInput>;
+  update?: Maybe<UserUpdateWithoutCustomersDataInput>;
+  upsert?: Maybe<UserUpsertWithoutCustomersInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutCustomersDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<String>;
+  permissions?: Maybe<UserUpdatepermissionsInput>;
+  verified?: Maybe<Boolean>;
+  name?: Maybe<String>;
+  confirmEmailToken?: Maybe<String>;
+  resetToken?: Maybe<String>;
+  resetTokenExpiry?: Maybe<String>;
+  products?: Maybe<ProductUpdateManyWithoutUserInput>;
+  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
+  inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
+  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
+  sales?: Maybe<SaleUpdateManyWithoutUserInput>;
+  saleItems?: Maybe<SaleItemUpdateManyInput>;
+}
+
+export interface SaleUpdateManyWithoutUserInput {
+  create?: Maybe<SaleCreateWithoutUserInput[] | SaleCreateWithoutUserInput>;
+  delete?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  connect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  set?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  disconnect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
+  update?: Maybe<
+    | SaleUpdateWithWhereUniqueWithoutUserInput[]
+    | SaleUpdateWithWhereUniqueWithoutUserInput
+  >;
+  upsert?: Maybe<
+    | SaleUpsertWithWhereUniqueWithoutUserInput[]
+    | SaleUpsertWithWhereUniqueWithoutUserInput
+  >;
+  deleteMany?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
+  updateMany?: Maybe<
+    SaleUpdateManyWithWhereNestedInput[] | SaleUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SaleUpdateWithWhereUniqueWithoutUserInput {
+  where: SaleWhereUniqueInput;
+  data: SaleUpdateWithoutUserDataInput;
+}
+
+export interface SaleUpdateWithoutUserDataInput {
+  customer?: Maybe<CustomerUpdateOneWithoutSalesInput>;
+  timestamp?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+  taxType?: Maybe<SpecialSaleDeductionType>;
+  taxValue?: Maybe<String>;
+  shipping?: Maybe<String>;
+  note?: Maybe<String>;
+  saleItems?: Maybe<SaleItemUpdateManyWithoutSaleInput>;
+}
+
+export interface SaleItemUpdateManyWithoutSaleInput {
+  create?: Maybe<
+    SaleItemCreateWithoutSaleInput[] | SaleItemCreateWithoutSaleInput
+  >;
+  delete?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  set?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  disconnect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
+  update?: Maybe<
+    | SaleItemUpdateWithWhereUniqueWithoutSaleInput[]
+    | SaleItemUpdateWithWhereUniqueWithoutSaleInput
+  >;
+  upsert?: Maybe<
+    | SaleItemUpsertWithWhereUniqueWithoutSaleInput[]
+    | SaleItemUpsertWithWhereUniqueWithoutSaleInput
+  >;
+  deleteMany?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
+  updateMany?: Maybe<
+    | SaleItemUpdateManyWithWhereNestedInput[]
+    | SaleItemUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SaleItemUpdateWithWhereUniqueWithoutSaleInput {
+  where: SaleItemWhereUniqueInput;
+  data: SaleItemUpdateWithoutSaleDataInput;
+}
+
+export interface SaleItemUpdateWithoutSaleDataInput {
+  product?: Maybe<ProductUpdateOneRequiredInput>;
+  quantity?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+}
+
+export interface SaleItemUpsertWithWhereUniqueWithoutSaleInput {
+  where: SaleItemWhereUniqueInput;
+  update: SaleItemUpdateWithoutSaleDataInput;
+  create: SaleItemCreateWithoutSaleInput;
+}
+
+export interface SaleItemScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  quantity?: Maybe<Int>;
+  quantity_not?: Maybe<Int>;
+  quantity_in?: Maybe<Int[] | Int>;
+  quantity_not_in?: Maybe<Int[] | Int>;
+  quantity_lt?: Maybe<Int>;
+  quantity_lte?: Maybe<Int>;
+  quantity_gt?: Maybe<Int>;
+  quantity_gte?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountType_not?: Maybe<SpecialSaleDeductionType>;
+  discountType_in?: Maybe<
+    SpecialSaleDeductionType[] | SpecialSaleDeductionType
+  >;
+  discountType_not_in?: Maybe<
+    SpecialSaleDeductionType[] | SpecialSaleDeductionType
+  >;
+  discountValue?: Maybe<String>;
+  discountValue_not?: Maybe<String>;
+  discountValue_in?: Maybe<String[] | String>;
+  discountValue_not_in?: Maybe<String[] | String>;
+  discountValue_lt?: Maybe<String>;
+  discountValue_lte?: Maybe<String>;
+  discountValue_gt?: Maybe<String>;
+  discountValue_gte?: Maybe<String>;
+  discountValue_contains?: Maybe<String>;
+  discountValue_not_contains?: Maybe<String>;
+  discountValue_starts_with?: Maybe<String>;
+  discountValue_not_starts_with?: Maybe<String>;
+  discountValue_ends_with?: Maybe<String>;
+  discountValue_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
+  OR?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
+  NOT?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
+}
+
+export interface SaleItemUpdateManyWithWhereNestedInput {
+  where: SaleItemScalarWhereInput;
+  data: SaleItemUpdateManyDataInput;
+}
+
+export interface SaleItemUpdateManyDataInput {
+  quantity?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+}
+
+export interface SaleUpsertWithWhereUniqueWithoutUserInput {
+  where: SaleWhereUniqueInput;
+  update: SaleUpdateWithoutUserDataInput;
+  create: SaleCreateWithoutUserInput;
+}
+
+export interface SaleScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  timestamp?: Maybe<Int>;
+  timestamp_not?: Maybe<Int>;
+  timestamp_in?: Maybe<Int[] | Int>;
+  timestamp_not_in?: Maybe<Int[] | Int>;
+  timestamp_lt?: Maybe<Int>;
+  timestamp_lte?: Maybe<Int>;
+  timestamp_gt?: Maybe<Int>;
+  timestamp_gte?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountType_not?: Maybe<SpecialSaleDeductionType>;
+  discountType_in?: Maybe<
+    SpecialSaleDeductionType[] | SpecialSaleDeductionType
+  >;
+  discountType_not_in?: Maybe<
+    SpecialSaleDeductionType[] | SpecialSaleDeductionType
+  >;
+  discountValue?: Maybe<String>;
+  discountValue_not?: Maybe<String>;
+  discountValue_in?: Maybe<String[] | String>;
+  discountValue_not_in?: Maybe<String[] | String>;
+  discountValue_lt?: Maybe<String>;
+  discountValue_lte?: Maybe<String>;
+  discountValue_gt?: Maybe<String>;
+  discountValue_gte?: Maybe<String>;
+  discountValue_contains?: Maybe<String>;
+  discountValue_not_contains?: Maybe<String>;
+  discountValue_starts_with?: Maybe<String>;
+  discountValue_not_starts_with?: Maybe<String>;
+  discountValue_ends_with?: Maybe<String>;
+  discountValue_not_ends_with?: Maybe<String>;
+  taxType?: Maybe<SpecialSaleDeductionType>;
+  taxType_not?: Maybe<SpecialSaleDeductionType>;
+  taxType_in?: Maybe<SpecialSaleDeductionType[] | SpecialSaleDeductionType>;
+  taxType_not_in?: Maybe<SpecialSaleDeductionType[] | SpecialSaleDeductionType>;
+  taxValue?: Maybe<String>;
+  taxValue_not?: Maybe<String>;
+  taxValue_in?: Maybe<String[] | String>;
+  taxValue_not_in?: Maybe<String[] | String>;
+  taxValue_lt?: Maybe<String>;
+  taxValue_lte?: Maybe<String>;
+  taxValue_gt?: Maybe<String>;
+  taxValue_gte?: Maybe<String>;
+  taxValue_contains?: Maybe<String>;
+  taxValue_not_contains?: Maybe<String>;
+  taxValue_starts_with?: Maybe<String>;
+  taxValue_not_starts_with?: Maybe<String>;
+  taxValue_ends_with?: Maybe<String>;
+  taxValue_not_ends_with?: Maybe<String>;
+  shipping?: Maybe<String>;
+  shipping_not?: Maybe<String>;
+  shipping_in?: Maybe<String[] | String>;
+  shipping_not_in?: Maybe<String[] | String>;
+  shipping_lt?: Maybe<String>;
+  shipping_lte?: Maybe<String>;
+  shipping_gt?: Maybe<String>;
+  shipping_gte?: Maybe<String>;
+  shipping_contains?: Maybe<String>;
+  shipping_not_contains?: Maybe<String>;
+  shipping_starts_with?: Maybe<String>;
+  shipping_not_starts_with?: Maybe<String>;
+  shipping_ends_with?: Maybe<String>;
+  shipping_not_ends_with?: Maybe<String>;
+  note?: Maybe<String>;
+  note_not?: Maybe<String>;
+  note_in?: Maybe<String[] | String>;
+  note_not_in?: Maybe<String[] | String>;
+  note_lt?: Maybe<String>;
+  note_lte?: Maybe<String>;
+  note_gt?: Maybe<String>;
+  note_gte?: Maybe<String>;
+  note_contains?: Maybe<String>;
+  note_not_contains?: Maybe<String>;
+  note_starts_with?: Maybe<String>;
+  note_not_starts_with?: Maybe<String>;
+  note_ends_with?: Maybe<String>;
+  note_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
+  OR?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
+  NOT?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
+}
+
+export interface SaleUpdateManyWithWhereNestedInput {
+  where: SaleScalarWhereInput;
+  data: SaleUpdateManyDataInput;
+}
+
+export interface SaleUpdateManyDataInput {
+  timestamp?: Maybe<Int>;
+  discountType?: Maybe<SpecialSaleDeductionType>;
+  discountValue?: Maybe<String>;
+  taxType?: Maybe<SpecialSaleDeductionType>;
+  taxValue?: Maybe<String>;
+  shipping?: Maybe<String>;
+  note?: Maybe<String>;
+}
+
+export interface UserUpsertWithoutCustomersInput {
+  update: UserUpdateWithoutCustomersDataInput;
+  create: UserCreateWithoutCustomersInput;
+}
+
+export interface CustomerUpsertWithoutSalesInput {
+  update: CustomerUpdateWithoutSalesDataInput;
+  create: CustomerCreateWithoutSalesInput;
+}
+
+export interface SaleUpsertWithoutSaleItemsInput {
+  update: SaleUpdateWithoutSaleItemsDataInput;
+  create: SaleCreateWithoutSaleItemsInput;
+}
+
+export interface SaleItemUpsertWithWhereUniqueNestedInput {
+  where: SaleItemWhereUniqueInput;
+  update: SaleItemUpdateDataInput;
+  create: SaleItemCreateInput;
+}
+
+export interface UserUpsertWithoutSalesInput {
+  update: UserUpdateWithoutSalesDataInput;
+  create: UserCreateWithoutSalesInput;
+}
+
+export interface SaleUpsertWithWhereUniqueWithoutCustomerInput {
+  where: SaleWhereUniqueInput;
+  update: SaleUpdateWithoutCustomerDataInput;
+  create: SaleCreateWithoutCustomerInput;
 }
 
 export interface CustomerUpsertWithWhereUniqueWithoutUserInput {
@@ -2621,451 +3124,6 @@ export interface CustomerUpdateManyDataInput {
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   country?: Maybe<String>;
-}
-
-export interface SaleUpdateManyWithoutUserInput {
-  create?: Maybe<SaleCreateWithoutUserInput[] | SaleCreateWithoutUserInput>;
-  delete?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
-  connect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
-  set?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
-  disconnect?: Maybe<SaleWhereUniqueInput[] | SaleWhereUniqueInput>;
-  update?: Maybe<
-    | SaleUpdateWithWhereUniqueWithoutUserInput[]
-    | SaleUpdateWithWhereUniqueWithoutUserInput
-  >;
-  upsert?: Maybe<
-    | SaleUpsertWithWhereUniqueWithoutUserInput[]
-    | SaleUpsertWithWhereUniqueWithoutUserInput
-  >;
-  deleteMany?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
-  updateMany?: Maybe<
-    SaleUpdateManyWithWhereNestedInput[] | SaleUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface SaleUpdateWithWhereUniqueWithoutUserInput {
-  where: SaleWhereUniqueInput;
-  data: SaleUpdateWithoutUserDataInput;
-}
-
-export interface SaleUpdateWithoutUserDataInput {
-  customer?: Maybe<CustomerUpdateOneInput>;
-  timestamp?: Maybe<Int>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountValue?: Maybe<String>;
-  taxType?: Maybe<SpecialSaleDeductionType>;
-  taxValue?: Maybe<String>;
-  shipping?: Maybe<String>;
-  note?: Maybe<String>;
-  saleItems?: Maybe<SaleItemUpdateManyWithoutSaleInput>;
-}
-
-export interface CustomerUpdateOneInput {
-  create?: Maybe<CustomerCreateInput>;
-  update?: Maybe<CustomerUpdateDataInput>;
-  upsert?: Maybe<CustomerUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<CustomerWhereUniqueInput>;
-}
-
-export interface CustomerUpdateDataInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutCustomersInput>;
-  name?: Maybe<String>;
-  email?: Maybe<String>;
-  phone?: Maybe<String>;
-  street1?: Maybe<String>;
-  street2?: Maybe<String>;
-  city?: Maybe<String>;
-  state?: Maybe<String>;
-  zipCode?: Maybe<String>;
-  country?: Maybe<String>;
-}
-
-export interface UserUpdateOneRequiredWithoutCustomersInput {
-  create?: Maybe<UserCreateWithoutCustomersInput>;
-  update?: Maybe<UserUpdateWithoutCustomersDataInput>;
-  upsert?: Maybe<UserUpsertWithoutCustomersInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserUpdateWithoutCustomersDataInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<String>;
-  permissions?: Maybe<UserUpdatepermissionsInput>;
-  verified?: Maybe<Boolean>;
-  name?: Maybe<String>;
-  confirmEmailToken?: Maybe<String>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<String>;
-  products?: Maybe<ProductUpdateManyWithoutUserInput>;
-  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
-  inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
-  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
-  sales?: Maybe<SaleUpdateManyWithoutUserInput>;
-  saleItems?: Maybe<SaleItemUpdateManyInput>;
-}
-
-export interface SaleItemUpdateManyInput {
-  create?: Maybe<SaleItemCreateInput[] | SaleItemCreateInput>;
-  update?: Maybe<
-    | SaleItemUpdateWithWhereUniqueNestedInput[]
-    | SaleItemUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | SaleItemUpsertWithWhereUniqueNestedInput[]
-    | SaleItemUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  set?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  disconnect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  deleteMany?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
-  updateMany?: Maybe<
-    | SaleItemUpdateManyWithWhereNestedInput[]
-    | SaleItemUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface SaleItemUpdateWithWhereUniqueNestedInput {
-  where: SaleItemWhereUniqueInput;
-  data: SaleItemUpdateDataInput;
-}
-
-export interface SaleItemUpdateDataInput {
-  sale?: Maybe<SaleUpdateOneRequiredWithoutSaleItemsInput>;
-  product?: Maybe<ProductUpdateOneRequiredInput>;
-  quantity?: Maybe<String>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountValue?: Maybe<String>;
-}
-
-export interface SaleUpdateOneRequiredWithoutSaleItemsInput {
-  create?: Maybe<SaleCreateWithoutSaleItemsInput>;
-  update?: Maybe<SaleUpdateWithoutSaleItemsDataInput>;
-  upsert?: Maybe<SaleUpsertWithoutSaleItemsInput>;
-  connect?: Maybe<SaleWhereUniqueInput>;
-}
-
-export interface SaleUpdateWithoutSaleItemsDataInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutSalesInput>;
-  customer?: Maybe<CustomerUpdateOneInput>;
-  timestamp?: Maybe<Int>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountValue?: Maybe<String>;
-  taxType?: Maybe<SpecialSaleDeductionType>;
-  taxValue?: Maybe<String>;
-  shipping?: Maybe<String>;
-  note?: Maybe<String>;
-}
-
-export interface UserUpdateOneRequiredWithoutSalesInput {
-  create?: Maybe<UserCreateWithoutSalesInput>;
-  update?: Maybe<UserUpdateWithoutSalesDataInput>;
-  upsert?: Maybe<UserUpsertWithoutSalesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserUpdateWithoutSalesDataInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<String>;
-  permissions?: Maybe<UserUpdatepermissionsInput>;
-  verified?: Maybe<Boolean>;
-  name?: Maybe<String>;
-  confirmEmailToken?: Maybe<String>;
-  resetToken?: Maybe<String>;
-  resetTokenExpiry?: Maybe<String>;
-  products?: Maybe<ProductUpdateManyWithoutUserInput>;
-  categories?: Maybe<CategoryUpdateManyWithoutUserInput>;
-  inventories?: Maybe<InventoryUpdateManyWithoutUserInput>;
-  inventoryItems?: Maybe<InventoryItemUpdateManyInput>;
-  customers?: Maybe<CustomerUpdateManyWithoutUserInput>;
-  saleItems?: Maybe<SaleItemUpdateManyInput>;
-}
-
-export interface UserUpsertWithoutSalesInput {
-  update: UserUpdateWithoutSalesDataInput;
-  create: UserCreateWithoutSalesInput;
-}
-
-export interface SaleUpsertWithoutSaleItemsInput {
-  update: SaleUpdateWithoutSaleItemsDataInput;
-  create: SaleCreateWithoutSaleItemsInput;
-}
-
-export interface SaleItemUpsertWithWhereUniqueNestedInput {
-  where: SaleItemWhereUniqueInput;
-  update: SaleItemUpdateDataInput;
-  create: SaleItemCreateInput;
-}
-
-export interface SaleItemScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  quantity?: Maybe<String>;
-  quantity_not?: Maybe<String>;
-  quantity_in?: Maybe<String[] | String>;
-  quantity_not_in?: Maybe<String[] | String>;
-  quantity_lt?: Maybe<String>;
-  quantity_lte?: Maybe<String>;
-  quantity_gt?: Maybe<String>;
-  quantity_gte?: Maybe<String>;
-  quantity_contains?: Maybe<String>;
-  quantity_not_contains?: Maybe<String>;
-  quantity_starts_with?: Maybe<String>;
-  quantity_not_starts_with?: Maybe<String>;
-  quantity_ends_with?: Maybe<String>;
-  quantity_not_ends_with?: Maybe<String>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountType_not?: Maybe<SpecialSaleDeductionType>;
-  discountType_in?: Maybe<
-    SpecialSaleDeductionType[] | SpecialSaleDeductionType
-  >;
-  discountType_not_in?: Maybe<
-    SpecialSaleDeductionType[] | SpecialSaleDeductionType
-  >;
-  discountValue?: Maybe<String>;
-  discountValue_not?: Maybe<String>;
-  discountValue_in?: Maybe<String[] | String>;
-  discountValue_not_in?: Maybe<String[] | String>;
-  discountValue_lt?: Maybe<String>;
-  discountValue_lte?: Maybe<String>;
-  discountValue_gt?: Maybe<String>;
-  discountValue_gte?: Maybe<String>;
-  discountValue_contains?: Maybe<String>;
-  discountValue_not_contains?: Maybe<String>;
-  discountValue_starts_with?: Maybe<String>;
-  discountValue_not_starts_with?: Maybe<String>;
-  discountValue_ends_with?: Maybe<String>;
-  discountValue_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
-  OR?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
-  NOT?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
-}
-
-export interface SaleItemUpdateManyWithWhereNestedInput {
-  where: SaleItemScalarWhereInput;
-  data: SaleItemUpdateManyDataInput;
-}
-
-export interface SaleItemUpdateManyDataInput {
-  quantity?: Maybe<String>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountValue?: Maybe<String>;
-}
-
-export interface UserUpsertWithoutCustomersInput {
-  update: UserUpdateWithoutCustomersDataInput;
-  create: UserCreateWithoutCustomersInput;
-}
-
-export interface CustomerUpsertNestedInput {
-  update: CustomerUpdateDataInput;
-  create: CustomerCreateInput;
-}
-
-export interface SaleItemUpdateManyWithoutSaleInput {
-  create?: Maybe<
-    SaleItemCreateWithoutSaleInput[] | SaleItemCreateWithoutSaleInput
-  >;
-  delete?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  connect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  set?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  disconnect?: Maybe<SaleItemWhereUniqueInput[] | SaleItemWhereUniqueInput>;
-  update?: Maybe<
-    | SaleItemUpdateWithWhereUniqueWithoutSaleInput[]
-    | SaleItemUpdateWithWhereUniqueWithoutSaleInput
-  >;
-  upsert?: Maybe<
-    | SaleItemUpsertWithWhereUniqueWithoutSaleInput[]
-    | SaleItemUpsertWithWhereUniqueWithoutSaleInput
-  >;
-  deleteMany?: Maybe<SaleItemScalarWhereInput[] | SaleItemScalarWhereInput>;
-  updateMany?: Maybe<
-    | SaleItemUpdateManyWithWhereNestedInput[]
-    | SaleItemUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface SaleItemUpdateWithWhereUniqueWithoutSaleInput {
-  where: SaleItemWhereUniqueInput;
-  data: SaleItemUpdateWithoutSaleDataInput;
-}
-
-export interface SaleItemUpdateWithoutSaleDataInput {
-  product?: Maybe<ProductUpdateOneRequiredInput>;
-  quantity?: Maybe<String>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountValue?: Maybe<String>;
-}
-
-export interface SaleItemUpsertWithWhereUniqueWithoutSaleInput {
-  where: SaleItemWhereUniqueInput;
-  update: SaleItemUpdateWithoutSaleDataInput;
-  create: SaleItemCreateWithoutSaleInput;
-}
-
-export interface SaleUpsertWithWhereUniqueWithoutUserInput {
-  where: SaleWhereUniqueInput;
-  update: SaleUpdateWithoutUserDataInput;
-  create: SaleCreateWithoutUserInput;
-}
-
-export interface SaleScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  timestamp?: Maybe<Int>;
-  timestamp_not?: Maybe<Int>;
-  timestamp_in?: Maybe<Int[] | Int>;
-  timestamp_not_in?: Maybe<Int[] | Int>;
-  timestamp_lt?: Maybe<Int>;
-  timestamp_lte?: Maybe<Int>;
-  timestamp_gt?: Maybe<Int>;
-  timestamp_gte?: Maybe<Int>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountType_not?: Maybe<SpecialSaleDeductionType>;
-  discountType_in?: Maybe<
-    SpecialSaleDeductionType[] | SpecialSaleDeductionType
-  >;
-  discountType_not_in?: Maybe<
-    SpecialSaleDeductionType[] | SpecialSaleDeductionType
-  >;
-  discountValue?: Maybe<String>;
-  discountValue_not?: Maybe<String>;
-  discountValue_in?: Maybe<String[] | String>;
-  discountValue_not_in?: Maybe<String[] | String>;
-  discountValue_lt?: Maybe<String>;
-  discountValue_lte?: Maybe<String>;
-  discountValue_gt?: Maybe<String>;
-  discountValue_gte?: Maybe<String>;
-  discountValue_contains?: Maybe<String>;
-  discountValue_not_contains?: Maybe<String>;
-  discountValue_starts_with?: Maybe<String>;
-  discountValue_not_starts_with?: Maybe<String>;
-  discountValue_ends_with?: Maybe<String>;
-  discountValue_not_ends_with?: Maybe<String>;
-  taxType?: Maybe<SpecialSaleDeductionType>;
-  taxType_not?: Maybe<SpecialSaleDeductionType>;
-  taxType_in?: Maybe<SpecialSaleDeductionType[] | SpecialSaleDeductionType>;
-  taxType_not_in?: Maybe<SpecialSaleDeductionType[] | SpecialSaleDeductionType>;
-  taxValue?: Maybe<String>;
-  taxValue_not?: Maybe<String>;
-  taxValue_in?: Maybe<String[] | String>;
-  taxValue_not_in?: Maybe<String[] | String>;
-  taxValue_lt?: Maybe<String>;
-  taxValue_lte?: Maybe<String>;
-  taxValue_gt?: Maybe<String>;
-  taxValue_gte?: Maybe<String>;
-  taxValue_contains?: Maybe<String>;
-  taxValue_not_contains?: Maybe<String>;
-  taxValue_starts_with?: Maybe<String>;
-  taxValue_not_starts_with?: Maybe<String>;
-  taxValue_ends_with?: Maybe<String>;
-  taxValue_not_ends_with?: Maybe<String>;
-  shipping?: Maybe<String>;
-  shipping_not?: Maybe<String>;
-  shipping_in?: Maybe<String[] | String>;
-  shipping_not_in?: Maybe<String[] | String>;
-  shipping_lt?: Maybe<String>;
-  shipping_lte?: Maybe<String>;
-  shipping_gt?: Maybe<String>;
-  shipping_gte?: Maybe<String>;
-  shipping_contains?: Maybe<String>;
-  shipping_not_contains?: Maybe<String>;
-  shipping_starts_with?: Maybe<String>;
-  shipping_not_starts_with?: Maybe<String>;
-  shipping_ends_with?: Maybe<String>;
-  shipping_not_ends_with?: Maybe<String>;
-  note?: Maybe<String>;
-  note_not?: Maybe<String>;
-  note_in?: Maybe<String[] | String>;
-  note_not_in?: Maybe<String[] | String>;
-  note_lt?: Maybe<String>;
-  note_lte?: Maybe<String>;
-  note_gt?: Maybe<String>;
-  note_gte?: Maybe<String>;
-  note_contains?: Maybe<String>;
-  note_not_contains?: Maybe<String>;
-  note_starts_with?: Maybe<String>;
-  note_not_starts_with?: Maybe<String>;
-  note_ends_with?: Maybe<String>;
-  note_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
-  OR?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
-  NOT?: Maybe<SaleScalarWhereInput[] | SaleScalarWhereInput>;
-}
-
-export interface SaleUpdateManyWithWhereNestedInput {
-  where: SaleScalarWhereInput;
-  data: SaleUpdateManyDataInput;
-}
-
-export interface SaleUpdateManyDataInput {
-  timestamp?: Maybe<Int>;
-  discountType?: Maybe<SpecialSaleDeductionType>;
-  discountValue?: Maybe<String>;
-  taxType?: Maybe<SpecialSaleDeductionType>;
-  taxValue?: Maybe<String>;
-  shipping?: Maybe<String>;
-  note?: Maybe<String>;
 }
 
 export interface UserUpsertWithoutInventoriesInput {
@@ -3366,6 +3424,21 @@ export interface CategoryUpdateManyMutationInput {
   name?: Maybe<String>;
 }
 
+export interface CustomerCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneWithoutCustomersInput;
+  name: String;
+  email?: Maybe<String>;
+  phone?: Maybe<String>;
+  street1?: Maybe<String>;
+  street2?: Maybe<String>;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
+  zipCode?: Maybe<String>;
+  country?: Maybe<String>;
+  sales?: Maybe<SaleCreateManyWithoutCustomerInput>;
+}
+
 export interface CustomerUpdateInput {
   user?: Maybe<UserUpdateOneRequiredWithoutCustomersInput>;
   name?: Maybe<String>;
@@ -3377,6 +3450,7 @@ export interface CustomerUpdateInput {
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   country?: Maybe<String>;
+  sales?: Maybe<SaleUpdateManyWithoutCustomerInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -3460,7 +3534,7 @@ export interface ProductUpdateManyMutationInput {
 export interface SaleCreateInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneWithoutSalesInput;
-  customer?: Maybe<CustomerCreateOneInput>;
+  customer?: Maybe<CustomerCreateOneWithoutSalesInput>;
   timestamp: Int;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -3473,7 +3547,7 @@ export interface SaleCreateInput {
 
 export interface SaleUpdateInput {
   user?: Maybe<UserUpdateOneRequiredWithoutSalesInput>;
-  customer?: Maybe<CustomerUpdateOneInput>;
+  customer?: Maybe<CustomerUpdateOneWithoutSalesInput>;
   timestamp?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -3497,13 +3571,13 @@ export interface SaleUpdateManyMutationInput {
 export interface SaleItemUpdateInput {
   sale?: Maybe<SaleUpdateOneRequiredWithoutSaleItemsInput>;
   product?: Maybe<ProductUpdateOneRequiredInput>;
-  quantity?: Maybe<String>;
+  quantity?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
 }
 
 export interface SaleItemUpdateManyMutationInput {
-  quantity?: Maybe<String>;
+  quantity?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
 }
@@ -4211,6 +4285,15 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   country: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  sales: <T = FragmentableArray<Sale>>(args?: {
+    where?: SaleWhereInput;
+    orderBy?: SaleOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface CustomerSubscription
@@ -4229,6 +4312,15 @@ export interface CustomerSubscription
   country: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  sales: <T = Promise<AsyncIterator<SaleSubscription>>>(args?: {
+    where?: SaleWhereInput;
+    orderBy?: SaleOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface CustomerNullablePromise
@@ -4247,6 +4339,15 @@ export interface CustomerNullablePromise
   country: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  sales: <T = FragmentableArray<Sale>>(args?: {
+    where?: SaleWhereInput;
+    orderBy?: SaleOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface Sale {
@@ -4340,7 +4441,7 @@ export interface SaleNullablePromise
 
 export interface SaleItem {
   id: ID_Output;
-  quantity: String;
+  quantity: Int;
   discountType?: SpecialSaleDeductionType;
   discountValue?: String;
   createdAt: DateTimeOutput;
@@ -4351,7 +4452,7 @@ export interface SaleItemPromise extends Promise<SaleItem>, Fragmentable {
   id: () => Promise<ID_Output>;
   sale: <T = SalePromise>() => T;
   product: <T = ProductPromise>() => T;
-  quantity: () => Promise<String>;
+  quantity: () => Promise<Int>;
   discountType: () => Promise<SpecialSaleDeductionType>;
   discountValue: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -4364,7 +4465,7 @@ export interface SaleItemSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   sale: <T = SaleSubscription>() => T;
   product: <T = ProductSubscription>() => T;
-  quantity: () => Promise<AsyncIterator<String>>;
+  quantity: () => Promise<AsyncIterator<Int>>;
   discountType: () => Promise<AsyncIterator<SpecialSaleDeductionType>>;
   discountValue: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -4377,7 +4478,7 @@ export interface SaleItemNullablePromise
   id: () => Promise<ID_Output>;
   sale: <T = SalePromise>() => T;
   product: <T = ProductPromise>() => T;
-  quantity: () => Promise<String>;
+  quantity: () => Promise<Int>;
   discountType: () => Promise<SpecialSaleDeductionType>;
   discountValue: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -5359,7 +5460,7 @@ export interface SaleItemSubscriptionPayloadSubscription
 
 export interface SaleItemPreviousValues {
   id: ID_Output;
-  quantity: String;
+  quantity: Int;
   discountType?: SpecialSaleDeductionType;
   discountValue?: String;
   createdAt: DateTimeOutput;
@@ -5370,7 +5471,7 @@ export interface SaleItemPreviousValuesPromise
   extends Promise<SaleItemPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  quantity: () => Promise<String>;
+  quantity: () => Promise<Int>;
   discountType: () => Promise<SpecialSaleDeductionType>;
   discountValue: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -5381,7 +5482,7 @@ export interface SaleItemPreviousValuesSubscription
   extends Promise<AsyncIterator<SaleItemPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  quantity: () => Promise<AsyncIterator<String>>;
+  quantity: () => Promise<AsyncIterator<Int>>;
   discountType: () => Promise<AsyncIterator<SpecialSaleDeductionType>>;
   discountValue: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;

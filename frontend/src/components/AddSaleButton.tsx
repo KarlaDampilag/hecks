@@ -6,12 +6,12 @@ import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import * as _ from 'lodash';
 
-import { PRODUCTS_BY_USER_QUERY } from './Products';
+// import { PRODUCTS_BY_USER_QUERY } from './Products';
 import { CUSTOMERS_BY_USER_QUERY } from './Customers';
 
 const CREATE_SALE_MUTATION = gql`
     mutation CREATE_SALE_MUTATION(
-        $saleItems: [SaleItemInput]!,
+        $saleItems: [SaleItemInput!]!,
         $timestamp: Int!,
         $customerId: String,
         $discountType: SpecialSaleDeductionType,
@@ -21,7 +21,7 @@ const CREATE_SALE_MUTATION = gql`
         $shipping: String,
         $note: String
     ) {
-        createSale(
+        createSaleAndItems(
             saleItems: $saleItems,
             timestamp: $timestamp,
             customerId: $customerId,
@@ -48,39 +48,12 @@ const CREATE_SALE_MUTATION = gql`
     }
 `;
 
-const CREATE_SALE_ITEM_MUTATION = gql`
-    mutation CREATE_SALE_ITEM_MUTATION(
-        $saleId: String!,
-        $productId: String!,
-        $quantity: String!,
-    ) {
-        createSaleAndItems (
-            saleId: $saleId,
-            productId: $productId,
-            quantity: $quantity
-        ) {
-            sale {
-                id
-                timestamp
-                customer {
-                    name
-                }
-                discountType
-                discountValue
-                taxType
-                taxValue
-                shipping
-                note
-                createdAt
-            }
-            product {
-                id
-                name
-                salePrice
-                costPrice
-            }
-            quantity
-            createdAt
+const PRODUCTS_BY_USER_QUERY = gql`
+    {
+        productsByUser {
+            id
+            name
+            salePrice
         }
     }
 `;
@@ -132,16 +105,15 @@ const AddSaleButton = () => {
         setTotal(total);
     }, [saleItems, discountType, discountValue, taxType, taxValue, shipping]);
 
-    const [createSale, { error: createSaleError, loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
+    const [createSaleAndItems, { error: createSaleError, loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
         variables: { saleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
-    });
-
-    const [createSaleItem, { error: createItemError, loading: createItemLoading }] = useMutation(CREATE_SALE_ITEM_MUTATION, {
-        variables: { saleId }
     });
 
     const { data: productsByUserData } = useQuery(PRODUCTS_BY_USER_QUERY);
     const products = productsByUserData ? productsByUserData.productsByUser : [];
+    _.each(products, product => {
+        delete product.__typename;
+    });
     const saleItemIds = _.map(saleItems, saleItem => saleItem.product.id);
 
     const { data: customersByUserData } = useQuery(CUSTOMERS_BY_USER_QUERY);
@@ -178,8 +150,8 @@ const AddSaleButton = () => {
     }
 
     const layout = {
-        labelCol: { span: 4 },
-        wrapperCol: { span: 20 }
+        labelCol: { span: 5 },
+        wrapperCol: { span: 19 }
     }
 
     return (
@@ -195,17 +167,28 @@ const AddSaleButton = () => {
                     labelAlign='left'
                     onFinish={async () => {
                         if (saleItems.length > 0 && saleItems[0].product.id !== null) {
-                            // const createSaleResponse = await createSale();
-                            // console.log(createSaleResponse);
+                            const createSaleResponse = await createSaleAndItems();
+                            console.log(createSaleResponse);
 
-                            // if (createSaleError || createItemError) {
-                            //     message.error('Error saving sale entry. Please contact SourceCodeXL.');
-                            // } else {
-                            //     setModalIsVisible(false);
-                            //     form.resetFields();
-                            //     message.success('Sale record added');
-                            // }
-                            console.log({ customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note, saleItems })
+                            if (createSaleError) {
+                                message.error('Error saving sale entry. Please contact SourceCodeXL.');
+                            } else {
+                                setModalIsVisible(false);
+                                form.resetFields();
+                                setCustomerId(undefined);
+                                setSaleItems([{
+                                    product: {
+                                        id: null
+                                    },
+                                    quantity: 1
+                                }]);
+                                setSubTotal(0);
+                                setDiscountType('FLAT');
+                                setDiscountValue(undefined);
+                                setTaxType('FLAT');
+                                setTaxValue(undefined);
+                                message.success('Sale record added');
+                            }
                         } else {
                             message.error('Minimum of one product is required to record a sale');
                         }
@@ -267,6 +250,7 @@ const AddSaleButton = () => {
                                         <span>Quantity:</span>
                                         <InputNumber
                                             value={saleItem.quantity}
+                                            min={1}
                                             onChange={(value) => handleQuantityChange(saleItem, value)}
                                         />
                                     </label>
@@ -420,8 +404,8 @@ const AddSaleButton = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" disabled={createItemLoading || createSaleLoading} loading={createItemLoading || createSaleLoading} style={{ width: '100%' }}>
-                            Add{createItemLoading || createSaleLoading ? 'ing' : ' '} Sale Record
+                        <Button type="primary" htmlType="submit" disabled={createSaleLoading} loading={createSaleLoading} style={{ width: '100%' }}>
+                            Add{createSaleLoading ? 'ing' : ' '} Sale Record
                                 </Button>
                     </Form.Item>
                 </Form>

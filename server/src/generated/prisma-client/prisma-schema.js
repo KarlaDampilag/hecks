@@ -238,6 +238,7 @@ type Customer {
   country: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  sales(where: SaleWhereInput, orderBy: SaleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Sale!]
 }
 
 type CustomerConnection {
@@ -258,6 +259,7 @@ input CustomerCreateInput {
   state: String
   zipCode: String
   country: String
+  sales: SaleCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateManyWithoutUserInput {
@@ -265,9 +267,23 @@ input CustomerCreateManyWithoutUserInput {
   connect: [CustomerWhereUniqueInput!]
 }
 
-input CustomerCreateOneInput {
-  create: CustomerCreateInput
+input CustomerCreateOneWithoutSalesInput {
+  create: CustomerCreateWithoutSalesInput
   connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateWithoutSalesInput {
+  id: ID
+  user: UserCreateOneWithoutCustomersInput!
+  name: String!
+  email: String
+  phone: String
+  street1: String
+  street2: String
+  city: String
+  state: String
+  zipCode: String
+  country: String
 }
 
 input CustomerCreateWithoutUserInput {
@@ -281,6 +297,7 @@ input CustomerCreateWithoutUserInput {
   state: String
   zipCode: String
   country: String
+  sales: SaleCreateManyWithoutCustomerInput
 }
 
 type CustomerEdge {
@@ -510,19 +527,6 @@ input CustomerSubscriptionWhereInput {
   NOT: [CustomerSubscriptionWhereInput!]
 }
 
-input CustomerUpdateDataInput {
-  user: UserUpdateOneRequiredWithoutCustomersInput
-  name: String
-  email: String
-  phone: String
-  street1: String
-  street2: String
-  city: String
-  state: String
-  zipCode: String
-  country: String
-}
-
 input CustomerUpdateInput {
   user: UserUpdateOneRequiredWithoutCustomersInput
   name: String
@@ -534,6 +538,7 @@ input CustomerUpdateInput {
   state: String
   zipCode: String
   country: String
+  sales: SaleUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -577,13 +582,26 @@ input CustomerUpdateManyWithWhereNestedInput {
   data: CustomerUpdateManyDataInput!
 }
 
-input CustomerUpdateOneInput {
-  create: CustomerCreateInput
-  update: CustomerUpdateDataInput
-  upsert: CustomerUpsertNestedInput
+input CustomerUpdateOneWithoutSalesInput {
+  create: CustomerCreateWithoutSalesInput
+  update: CustomerUpdateWithoutSalesDataInput
+  upsert: CustomerUpsertWithoutSalesInput
   delete: Boolean
   disconnect: Boolean
   connect: CustomerWhereUniqueInput
+}
+
+input CustomerUpdateWithoutSalesDataInput {
+  user: UserUpdateOneRequiredWithoutCustomersInput
+  name: String
+  email: String
+  phone: String
+  street1: String
+  street2: String
+  city: String
+  state: String
+  zipCode: String
+  country: String
 }
 
 input CustomerUpdateWithoutUserDataInput {
@@ -596,6 +614,7 @@ input CustomerUpdateWithoutUserDataInput {
   state: String
   zipCode: String
   country: String
+  sales: SaleUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithWhereUniqueWithoutUserInput {
@@ -603,9 +622,9 @@ input CustomerUpdateWithWhereUniqueWithoutUserInput {
   data: CustomerUpdateWithoutUserDataInput!
 }
 
-input CustomerUpsertNestedInput {
-  update: CustomerUpdateDataInput!
-  create: CustomerCreateInput!
+input CustomerUpsertWithoutSalesInput {
+  update: CustomerUpdateWithoutSalesDataInput!
+  create: CustomerCreateWithoutSalesInput!
 }
 
 input CustomerUpsertWithWhereUniqueWithoutUserInput {
@@ -772,6 +791,9 @@ input CustomerWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  sales_every: SaleWhereInput
+  sales_some: SaleWhereInput
+  sales_none: SaleWhereInput
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
   NOT: [CustomerWhereInput!]
@@ -2194,7 +2216,7 @@ type SaleConnection {
 input SaleCreateInput {
   id: ID
   user: UserCreateOneWithoutSalesInput!
-  customer: CustomerCreateOneInput
+  customer: CustomerCreateOneWithoutSalesInput
   timestamp: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2203,6 +2225,11 @@ input SaleCreateInput {
   shipping: String
   note: String
   saleItems: SaleItemCreateManyWithoutSaleInput
+}
+
+input SaleCreateManyWithoutCustomerInput {
+  create: [SaleCreateWithoutCustomerInput!]
+  connect: [SaleWhereUniqueInput!]
 }
 
 input SaleCreateManyWithoutUserInput {
@@ -2215,10 +2242,23 @@ input SaleCreateOneWithoutSaleItemsInput {
   connect: SaleWhereUniqueInput
 }
 
+input SaleCreateWithoutCustomerInput {
+  id: ID
+  user: UserCreateOneWithoutSalesInput!
+  timestamp: Int!
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+  taxType: SpecialSaleDeductionType
+  taxValue: String
+  shipping: String
+  note: String
+  saleItems: SaleItemCreateManyWithoutSaleInput
+}
+
 input SaleCreateWithoutSaleItemsInput {
   id: ID
   user: UserCreateOneWithoutSalesInput!
-  customer: CustomerCreateOneInput
+  customer: CustomerCreateOneWithoutSalesInput
   timestamp: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2230,7 +2270,7 @@ input SaleCreateWithoutSaleItemsInput {
 
 input SaleCreateWithoutUserInput {
   id: ID
-  customer: CustomerCreateOneInput
+  customer: CustomerCreateOneWithoutSalesInput
   timestamp: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2250,7 +2290,7 @@ type SaleItem {
   id: ID!
   sale: Sale!
   product: Product!
-  quantity: String!
+  quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
   createdAt: DateTime!
@@ -2267,7 +2307,7 @@ input SaleItemCreateInput {
   id: ID
   sale: SaleCreateOneWithoutSaleItemsInput!
   product: ProductCreateOneInput!
-  quantity: String!
+  quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
@@ -2285,7 +2325,7 @@ input SaleItemCreateManyWithoutSaleInput {
 input SaleItemCreateWithoutSaleInput {
   id: ID
   product: ProductCreateOneInput!
-  quantity: String!
+  quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
@@ -2312,7 +2352,7 @@ enum SaleItemOrderByInput {
 
 type SaleItemPreviousValues {
   id: ID!
-  quantity: String!
+  quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
   createdAt: DateTime!
@@ -2334,20 +2374,14 @@ input SaleItemScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  quantity: String
-  quantity_not: String
-  quantity_in: [String!]
-  quantity_not_in: [String!]
-  quantity_lt: String
-  quantity_lte: String
-  quantity_gt: String
-  quantity_gte: String
-  quantity_contains: String
-  quantity_not_contains: String
-  quantity_starts_with: String
-  quantity_not_starts_with: String
-  quantity_ends_with: String
-  quantity_not_ends_with: String
+  quantity: Int
+  quantity_not: Int
+  quantity_in: [Int!]
+  quantity_not_in: [Int!]
+  quantity_lt: Int
+  quantity_lte: Int
+  quantity_gt: Int
+  quantity_gte: Int
   discountType: SpecialSaleDeductionType
   discountType_not: SpecialSaleDeductionType
   discountType_in: [SpecialSaleDeductionType!]
@@ -2408,7 +2442,7 @@ input SaleItemSubscriptionWhereInput {
 input SaleItemUpdateDataInput {
   sale: SaleUpdateOneRequiredWithoutSaleItemsInput
   product: ProductUpdateOneRequiredInput
-  quantity: String
+  quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
@@ -2416,13 +2450,13 @@ input SaleItemUpdateDataInput {
 input SaleItemUpdateInput {
   sale: SaleUpdateOneRequiredWithoutSaleItemsInput
   product: ProductUpdateOneRequiredInput
-  quantity: String
+  quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
 
 input SaleItemUpdateManyDataInput {
-  quantity: String
+  quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
@@ -2440,7 +2474,7 @@ input SaleItemUpdateManyInput {
 }
 
 input SaleItemUpdateManyMutationInput {
-  quantity: String
+  quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
@@ -2464,7 +2498,7 @@ input SaleItemUpdateManyWithWhereNestedInput {
 
 input SaleItemUpdateWithoutSaleDataInput {
   product: ProductUpdateOneRequiredInput
-  quantity: String
+  quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
@@ -2508,20 +2542,14 @@ input SaleItemWhereInput {
   id_not_ends_with: ID
   sale: SaleWhereInput
   product: ProductWhereInput
-  quantity: String
-  quantity_not: String
-  quantity_in: [String!]
-  quantity_not_in: [String!]
-  quantity_lt: String
-  quantity_lte: String
-  quantity_gt: String
-  quantity_gte: String
-  quantity_contains: String
-  quantity_not_contains: String
-  quantity_starts_with: String
-  quantity_not_starts_with: String
-  quantity_ends_with: String
-  quantity_not_ends_with: String
+  quantity: Int
+  quantity_not: Int
+  quantity_in: [Int!]
+  quantity_not_in: [Int!]
+  quantity_lt: Int
+  quantity_lte: Int
+  quantity_gt: Int
+  quantity_gte: Int
   discountType: SpecialSaleDeductionType
   discountType_not: SpecialSaleDeductionType
   discountType_in: [SpecialSaleDeductionType!]
@@ -2729,7 +2757,7 @@ input SaleSubscriptionWhereInput {
 
 input SaleUpdateInput {
   user: UserUpdateOneRequiredWithoutSalesInput
-  customer: CustomerUpdateOneInput
+  customer: CustomerUpdateOneWithoutSalesInput
   timestamp: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2760,6 +2788,18 @@ input SaleUpdateManyMutationInput {
   note: String
 }
 
+input SaleUpdateManyWithoutCustomerInput {
+  create: [SaleCreateWithoutCustomerInput!]
+  delete: [SaleWhereUniqueInput!]
+  connect: [SaleWhereUniqueInput!]
+  set: [SaleWhereUniqueInput!]
+  disconnect: [SaleWhereUniqueInput!]
+  update: [SaleUpdateWithWhereUniqueWithoutCustomerInput!]
+  upsert: [SaleUpsertWithWhereUniqueWithoutCustomerInput!]
+  deleteMany: [SaleScalarWhereInput!]
+  updateMany: [SaleUpdateManyWithWhereNestedInput!]
+}
+
 input SaleUpdateManyWithoutUserInput {
   create: [SaleCreateWithoutUserInput!]
   delete: [SaleWhereUniqueInput!]
@@ -2784,20 +2824,8 @@ input SaleUpdateOneRequiredWithoutSaleItemsInput {
   connect: SaleWhereUniqueInput
 }
 
-input SaleUpdateWithoutSaleItemsDataInput {
+input SaleUpdateWithoutCustomerDataInput {
   user: UserUpdateOneRequiredWithoutSalesInput
-  customer: CustomerUpdateOneInput
-  timestamp: Int
-  discountType: SpecialSaleDeductionType
-  discountValue: String
-  taxType: SpecialSaleDeductionType
-  taxValue: String
-  shipping: String
-  note: String
-}
-
-input SaleUpdateWithoutUserDataInput {
-  customer: CustomerUpdateOneInput
   timestamp: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2808,6 +2836,35 @@ input SaleUpdateWithoutUserDataInput {
   saleItems: SaleItemUpdateManyWithoutSaleInput
 }
 
+input SaleUpdateWithoutSaleItemsDataInput {
+  user: UserUpdateOneRequiredWithoutSalesInput
+  customer: CustomerUpdateOneWithoutSalesInput
+  timestamp: Int
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+  taxType: SpecialSaleDeductionType
+  taxValue: String
+  shipping: String
+  note: String
+}
+
+input SaleUpdateWithoutUserDataInput {
+  customer: CustomerUpdateOneWithoutSalesInput
+  timestamp: Int
+  discountType: SpecialSaleDeductionType
+  discountValue: String
+  taxType: SpecialSaleDeductionType
+  taxValue: String
+  shipping: String
+  note: String
+  saleItems: SaleItemUpdateManyWithoutSaleInput
+}
+
+input SaleUpdateWithWhereUniqueWithoutCustomerInput {
+  where: SaleWhereUniqueInput!
+  data: SaleUpdateWithoutCustomerDataInput!
+}
+
 input SaleUpdateWithWhereUniqueWithoutUserInput {
   where: SaleWhereUniqueInput!
   data: SaleUpdateWithoutUserDataInput!
@@ -2816,6 +2873,12 @@ input SaleUpdateWithWhereUniqueWithoutUserInput {
 input SaleUpsertWithoutSaleItemsInput {
   update: SaleUpdateWithoutSaleItemsDataInput!
   create: SaleCreateWithoutSaleItemsInput!
+}
+
+input SaleUpsertWithWhereUniqueWithoutCustomerInput {
+  where: SaleWhereUniqueInput!
+  update: SaleUpdateWithoutCustomerDataInput!
+  create: SaleCreateWithoutCustomerInput!
 }
 
 input SaleUpsertWithWhereUniqueWithoutUserInput {
