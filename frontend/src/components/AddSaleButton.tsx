@@ -1,12 +1,11 @@
 import React from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, Spin, InputNumber } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, Spin, InputNumber, Table } from 'antd';
+import { PlusOutlined, DeleteOutlined, DeleteRowOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import * as _ from 'lodash';
 
-// import { PRODUCTS_BY_USER_QUERY } from './Products';
 import { CUSTOMERS_BY_USER_QUERY } from './Customers';
 
 const CREATE_SALE_MUTATION = gql`
@@ -54,9 +53,23 @@ const PRODUCTS_BY_USER_QUERY = gql`
             id
             name
             salePrice
+            costPrice
         }
     }
 `;
+
+const calculateProfitBySaleItems = (saleItems: SaleItemProps[]) => {
+    let profit = 0;
+    _.each(saleItems, saleItem => {
+        const product = saleItem.product;
+        if (product && product.salePrice) {
+            const singleItemProfit = parseFloat(Number(product.salePrice - product.costPrice).toFixed(3));
+            const profitWithQuantity = parseFloat(Number(singleItemProfit * saleItem.quantity).toFixed(3));
+            profit += profitWithQuantity;
+        }
+    });
+    return profit;
+}
 
 interface SaleItemProps {
     product: any; // FIXME how to use graphql types in frontend
@@ -65,13 +78,13 @@ interface SaleItemProps {
 
 const AddSaleButton = () => {
     const [modalIsVisible, setModalIsVisible] = React.useState<boolean>();
-    const [saleId, setSaleId] = React.useState<string>();
     const [saleItems, setSaleItems] = React.useState<SaleItemProps[]>([{
         product: {
             id: null
         },
         quantity: 1
     }]);
+    const [filteredSaleItems, setFilteredSaleItems] = React.useState<SaleItemProps[]>();
     const [customerId, setCustomerId] = React.useState<string>();
     const [timestamp, setTimestamp] = React.useState<number>(moment().unix());
     const [discountType, setDiscountType] = React.useState<string>('FLAT');
@@ -82,6 +95,7 @@ const AddSaleButton = () => {
     const [note, setNote] = React.useState<string>();
     const [subTotal, setSubTotal] = React.useState<number>(0);
     const [total, setTotal] = React.useState<number>();
+    const [profit, setProfit] = React.useState<number>();
     const [form] = Form.useForm();
 
     React.useEffect(() => {
@@ -101,12 +115,15 @@ const AddSaleButton = () => {
         } else {
             taxDeduction = subTotal * (taxNumber / 100);
         }
-        total = total - discountDeduction -  taxDeduction - shippingNumber;
+        total = total - discountDeduction - taxDeduction - shippingNumber;
         setTotal(total);
+
+        const profit = calculateProfitBySaleItems(saleItems);
+        setProfit(profit);
     }, [saleItems, discountType, discountValue, taxType, taxValue, shipping]);
 
     const [createSaleAndItems, { error: createSaleError, loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
-        variables: { saleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
+        variables: { saleItems: filteredSaleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
     });
 
     const { data: productsByUserData } = useQuery(PRODUCTS_BY_USER_QUERY);
@@ -127,6 +144,9 @@ const AddSaleButton = () => {
         updatedSaleItems.splice(index, 1, updatedSaleItem);
         setSaleItems(updatedSaleItems);
         updateSubTotal(updatedSaleItems);
+
+        const filteredItems: SaleItemProps[] = _.filter(updatedSaleItems, item => item.product.id != null);
+        setFilteredSaleItems(filteredItems);
     }
 
     const handleQuantityChange = (saleItem: SaleItemProps, value: number | undefined) => {
@@ -143,8 +163,10 @@ const AddSaleButton = () => {
         let total = 0;
         _.map(saleItems, saleItem => {
             const product = _.find(products, { id: saleItem.product.id });
-            const price = product.salePrice;
-            total += price * saleItem.quantity;
+            if (product) {
+                const price = product.salePrice;
+                total += price * saleItem.quantity;
+            }
         });
         setSubTotal(total);
     }
@@ -168,7 +190,6 @@ const AddSaleButton = () => {
                     onFinish={async () => {
                         if (saleItems.length > 0 && saleItems[0].product.id !== null) {
                             const createSaleResponse = await createSaleAndItems();
-                            console.log(createSaleResponse);
 
                             if (createSaleError) {
                                 message.error('Error saving sale entry. Please contact SourceCodeXL.');
@@ -220,70 +241,96 @@ const AddSaleButton = () => {
 
                     <Divider />
 
-                    {
-                        _.map(saleItems, (saleItem, key) => {
-                            return (
-                                <div className='sale-item-form-row' key={key}>
-                                    <label className='first-label'>
-                                        <span>Product:</span>
-                                        <Select
-                                            style={{ width: '100%' }}
-                                            value={saleItem.product.id && JSON.stringify(saleItem.product)}
-                                            onChange={(value) => handleProductChange(saleItem, value)}
-                                            placeholder='Add a product'
-                                        >
-                                            {
-                                                _.map(products, product =>
-                                                    <Select.Option
-                                                        value={JSON.stringify(product)}
-                                                        disabled={_.includes(saleItemIds, product.id)}
-                                                        key={product.id}
-                                                    >
-                                                        {product.name}
-                                                    </Select.Option>
-                                                )
-                                            }
-                                        </Select>
-                                    </label>
+                    <Table
+                        size='small'
+                        pagination={false}
+                        dataSource={saleItems}
+                        rowKey='id'
+                        columns={[
+                            {
+                                width: 300,
+                                title: 'Product',
+                                dataIndex: 'id',
+                                render: (value, record) => (
+                                    <Select
+                                        style={{ width: '100%' }}
+                                        value={record.product.id && JSON.stringify(record.product)}
+                                        onChange={(value) => handleProductChange(record, value)}
+                                        placeholder='Add a product'
+                                    >
+                                        {
+                                            _.map(products, product =>
+                                                <Select.Option
+                                                    value={JSON.stringify(product)}
+                                                    disabled={_.includes(saleItemIds, product.id)}
+                                                    key={product.id}
+                                                >
+                                                    {product.name}
+                                                </Select.Option>
+                                            )
+                                        }
+                                    </Select>
+                                )
+                            },
+                            {
+                                title: 'Quantity',
+                                dataIndex: 'quantity',
+                                render: (value, record) => (
+                                    <InputNumber
+                                        value={value}
+                                        min={1}
+                                        onChange={(value) => handleQuantityChange(record, value)}
+                                    />
+                                )
+                            },
+                            {
+                                title: 'Price',
+                                dataIndex: 'product',
+                                render: (value) => (
+                                    value.salePrice
+                                )
+                            },
+                            {
+                                title: 'Cost',
+                                dataIndex: 'product',
+                                render: (value) => (
+                                    value.costPrice
+                                )
+                            },
+                            {
+                                title: '(Profit)',
+                                dataIndex: 'product',
+                                render: (value, record) => {
+                                    return calculateProfitBySaleItems([record]);
+                                }
+                            },
+                            {
+                                title: 'Total',
+                                dataIndex: 'product',
+                                render: (value, record) => (
+                                    value.salePrice && record.quantity && value.salePrice * record.quantity
+                                )
+                            },
+                            {
+                                title: 'Remove',
+                                dataIndex: 'product',
+                                render: (value, record) => (
+                                    <span
+                                        style={{ 'cursor': 'pointer' }}
+                                        onClick={() => {
+                                            let newSaleItems = [...saleItems];
+                                            newSaleItems = _.filter(newSaleItems, newSaleItem => {
+                                                return newSaleItem != record
+                                            });
+                                            setSaleItems(newSaleItems);
+                                            updateSubTotal(newSaleItems);
+                                        }}
+                                    >❌</span>
+                                )
+                            }
+                        ]}
+                    />
 
-                                    <label>
-                                        <span>Quantity:</span>
-                                        <InputNumber
-                                            value={saleItem.quantity}
-                                            min={1}
-                                            onChange={(value) => handleQuantityChange(saleItem, value)}
-                                        />
-                                    </label>
-
-                                    <label>
-                                        <span>Price:</span>
-                                        <div style={{ 'padding': '5px 0 0 5px' }}>{saleItem.product.salePrice}</div>
-                                    </label>
-
-                                    <label>
-                                        <span>Total:</span>
-                                        <div style={{ 'padding': '5px 0 0 5px' }}>
-                                            {saleItem.product.salePrice && saleItem.quantity && saleItem.product.salePrice * saleItem.quantity}
-                                        </div>
-                                    </label>
-
-                                    <div className='x-container'>
-                                        <span
-                                            style={{ 'cursor': 'pointer', 'fontSize': '13pt' }}
-                                            onClick={() => {
-                                                let newSaleItems = [...saleItems];
-                                                newSaleItems = _.filter(newSaleItems, newSaleItem => {
-                                                    return newSaleItem != saleItem
-                                                });
-                                                setSaleItems(newSaleItems);
-                                                updateSubTotal(newSaleItems);
-                                            }}
-                                        >❌</span>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    }
                     <Form.Item>
                         <Button
                             style={{ 'marginTop': '15px' }}
@@ -299,12 +346,6 @@ const AddSaleButton = () => {
                             }}
                         >➕ Add Product</Button>
                     </Form.Item>
-
-                    <Divider />
-
-                    <div>
-                        <span className='bold'>SUBTOTAL: {subTotal}</span>
-                    </div>
 
                     <Divider />
 
@@ -390,7 +431,13 @@ const AddSaleButton = () => {
                     <Divider />
 
                     <div>
+                        <span className='bold'>SUBTOTAL: {subTotal}</span>
+                    </div>
+                    <div>
                         <span className='bold'>TOTAL: {total}</span>
+                    </div>
+                    <div>
+                        <span className='bold'>(PROFIT: {profit})</span>
                     </div>
 
                     <Divider />

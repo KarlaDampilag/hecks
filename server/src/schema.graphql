@@ -10,6 +10,7 @@ input SaleItemInput {
 input ProductInput {
   id: String!
   salePrice: String!
+  costPrice: String
   name: String!
 }
 
@@ -50,7 +51,7 @@ type Query {
     # inventory(id: ID!): Inventory
     customersByUser(orderBy: CustomerOrderByInput): [Customer]!
     # customer(id: ID!): Customer
-    # sales(orderBy: SaleOrderByInput): [Sale]!
+    salesByUser: [Sale]!
     # saleItems(orderBy: SaleItemOrderByInput): [SaleItem]!
 }
 

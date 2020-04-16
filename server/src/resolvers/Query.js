@@ -92,6 +92,31 @@ async function customersByUser(parent, args, ctx, info) {
     return await ctx.prisma.user({ id: ctx.request.userId }).customers();
 }
 
+async function salesByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const fragment = `
+    fragment SalesWithOthers on User {
+        id
+        timestamp
+        customer {
+            name
+        }
+        saleItems {
+            id
+            quantity
+            product {
+                name
+            }
+        }
+    }
+    `;
+
+    return await ctx.prisma.user({ id: ctx.request.userId }).sales().$fragment(fragment);
+}
+
 module.exports = {
     me,
     products,
@@ -102,5 +127,6 @@ module.exports = {
     inventoriesByUser,
     inventoryItemsByProduct,
     inventoryItemCount,
-    customersByUser
+    customersByUser,
+    salesByUser
 }

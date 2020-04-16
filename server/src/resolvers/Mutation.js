@@ -297,23 +297,35 @@ async function createSaleAndItems(parent, args, ctx, info) {
     delete arguments.customerId;
     delete arguments.saleItems;
 
-    const sale = await ctx.prisma.createSale({
-        user: {
-            connect: {
-                id: ctx.request.userId
-            }
-        },
-        customer: {
-            connect: {
-                id: args.customerId
-            }
-        },
-        ...arguments
-    });
+    let sale;
+    if (args.customerId) {
+        sale = await ctx.prisma.createSale({
+            user: {
+                connect: {
+                    id: ctx.request.userId
+                }
+            },
+            customer: {
+                connect: {
+                    id: args.customerId
+                }
+            },
+            ...arguments
+        });
+    } else {
+        sale = await ctx.prisma.createSale({
+            user: {
+                connect: {
+                    id: ctx.request.userId
+                }
+            },
+            ...arguments
+        });
+    }
 
     const savedItems = [];
     await Promise.all(args.saleItems.map(async (saleItem) => {
-        const saveArguments = {...saleItem};
+        const saveArguments = { ...saleItem };
         delete saveArguments.product;
         const savedItem = await ctx.prisma.createSaleItem({
             sale: {

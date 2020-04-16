@@ -1,22 +1,29 @@
 import React from 'react';
 import * as _ from 'lodash';
+import moment from 'moment';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Table, message } from 'antd';
+import { Table, message, Tag } from 'antd';
 
 import { userContext } from './App';
 import AddSaleButton from './AddSaleButton';
 import UpdateInventoryButton from './UpdateInventoryButton';
 import DeleteButton from './DeleteButton';
 
-const INVENTORIES_BY_USER_QUERY = gql`
+const SALES_BY_USER_QUERY = gql`
     {
-        inventoriesByUser(orderBy: createdAt_DESC) {
+        salesByUser {
             id
-            name
-            createdAt
-            inventoryItems {
+            timestamp
+            customer {
+                name
+            }
+            saleItems {
                 id
+                quantity
+                product {
+                    name
+                }
             }
         }
     }
@@ -35,15 +42,16 @@ const DELETE_INVENTORY_MUTATION = gql`
 const Sales = () => {
     const [idForDeletion, setIdForDeletion] = React.useState<string>();
 
-    const { data: inventoriesData, loading: inventoriesLoading } = useQuery(INVENTORIES_BY_USER_QUERY);
-    const inventories = inventoriesData ? inventoriesData.inventoriesByUser : null;
+    const { data: salesData, loading } = useQuery(SALES_BY_USER_QUERY);
+    const sales = salesData ? salesData.salesByUser : null;
+    console.log(sales)
 
     const [deleteInventory, { error: deleteInventoryError }] = useMutation(DELETE_INVENTORY_MUTATION, {
         variables: { id: idForDeletion },
         update: (cache: any, payload: any) => {
-            const data = cache.readQuery({ query: INVENTORIES_BY_USER_QUERY });
+            const data = cache.readQuery({ query: SALES_BY_USER_QUERY });
             const filteredItems = _.filter(data.inventoriesByUser, inventory => inventory.id !== payload.data.deleteInventory.id);
-            cache.writeQuery({ query: INVENTORIES_BY_USER_QUERY, data: { inventoriesByUser: filteredItems } });
+            cache.writeQuery({ query: SALES_BY_USER_QUERY, data: { inventoriesByUser: filteredItems } });
         }
     });
 
@@ -57,13 +65,42 @@ const Sales = () => {
                     <>
                         <AddSaleButton />
                         <Table
-                            loading={inventoriesLoading}
-                            dataSource={inventories}
+                            loading={loading}
+                            dataSource={sales}
                             rowKey='id'
                             columns={[
                                 {
-                                    title: 'Name',
-                                    dataIndex: 'name'
+                                    title: 'Date of Sale',
+                                    dataIndex: 'timestamp',
+                                    render: (value) => {
+                                        return moment.unix(value).format("Do MMMM YYYY, h:mm:ss a");
+                                    }
+                                },
+                                {
+                                    title: 'Products',
+                                    dataIndex: 'saleItems',
+                                    render: (value) => {
+                                        return _.map(value, saleItem => {
+                                            return <Tag key={saleItem.id}>{saleItem.product.name}</Tag>
+                                        })
+                                    }
+                                },
+                                {
+                                    title: 'No. of Items',
+                                    dataIndex: 'saleItems',
+                                    render: (value) => {
+                                        return value.length;
+                                    }
+                                },
+                                {
+                                    title: 'Customer',
+                                    dataIndex: 'customer',
+                                    render: (value) => {
+                                        if (value) {
+                                            return value.name;
+                                        }
+                                        return null;
+                                    }
                                 },
                                 {
                                     title: 'Edit ✏️',
@@ -105,4 +142,4 @@ const Sales = () => {
     );
 }
 export default Sales;
-export { INVENTORIES_BY_USER_QUERY };
+export { SALES_BY_USER_QUERY };
