@@ -109,6 +109,8 @@ async function salesByUser(parent, args, ctx, info) {
             quantity
             product {
                 name
+                salePrice
+                costPrice
             }
         }
     }

@@ -2,11 +2,12 @@ import React from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, Spin, InputNumber, Table } from 'antd';
-import { PlusOutlined, DeleteOutlined, DeleteRowOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import * as _ from 'lodash';
 
 import { CUSTOMERS_BY_USER_QUERY } from './Customers';
+import { calculateProfitBySaleItems, calculateSubtotalBySaleItems } from '../services/main';
 
 const CREATE_SALE_MUTATION = gql`
     mutation CREATE_SALE_MUTATION(
@@ -57,19 +58,6 @@ const PRODUCTS_BY_USER_QUERY = gql`
         }
     }
 `;
-
-const calculateProfitBySaleItems = (saleItems: SaleItemProps[]) => {
-    let profit = 0;
-    _.each(saleItems, saleItem => {
-        const product = saleItem.product;
-        if (product && product.salePrice) {
-            const singleItemProfit = parseFloat(Number(product.salePrice - product.costPrice).toFixed(3));
-            const profitWithQuantity = parseFloat(Number(singleItemProfit * saleItem.quantity).toFixed(3));
-            profit += profitWithQuantity;
-        }
-    });
-    return profit;
-}
 
 interface SaleItemProps {
     product: any; // FIXME how to use graphql types in frontend
@@ -160,15 +148,7 @@ const AddSaleButton = () => {
     }
 
     const updateSubTotal = (saleItems: SaleItemProps[]) => {
-        let total = 0;
-        _.map(saleItems, saleItem => {
-            const product = _.find(products, { id: saleItem.product.id });
-            if (product) {
-                const price = product.salePrice;
-                total += price * saleItem.quantity;
-            }
-        });
-        setSubTotal(total);
+        setSubTotal(calculateSubtotalBySaleItems(saleItems));
     }
 
     const layout = {
@@ -349,6 +329,12 @@ const AddSaleButton = () => {
 
                     <Divider />
 
+                    <div>
+                        <span className='bold'>PROFIT: {profit}</span>
+                    </div>
+
+                    <Divider />
+
                     <span>Discount:</span>
                     <div className='deduction-form-row'>
                         <div className='deduction-type-col'>
@@ -435,9 +421,6 @@ const AddSaleButton = () => {
                     </div>
                     <div>
                         <span className='bold'>TOTAL: {total}</span>
-                    </div>
-                    <div>
-                        <span className='bold'>(PROFIT: {profit})</span>
                     </div>
 
                     <Divider />

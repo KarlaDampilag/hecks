@@ -9,6 +9,7 @@ import { userContext } from './App';
 import AddSaleButton from './AddSaleButton';
 import UpdateInventoryButton from './UpdateInventoryButton';
 import DeleteButton from './DeleteButton';
+import { calculateProfitBySaleItems, calculateSubtotalBySaleItems } from '../services/main';
 
 const SALES_BY_USER_QUERY = gql`
     {
@@ -23,6 +24,8 @@ const SALES_BY_USER_QUERY = gql`
                 quantity
                 product {
                     name
+                    salePrice
+                    costPrice
                 }
             }
         }
@@ -90,6 +93,20 @@ const Sales = () => {
                                     dataIndex: 'saleItems',
                                     render: (value) => {
                                         return value.length;
+                                    }
+                                },
+                                {
+                                    title: 'Subtotal',
+                                    dataIndex: 'saleItems',
+                                    render: (value) => {
+                                        return calculateSubtotalBySaleItems(value);
+                                    }
+                                },
+                                {
+                                    title: 'Profit',
+                                    dataIndex: 'saleItems',
+                                    render: (value) => {
+                                        return calculateProfitBySaleItems(value);
                                     }
                                 },
                                 {
