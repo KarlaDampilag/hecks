@@ -120,10 +120,11 @@ async function salesByUser(parent, args, ctx, info) {
         taxValue
         shipping
         note
+        createdAt
     }
     `;
 
-    return await ctx.prisma.user({ id: ctx.request.userId }).sales().$fragment(fragment);
+    return await ctx.prisma.user({ id: ctx.request.userId }).sales({ orderBy: args.orderBy }).$fragment(fragment);
 }
 
 module.exports = {

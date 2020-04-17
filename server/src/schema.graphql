@@ -51,7 +51,7 @@ type Query {
     # inventory(id: ID!): Inventory
     customersByUser(orderBy: CustomerOrderByInput): [Customer]!
     # customer(id: ID!): Customer
-    salesByUser: [Sale]!
+    salesByUser(orderBy: SaleOrderByInput): [Sale]!
     # saleItems(orderBy: SaleItemOrderByInput): [SaleItem]!
 }
 

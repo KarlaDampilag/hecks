@@ -14,7 +14,7 @@ import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTota
 
 const SALES_BY_USER_QUERY = gql`
     {
-        salesByUser {
+        salesByUser(orderBy: createdAt_DESC) {
             id
             timestamp
             customer {
@@ -36,6 +36,7 @@ const SALES_BY_USER_QUERY = gql`
             taxValue
             shipping
             note
+            createdAt
         }
     }
 `;
@@ -52,8 +53,6 @@ const DELETE_INVENTORY_MUTATION = gql`
 
 const Sales = () => {
     const [idForDeletion, setIdForDeletion] = React.useState<string>();
-    const [recordForModal, setRecordForModal] = React.useState<any>(); // FIXME how to use sale interface from graphql?
-    const [showViewSale, setShowViewSale] = React.useState<boolean>(false);
 
     const { data: salesData, loading } = useQuery(SALES_BY_USER_QUERY);
     const sales = salesData ? salesData.salesByUser : null;

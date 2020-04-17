@@ -7,6 +7,7 @@ import moment from 'moment';
 import * as _ from 'lodash';
 
 import { CUSTOMERS_BY_USER_QUERY } from './Customers';
+import { SALES_BY_USER_QUERY } from './Sales';
 import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
 
 const CREATE_SALE_MUTATION = gql`
@@ -102,6 +103,12 @@ const AddSaleButton = () => {
 
     const [createSaleAndItems, { error: createSaleError, loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
         variables: { saleItems: filteredSaleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
+        update: (store, response) => {
+            let newData = response.data.createSaleAndItems;
+            let localStoreData: any = store.readQuery({ query: SALES_BY_USER_QUERY });
+            localStoreData = { salesByUser: [...localStoreData.salesByUser, newData] };
+            store.writeQuery({ query: SALES_BY_USER_QUERY, data: localStoreData });
+        }
     });
 
     const { data: productsByUserData } = useQuery(PRODUCTS_BY_USER_QUERY);

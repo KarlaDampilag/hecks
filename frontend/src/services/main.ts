@@ -42,7 +42,7 @@ export const calculateTotalBySale: (sale: any) => number = (sale: any) => {
     if (sale.discountType == 'FLAT') {
         discountDeduction = discountNumber;
     } else {
-        discountDeduction = sale.subTotal * (discountNumber / 100);
+        discountDeduction = subtotal * (discountNumber / 100);
     }
     total = total - discountDeduction;
     if (sale.taxType == 'FLAT') {
