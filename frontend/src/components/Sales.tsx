@@ -9,7 +9,7 @@ import { userContext } from './App';
 import AddSaleButton from './AddSaleButton';
 import UpdateInventoryButton from './UpdateInventoryButton';
 import DeleteButton from './DeleteButton';
-import ViewSaleModal from './ViewSaleModal';
+import SaleDetails from './SaleDetails';
 import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
 
 const SALES_BY_USER_QUERY = gql`
@@ -77,19 +77,13 @@ const Sales = () => {
                 return (
                     <>
                         <AddSaleButton />
-                        <ViewSaleModal sale={recordForModal} visible={showViewSale} onClose={() => setShowViewSale(false)} />
                         <Table
                             loading={loading}
                             dataSource={sales}
                             rowKey='id'
                             rowClassName='clickable-table-row'
-                            onRow={(record, rowIndex) => {
-                                return {
-                                    onClick: () => {
-                                        setRecordForModal(record);
-                                        setShowViewSale(true);
-                                    },
-                                };
+                            expandable={{
+                                expandedRowRender: record => <SaleDetails sale={record} />
                             }}
                             columns={[
                                 {

@@ -44,11 +44,12 @@ export const calculateTotalBySale: (sale: any) => number = (sale: any) => {
     } else {
         discountDeduction = sale.subTotal * (discountNumber / 100);
     }
+    total = total - discountDeduction;
     if (sale.taxType == 'FLAT') {
         taxDeduction = taxNumber;
     } else {
-        taxDeduction = subtotal * (taxNumber / 100);
+        taxDeduction = total * (taxNumber / 100);
     }
-    total = total - discountDeduction - taxDeduction - shippingNumber;
+    total = total - taxDeduction + shippingNumber;
     return total;
 }

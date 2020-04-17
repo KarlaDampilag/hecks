@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { Modal, Table } from 'antd';
+import { Modal, Table, Divider } from 'antd';
 
 import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
 
 interface PropTypes {
     sale: any; // FIXME use sale interface from graphql
-    visible: boolean;
-    onClose: () => void;
 }
 
-const ViewSaleModal = (props: PropTypes) => {
+const SaleDetails = (props: PropTypes) => {
     const [showViewRecord, setShowViewRecord] = React.useState<boolean>(false);
 
     const renderDiscount = () => {
@@ -35,16 +33,10 @@ const ViewSaleModal = (props: PropTypes) => {
     }
 
     return (
-        <Modal
-            visible={props.visible}
-            onCancel={props.onClose}
-            footer={null}
-        >
+        <>
+            <div className='bold'><p>SALE DETAILS:</p></div>
             {
                 props.sale && (<>
-                    <div style={{ marginBottom: '1.5em' }}>
-                        Date of Sale: {moment.unix(props.sale.timestamp).format("Do MMMM YYYY, h:mm:ss a")}
-                    </div>
                     <Table
                         size='small'
                         pagination={false}
@@ -113,6 +105,10 @@ const ViewSaleModal = (props: PropTypes) => {
                         }}
                     />
 
+                    <div>NOTE: {props.sale.note}</div>
+
+                    <Divider />
+
                     <div>
                         <div className='summary-row'>
                             <span>DISCOUNT:</span> <span>{renderDiscount()}</span>
@@ -129,7 +125,7 @@ const ViewSaleModal = (props: PropTypes) => {
                     </div>
                 </>)
             }
-        </Modal>
+        </>
     )
 }
-export default ViewSaleModal;
+export default SaleDetails;

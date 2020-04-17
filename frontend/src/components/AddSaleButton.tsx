@@ -7,7 +7,7 @@ import moment from 'moment';
 import * as _ from 'lodash';
 
 import { CUSTOMERS_BY_USER_QUERY } from './Customers';
-import { calculateProfitBySaleItems, calculateSubtotalBySaleItems } from '../services/main';
+import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
 
 const CREATE_SALE_MUTATION = gql`
     mutation CREATE_SALE_MUTATION(
@@ -87,24 +87,14 @@ const AddSaleButton = () => {
     const [form] = Form.useForm();
 
     React.useEffect(() => {
-        let total = subTotal;
-        let discountDeduction;
-        let taxDeduction;
-        const discountNumber = discountValue ? parseFloat(discountValue) : 0;
-        const taxNumber = taxValue ? parseFloat(taxValue) : 0;
-        const shippingNumber = shipping ? parseFloat(shipping) : 0;
-        if (discountType == 'FLAT') {
-            discountDeduction = discountNumber;
-        } else {
-            discountDeduction = subTotal * (discountNumber / 100);
-        }
-        if (taxType == 'FLAT') {
-            taxDeduction = taxNumber;
-        } else {
-            taxDeduction = subTotal * (taxNumber / 100);
-        }
-        total = total - discountDeduction - taxDeduction - shippingNumber;
-        setTotal(total);
+        setTotal(calculateTotalBySale({
+            saleItems,
+            discountType,
+            discountValue,
+            taxType,
+            taxValue,
+            shipping,
+        }));
 
         const profit = calculateProfitBySaleItems(saleItems);
         setProfit(profit);
