@@ -3,13 +3,14 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Table, message, Tag } from 'antd';
+import { Table, message, Tag, Modal, Divider } from 'antd';
 
 import { userContext } from './App';
 import AddSaleButton from './AddSaleButton';
 import UpdateInventoryButton from './UpdateInventoryButton';
 import DeleteButton from './DeleteButton';
-import { calculateProfitBySaleItems, calculateSubtotalBySaleItems } from '../services/main';
+import ViewSaleModal from './ViewSaleModal';
+import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
 
 const SALES_BY_USER_QUERY = gql`
     {
@@ -23,11 +24,18 @@ const SALES_BY_USER_QUERY = gql`
                 id
                 quantity
                 product {
+                    id
                     name
                     salePrice
                     costPrice
                 }
             }
+            discountType
+            discountValue
+            taxType
+            taxValue
+            shipping
+            note
         }
     }
 `;
@@ -44,6 +52,8 @@ const DELETE_INVENTORY_MUTATION = gql`
 
 const Sales = () => {
     const [idForDeletion, setIdForDeletion] = React.useState<string>();
+    const [recordForModal, setRecordForModal] = React.useState<any>(); // FIXME how to use sale interface from graphql?
+    const [showViewSale, setShowViewSale] = React.useState<boolean>(false);
 
     const { data: salesData, loading } = useQuery(SALES_BY_USER_QUERY);
     const sales = salesData ? salesData.salesByUser : null;
@@ -67,10 +77,20 @@ const Sales = () => {
                 return (
                     <>
                         <AddSaleButton />
+                        <ViewSaleModal sale={recordForModal} visible={showViewSale} onClose={() => setShowViewSale(false)} />
                         <Table
                             loading={loading}
                             dataSource={sales}
                             rowKey='id'
+                            rowClassName='clickable-table-row'
+                            onRow={(record, rowIndex) => {
+                                return {
+                                    onClick: () => {
+                                        setRecordForModal(record);
+                                        setShowViewSale(true);
+                                    },
+                                };
+                            }}
                             columns={[
                                 {
                                     title: 'Date of Sale',
@@ -100,6 +120,13 @@ const Sales = () => {
                                     dataIndex: 'saleItems',
                                     render: (value) => {
                                         return calculateSubtotalBySaleItems(value);
+                                    }
+                                },
+                                {
+                                    title: 'Total',
+                                    dataIndex: 'id',
+                                    render: (value, record) => {
+                                        return calculateTotalBySale(record);
                                     }
                                 },
                                 {

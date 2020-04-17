@@ -108,11 +108,18 @@ async function salesByUser(parent, args, ctx, info) {
             id
             quantity
             product {
+                id
                 name
                 salePrice
                 costPrice
             }
         }
+        discountType
+        discountValue
+        taxType
+        taxValue
+        shipping
+        note
     }
     `;
 

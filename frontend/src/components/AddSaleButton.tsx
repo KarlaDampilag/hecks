@@ -278,7 +278,7 @@ const AddSaleButton = () => {
                                 )
                             },
                             {
-                                title: '(Profit)',
+                                title: 'Profit',
                                 dataIndex: 'product',
                                 render: (value, record) => {
                                     return calculateProfitBySaleItems([record]);
@@ -309,6 +309,27 @@ const AddSaleButton = () => {
                                 )
                             }
                         ]}
+                        summary={(pageData) => {
+                            const totalProfit = calculateProfitBySaleItems(pageData);
+                            const totalSubtotal = calculateSubtotalBySaleItems(pageData);
+                            let totalQuantity = 0;
+                            _.each(pageData, saleItem => totalQuantity += saleItem.quantity);
+
+                            console.log(pageData)
+                            return (
+                                <>
+                                    <tr>
+                                        <th style={{ padding: '8px' }}>Total</th>
+                                        <th style={{ padding: '16px' }}>{totalQuantity}</th>
+                                        <th style={{ padding: '8px' }}></th>
+                                        <th style={{ padding: '8px' }}></th>
+                                        <th style={{ padding: '8px' }}>{totalProfit}</th>
+                                        <th style={{ padding: '8px' }}>{totalSubtotal}</th>
+                                        <th style={{ padding: '8px' }}></th>
+                                    </tr>
+                                </>
+                            )
+                        }}
                     />
 
                     <Form.Item>
@@ -329,12 +350,7 @@ const AddSaleButton = () => {
 
                     <Divider />
 
-                    <div>
-                        <span className='bold'>PROFIT: {profit}</span>
-                    </div>
-
-                    <Divider />
-
+                    <div><p className='bold'>DEDUCTIONS:</p></div>
                     <span>Discount:</span>
                     <div className='deduction-form-row'>
                         <div className='deduction-type-col'>
@@ -415,10 +431,7 @@ const AddSaleButton = () => {
                     </Form.Item>
 
                     <Divider />
-
-                    <div>
-                        <span className='bold'>SUBTOTAL: {subTotal}</span>
-                    </div>
+                    
                     <div>
                         <span className='bold'>TOTAL: {total}</span>
                     </div>

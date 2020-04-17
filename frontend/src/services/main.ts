@@ -5,8 +5,8 @@ interface SaleItemProps {
     quantity: number;
 } // FIXME how to make universal interfaces for the whole app?
 
-export const calculateProfitBySaleItems = (saleItems: SaleItemProps[]) => {
-    let profit = 0;
+export const calculateProfitBySaleItems: (saleItems: SaleItemProps[]) => number = (saleItems: SaleItemProps[]) => {
+    let profit: number = 0;
     _.each(saleItems, saleItem => {
         const product = saleItem.product;
         if (product && product.salePrice) {
@@ -18,14 +18,37 @@ export const calculateProfitBySaleItems = (saleItems: SaleItemProps[]) => {
     return profit;
 }
 
-export const calculateSubtotalBySaleItems = (saleItems: SaleItemProps[]) => {
-    let total = 0;
+export const calculateSubtotalBySaleItems: (saleItems: SaleItemProps[]) => number = (saleItems: SaleItemProps[]) => {
+    let total: number = 0;
     _.map(saleItems, saleItem => {
         const product = saleItem.product;
-        if (product) {
+        if (product && product.id) {
             const price = product.salePrice;
             total += price * saleItem.quantity;
         }
     });
+    return total;
+}
+
+// FIXME use proper type not any
+export const calculateTotalBySale: (sale: any) => number = (sale: any) => {
+    const subtotal = calculateSubtotalBySaleItems(sale.saleItems);
+    let total: number = subtotal;
+    let discountDeduction;
+    let taxDeduction;
+    const discountNumber = sale.discountValue ? parseFloat(sale.discountValue) : 0;
+    const taxNumber = sale.taxValue ? parseFloat(sale.taxValue) : 0;
+    const shippingNumber = sale.shipping ? parseFloat(sale.shipping) : 0;
+    if (sale.discountType == 'FLAT') {
+        discountDeduction = discountNumber;
+    } else {
+        discountDeduction = sale.subTotal * (discountNumber / 100);
+    }
+    if (sale.taxType == 'FLAT') {
+        taxDeduction = taxNumber;
+    } else {
+        taxDeduction = subtotal * (taxNumber / 100);
+    }
+    total = total - discountDeduction - taxDeduction - shippingNumber;
     return total;
 }

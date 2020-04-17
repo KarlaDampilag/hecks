@@ -52,6 +52,27 @@ code {
   padding-left: 0;
 }
 
+.summary-row {
+  display: flex;
+  width: 150px;
+}
+.summary-row span {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.summary-row span:first-of-type {
+  text-align: right;
+  margin-right: 10px;
+}
+
+.clickable-table-row {
+  cursor: pointer;
+}
+
+.ant-table-wrapper {
+  margin-bottom: 1.5em;
+}
+
 .deduction-form-row {
   display: flex;
   justify-content: space-evenly;
