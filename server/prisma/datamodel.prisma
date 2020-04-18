@@ -124,6 +124,8 @@ type SaleItem {
   id: ID! @id
   sale: Sale!
   product: Product!
+  salePrice: String!
+  costPrice: String
   quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String

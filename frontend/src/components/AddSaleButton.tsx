@@ -34,16 +34,26 @@ const CREATE_SALE_MUTATION = gql`
             note: $note
         ) {
             id
+            timestamp
             customer {
-                id
                 name
-            }        
+            }
+            saleItems {
+                id
+                quantity
+                product {
+                    id
+                    name
+                }
+                salePrice
+                costPrice
+            }
             discountType
             discountValue
             taxType
             taxValue
             shipping
-            note    
+            note
             createdAt
         }
     }
@@ -62,6 +72,8 @@ const PRODUCTS_BY_USER_QUERY = gql`
 
 interface SaleItemProps {
     product: any; // FIXME how to use graphql types in frontend
+    salePrice: string;
+    costPrice?: string;
     quantity: number;
 }
 
@@ -71,6 +83,7 @@ const AddSaleButton = () => {
         product: {
             id: null
         },
+        salePrice: '0',
         quantity: 1
     }]);
     const [filteredSaleItems, setFilteredSaleItems] = React.useState<SaleItemProps[]>();
@@ -122,9 +135,12 @@ const AddSaleButton = () => {
     const customers = customersByUserData ? customersByUserData.customersByUser : null;
 
     const handleProductChange = (saleItem: SaleItemProps, value: string) => {
+        const product = JSON.parse(value);
         const updatedSaleItems = [...saleItems];
         const updatedSaleItem: SaleItemProps = { ...saleItem };
-        updatedSaleItem.product = JSON.parse(value);
+        updatedSaleItem.product = product;
+        updatedSaleItem.salePrice = product.salePrice;
+        updatedSaleItem.costPrice = product.costPrice;
         const index = _.findIndex(updatedSaleItems, saleItem);
         updatedSaleItems.splice(index, 1, updatedSaleItem);
         setSaleItems(updatedSaleItems);
@@ -178,6 +194,7 @@ const AddSaleButton = () => {
                                     product: {
                                         id: null
                                     },
+                                    salePrice: '0',
                                     quantity: 1
                                 }]);
                                 setSubTotal(0);
@@ -262,16 +279,16 @@ const AddSaleButton = () => {
                             },
                             {
                                 title: 'Price',
-                                dataIndex: 'product',
+                                dataIndex: 'salePrice',
                                 render: (value) => (
-                                    value.salePrice
+                                    value
                                 )
                             },
                             {
                                 title: 'Cost',
-                                dataIndex: 'product',
+                                dataIndex: 'costPrice',
                                 render: (value) => (
-                                    value.costPrice
+                                    value
                                 )
                             },
                             {
@@ -338,6 +355,7 @@ const AddSaleButton = () => {
                                     product: {
                                         id: null
                                     },
+                                    salePrice: '0',
                                     quantity: 1
                                 });
                                 setSaleItems(newSaleItems);
@@ -428,7 +446,7 @@ const AddSaleButton = () => {
                     </Form.Item>
 
                     <Divider />
-                    
+
                     <div>
                         <span className='bold'>TOTAL: {total}</span>
                     </div>

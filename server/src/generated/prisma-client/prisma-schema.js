@@ -2290,6 +2290,8 @@ type SaleItem {
   id: ID!
   sale: Sale!
   product: Product!
+  salePrice: String!
+  costPrice: String
   quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2307,6 +2309,8 @@ input SaleItemCreateInput {
   id: ID
   sale: SaleCreateOneWithoutSaleItemsInput!
   product: ProductCreateOneInput!
+  salePrice: String!
+  costPrice: String
   quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2325,6 +2329,8 @@ input SaleItemCreateManyWithoutSaleInput {
 input SaleItemCreateWithoutSaleInput {
   id: ID
   product: ProductCreateOneInput!
+  salePrice: String!
+  costPrice: String
   quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2338,6 +2344,10 @@ type SaleItemEdge {
 enum SaleItemOrderByInput {
   id_ASC
   id_DESC
+  salePrice_ASC
+  salePrice_DESC
+  costPrice_ASC
+  costPrice_DESC
   quantity_ASC
   quantity_DESC
   discountType_ASC
@@ -2352,6 +2362,8 @@ enum SaleItemOrderByInput {
 
 type SaleItemPreviousValues {
   id: ID!
+  salePrice: String!
+  costPrice: String
   quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2374,6 +2386,34 @@ input SaleItemScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  salePrice: String
+  salePrice_not: String
+  salePrice_in: [String!]
+  salePrice_not_in: [String!]
+  salePrice_lt: String
+  salePrice_lte: String
+  salePrice_gt: String
+  salePrice_gte: String
+  salePrice_contains: String
+  salePrice_not_contains: String
+  salePrice_starts_with: String
+  salePrice_not_starts_with: String
+  salePrice_ends_with: String
+  salePrice_not_ends_with: String
+  costPrice: String
+  costPrice_not: String
+  costPrice_in: [String!]
+  costPrice_not_in: [String!]
+  costPrice_lt: String
+  costPrice_lte: String
+  costPrice_gt: String
+  costPrice_gte: String
+  costPrice_contains: String
+  costPrice_not_contains: String
+  costPrice_starts_with: String
+  costPrice_not_starts_with: String
+  costPrice_ends_with: String
+  costPrice_not_ends_with: String
   quantity: Int
   quantity_not: Int
   quantity_in: [Int!]
@@ -2442,6 +2482,8 @@ input SaleItemSubscriptionWhereInput {
 input SaleItemUpdateDataInput {
   sale: SaleUpdateOneRequiredWithoutSaleItemsInput
   product: ProductUpdateOneRequiredInput
+  salePrice: String
+  costPrice: String
   quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2450,12 +2492,16 @@ input SaleItemUpdateDataInput {
 input SaleItemUpdateInput {
   sale: SaleUpdateOneRequiredWithoutSaleItemsInput
   product: ProductUpdateOneRequiredInput
+  salePrice: String
+  costPrice: String
   quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
 
 input SaleItemUpdateManyDataInput {
+  salePrice: String
+  costPrice: String
   quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2474,6 +2520,8 @@ input SaleItemUpdateManyInput {
 }
 
 input SaleItemUpdateManyMutationInput {
+  salePrice: String
+  costPrice: String
   quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2498,6 +2546,8 @@ input SaleItemUpdateManyWithWhereNestedInput {
 
 input SaleItemUpdateWithoutSaleDataInput {
   product: ProductUpdateOneRequiredInput
+  salePrice: String
+  costPrice: String
   quantity: Int
   discountType: SpecialSaleDeductionType
   discountValue: String
@@ -2542,6 +2592,34 @@ input SaleItemWhereInput {
   id_not_ends_with: ID
   sale: SaleWhereInput
   product: ProductWhereInput
+  salePrice: String
+  salePrice_not: String
+  salePrice_in: [String!]
+  salePrice_not_in: [String!]
+  salePrice_lt: String
+  salePrice_lte: String
+  salePrice_gt: String
+  salePrice_gte: String
+  salePrice_contains: String
+  salePrice_not_contains: String
+  salePrice_starts_with: String
+  salePrice_not_starts_with: String
+  salePrice_ends_with: String
+  salePrice_not_ends_with: String
+  costPrice: String
+  costPrice_not: String
+  costPrice_in: [String!]
+  costPrice_not_in: [String!]
+  costPrice_lt: String
+  costPrice_lte: String
+  costPrice_gt: String
+  costPrice_gte: String
+  costPrice_contains: String
+  costPrice_not_contains: String
+  costPrice_starts_with: String
+  costPrice_not_starts_with: String
+  costPrice_ends_with: String
+  costPrice_not_ends_with: String
   quantity: Int
   quantity_not: Int
   quantity_in: [Int!]

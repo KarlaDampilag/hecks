@@ -110,9 +110,9 @@ async function salesByUser(parent, args, ctx, info) {
             product {
                 id
                 name
-                salePrice
-                costPrice
             }
+            salePrice
+            costPrice
         }
         discountType
         discountValue

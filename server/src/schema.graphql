@@ -3,15 +3,17 @@
 input SaleItemInput {
   product: ProductInput!
   quantity: Int!
+  salePrice: String!
+  costPrice: String
   discountType: SpecialSaleDeductionType
   discountValue: String
 }
 
 input ProductInput {
   id: String!
+  name: String!
   salePrice: String!
   costPrice: String
-  name: String!
 }
 
 type Mutation {
@@ -31,7 +33,6 @@ type Mutation {
     updateCustomer(id: ID!, name: String, email: String, phone: String, street1: String, street2: String, city: String, state: String, zipCode: String, country: String): Customer!
     deleteCustomer(id: ID!): Customer!
     createSaleAndItems(saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
-    createSaleItem(saleId: String!, productId: String!, quantity: String!, discountType: SpecialSaleDeductionType, discountValue: String): SaleItem!
     # requestReset(email: String!): SuccessMessage
     # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
     # updatePermissions(permissions: [Permission], userId: ID!): User

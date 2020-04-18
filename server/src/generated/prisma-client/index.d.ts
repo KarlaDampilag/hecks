@@ -556,6 +556,10 @@ export type SaleOrderByInput =
 export type SaleItemOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "salePrice_ASC"
+  | "salePrice_DESC"
+  | "costPrice_ASC"
+  | "costPrice_DESC"
   | "quantity_ASC"
   | "quantity_DESC"
   | "discountType_ASC"
@@ -1376,6 +1380,34 @@ export interface SaleItemWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   sale?: Maybe<SaleWhereInput>;
   product?: Maybe<ProductWhereInput>;
+  salePrice?: Maybe<String>;
+  salePrice_not?: Maybe<String>;
+  salePrice_in?: Maybe<String[] | String>;
+  salePrice_not_in?: Maybe<String[] | String>;
+  salePrice_lt?: Maybe<String>;
+  salePrice_lte?: Maybe<String>;
+  salePrice_gt?: Maybe<String>;
+  salePrice_gte?: Maybe<String>;
+  salePrice_contains?: Maybe<String>;
+  salePrice_not_contains?: Maybe<String>;
+  salePrice_starts_with?: Maybe<String>;
+  salePrice_not_starts_with?: Maybe<String>;
+  salePrice_ends_with?: Maybe<String>;
+  salePrice_not_ends_with?: Maybe<String>;
+  costPrice?: Maybe<String>;
+  costPrice_not?: Maybe<String>;
+  costPrice_in?: Maybe<String[] | String>;
+  costPrice_not_in?: Maybe<String[] | String>;
+  costPrice_lt?: Maybe<String>;
+  costPrice_lte?: Maybe<String>;
+  costPrice_gt?: Maybe<String>;
+  costPrice_gte?: Maybe<String>;
+  costPrice_contains?: Maybe<String>;
+  costPrice_not_contains?: Maybe<String>;
+  costPrice_starts_with?: Maybe<String>;
+  costPrice_not_starts_with?: Maybe<String>;
+  costPrice_ends_with?: Maybe<String>;
+  costPrice_not_ends_with?: Maybe<String>;
   quantity?: Maybe<Int>;
   quantity_not?: Maybe<Int>;
   quantity_in?: Maybe<Int[] | Int>;
@@ -1729,6 +1761,8 @@ export interface SaleItemCreateInput {
   id?: Maybe<ID_Input>;
   sale: SaleCreateOneWithoutSaleItemsInput;
   product: ProductCreateOneInput;
+  salePrice: String;
+  costPrice?: Maybe<String>;
   quantity: Int;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -1823,6 +1857,8 @@ export interface SaleItemCreateManyWithoutSaleInput {
 export interface SaleItemCreateWithoutSaleInput {
   id?: Maybe<ID_Input>;
   product: ProductCreateOneInput;
+  salePrice: String;
+  costPrice?: Maybe<String>;
   quantity: Int;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -2550,6 +2586,8 @@ export interface SaleItemUpdateWithWhereUniqueNestedInput {
 export interface SaleItemUpdateDataInput {
   sale?: Maybe<SaleUpdateOneRequiredWithoutSaleItemsInput>;
   product?: Maybe<ProductUpdateOneRequiredInput>;
+  salePrice?: Maybe<String>;
+  costPrice?: Maybe<String>;
   quantity?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -2688,6 +2726,8 @@ export interface SaleItemUpdateWithWhereUniqueWithoutSaleInput {
 
 export interface SaleItemUpdateWithoutSaleDataInput {
   product?: Maybe<ProductUpdateOneRequiredInput>;
+  salePrice?: Maybe<String>;
+  costPrice?: Maybe<String>;
   quantity?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -2714,6 +2754,34 @@ export interface SaleItemScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  salePrice?: Maybe<String>;
+  salePrice_not?: Maybe<String>;
+  salePrice_in?: Maybe<String[] | String>;
+  salePrice_not_in?: Maybe<String[] | String>;
+  salePrice_lt?: Maybe<String>;
+  salePrice_lte?: Maybe<String>;
+  salePrice_gt?: Maybe<String>;
+  salePrice_gte?: Maybe<String>;
+  salePrice_contains?: Maybe<String>;
+  salePrice_not_contains?: Maybe<String>;
+  salePrice_starts_with?: Maybe<String>;
+  salePrice_not_starts_with?: Maybe<String>;
+  salePrice_ends_with?: Maybe<String>;
+  salePrice_not_ends_with?: Maybe<String>;
+  costPrice?: Maybe<String>;
+  costPrice_not?: Maybe<String>;
+  costPrice_in?: Maybe<String[] | String>;
+  costPrice_not_in?: Maybe<String[] | String>;
+  costPrice_lt?: Maybe<String>;
+  costPrice_lte?: Maybe<String>;
+  costPrice_gt?: Maybe<String>;
+  costPrice_gte?: Maybe<String>;
+  costPrice_contains?: Maybe<String>;
+  costPrice_not_contains?: Maybe<String>;
+  costPrice_starts_with?: Maybe<String>;
+  costPrice_not_starts_with?: Maybe<String>;
+  costPrice_ends_with?: Maybe<String>;
+  costPrice_not_ends_with?: Maybe<String>;
   quantity?: Maybe<Int>;
   quantity_not?: Maybe<Int>;
   quantity_in?: Maybe<Int[] | Int>;
@@ -2771,6 +2839,8 @@ export interface SaleItemUpdateManyWithWhereNestedInput {
 }
 
 export interface SaleItemUpdateManyDataInput {
+  salePrice?: Maybe<String>;
+  costPrice?: Maybe<String>;
   quantity?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -3571,12 +3641,16 @@ export interface SaleUpdateManyMutationInput {
 export interface SaleItemUpdateInput {
   sale?: Maybe<SaleUpdateOneRequiredWithoutSaleItemsInput>;
   product?: Maybe<ProductUpdateOneRequiredInput>;
+  salePrice?: Maybe<String>;
+  costPrice?: Maybe<String>;
   quantity?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
 }
 
 export interface SaleItemUpdateManyMutationInput {
+  salePrice?: Maybe<String>;
+  costPrice?: Maybe<String>;
   quantity?: Maybe<Int>;
   discountType?: Maybe<SpecialSaleDeductionType>;
   discountValue?: Maybe<String>;
@@ -4441,6 +4515,8 @@ export interface SaleNullablePromise
 
 export interface SaleItem {
   id: ID_Output;
+  salePrice: String;
+  costPrice?: String;
   quantity: Int;
   discountType?: SpecialSaleDeductionType;
   discountValue?: String;
@@ -4452,6 +4528,8 @@ export interface SaleItemPromise extends Promise<SaleItem>, Fragmentable {
   id: () => Promise<ID_Output>;
   sale: <T = SalePromise>() => T;
   product: <T = ProductPromise>() => T;
+  salePrice: () => Promise<String>;
+  costPrice: () => Promise<String>;
   quantity: () => Promise<Int>;
   discountType: () => Promise<SpecialSaleDeductionType>;
   discountValue: () => Promise<String>;
@@ -4465,6 +4543,8 @@ export interface SaleItemSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   sale: <T = SaleSubscription>() => T;
   product: <T = ProductSubscription>() => T;
+  salePrice: () => Promise<AsyncIterator<String>>;
+  costPrice: () => Promise<AsyncIterator<String>>;
   quantity: () => Promise<AsyncIterator<Int>>;
   discountType: () => Promise<AsyncIterator<SpecialSaleDeductionType>>;
   discountValue: () => Promise<AsyncIterator<String>>;
@@ -4478,6 +4558,8 @@ export interface SaleItemNullablePromise
   id: () => Promise<ID_Output>;
   sale: <T = SalePromise>() => T;
   product: <T = ProductPromise>() => T;
+  salePrice: () => Promise<String>;
+  costPrice: () => Promise<String>;
   quantity: () => Promise<Int>;
   discountType: () => Promise<SpecialSaleDeductionType>;
   discountValue: () => Promise<String>;
@@ -5460,6 +5542,8 @@ export interface SaleItemSubscriptionPayloadSubscription
 
 export interface SaleItemPreviousValues {
   id: ID_Output;
+  salePrice: String;
+  costPrice?: String;
   quantity: Int;
   discountType?: SpecialSaleDeductionType;
   discountValue?: String;
@@ -5471,6 +5555,8 @@ export interface SaleItemPreviousValuesPromise
   extends Promise<SaleItemPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  salePrice: () => Promise<String>;
+  costPrice: () => Promise<String>;
   quantity: () => Promise<Int>;
   discountType: () => Promise<SpecialSaleDeductionType>;
   discountValue: () => Promise<String>;
@@ -5482,6 +5568,8 @@ export interface SaleItemPreviousValuesSubscription
   extends Promise<AsyncIterator<SaleItemPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  salePrice: () => Promise<AsyncIterator<String>>;
+  costPrice: () => Promise<AsyncIterator<String>>;
   quantity: () => Promise<AsyncIterator<Int>>;
   discountType: () => Promise<AsyncIterator<SpecialSaleDeductionType>>;
   discountValue: () => Promise<AsyncIterator<String>>;

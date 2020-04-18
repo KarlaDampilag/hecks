@@ -338,43 +338,14 @@ async function createSaleAndItems(parent, args, ctx, info) {
                     id: saleItem.product.id
                 }
             },
+            salePrice: saleItem.product.salePrice,
+            costPrice: saleItem.product.costPrice,
             ...saveArguments
         });
         savedItems.push(savedItem);
     }));
 
     return sale;
-}
-
-async function createSaleItem(parent, args, ctx, info) {
-    if (!ctx.request.userId) {
-        throw new Error('You must be logged in to do that.');
-    }
-
-    const arguments = { ...args };
-    delete arguments.saleId;
-    delete arguments.productId;
-
-    const saleItem = await ctx.prisma.createSaleItem({
-        user: {
-            connect: {
-                id: ctx.request.userId
-            }
-        },
-        sale: {
-            connect: {
-                id: args.saleId
-            }
-        },
-        product: {
-            connect: {
-                id: args.productId
-            }
-        },
-        ...arguments
-    });
-
-    return saleItem;
 }
 
 module.exports = {
@@ -392,5 +363,4 @@ module.exports = {
     updateCustomer,
     deleteCustomer,
     createSaleAndItems,
-    createSaleItem
 }

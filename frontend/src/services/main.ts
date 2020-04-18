@@ -1,19 +1,20 @@
 import * as _ from 'lodash';
 
 interface SaleItemProps {
-    product: any; // FIXME how to use graphql types in frontend
+    product: any; // FIXME how to use graphql types in frontend`
+    salePrice: string;
+    costPrice?: string;
     quantity: number;
 } // FIXME how to make universal interfaces for the whole app?
 
 export const calculateProfitBySaleItems: (saleItems: SaleItemProps[]) => number = (saleItems: SaleItemProps[]) => {
     let profit: number = 0;
     _.each(saleItems, saleItem => {
-        const product = saleItem.product;
-        if (product && product.salePrice) {
-            const singleItemProfit = parseFloat(Number(product.salePrice - product.costPrice).toFixed(3));
-            const profitWithQuantity = parseFloat(Number(singleItemProfit * saleItem.quantity).toFixed(3));
-            profit += profitWithQuantity;
-        }
+        const salePrice = saleItem.salePrice ? parseFloat(saleItem.salePrice) : 0;
+        const costPrice = saleItem.costPrice ? parseFloat(saleItem.costPrice) : 0;
+        const singleItemProfit = parseFloat(Number(salePrice - costPrice).toFixed(3));
+        const profitWithQuantity = parseFloat(Number(singleItemProfit * saleItem.quantity).toFixed(3));
+        profit += profitWithQuantity;
     });
     return profit;
 }
@@ -21,11 +22,8 @@ export const calculateProfitBySaleItems: (saleItems: SaleItemProps[]) => number 
 export const calculateSubtotalBySaleItems: (saleItems: SaleItemProps[]) => number = (saleItems: SaleItemProps[]) => {
     let total: number = 0;
     _.map(saleItems, saleItem => {
-        const product = saleItem.product;
-        if (product && product.id) {
-            const price = product.salePrice;
-            total += price * saleItem.quantity;
-        }
+        const salePrice = saleItem.salePrice ? parseFloat(saleItem.salePrice) : 0;
+        total += salePrice * saleItem.quantity;
     });
     return total;
 }

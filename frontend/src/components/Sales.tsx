@@ -26,9 +26,9 @@ const SALES_BY_USER_QUERY = gql`
                 product {
                     id
                     name
-                    salePrice
-                    costPrice
                 }
+                salePrice
+                costPrice
             }
             discountType
             discountValue
@@ -99,13 +99,6 @@ const Sales = () => {
                                         return _.map(value, saleItem => {
                                             return <Tag key={saleItem.id}>{saleItem.product.name}</Tag>
                                         })
-                                    }
-                                },
-                                {
-                                    title: 'No. of Items',
-                                    dataIndex: 'saleItems',
-                                    render: (value) => {
-                                        return value.length;
                                     }
                                 },
                                 {
