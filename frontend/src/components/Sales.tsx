@@ -7,10 +7,21 @@ import { Table, message, Tag, Modal, Divider } from 'antd';
 
 import { userContext } from './App';
 import AddSaleButton from './AddSaleButton';
-import UpdateInventoryButton from './UpdateInventoryButton';
+import UpdateSaleButton from './UpdateSaleButton';
 import DeleteButton from './DeleteButton';
 import SaleDetails from './SaleDetails';
 import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
+
+const PRODUCTS_BY_USER_QUERY = gql`
+    {
+        productsByUser {
+            id
+            name
+            salePrice
+            costPrice
+        }
+    }
+`;
 
 const SALES_BY_USER_QUERY = gql`
     {
@@ -18,6 +29,7 @@ const SALES_BY_USER_QUERY = gql`
             id
             timestamp
             customer {
+                id
                 name
             }
             saleItems {
@@ -26,6 +38,8 @@ const SALES_BY_USER_QUERY = gql`
                 product {
                     id
                     name
+                    salePrice
+                    costPrice
                 }
                 salePrice
                 costPrice
@@ -65,6 +79,12 @@ const Sales = () => {
         }
     });
 
+    const { data: productsByUserData } = useQuery(PRODUCTS_BY_USER_QUERY);
+    const products = productsByUserData ? productsByUserData.productsByUser : [];
+    _.each(products, product => {
+        delete product.__typename;
+    });
+
     return (
         <userContext.Consumer>
             {value => {
@@ -73,7 +93,7 @@ const Sales = () => {
                 }
                 return (
                     <>
-                        <AddSaleButton />
+                        <AddSaleButton products={products} />
                         <Table
                             loading={loading}
                             dataSource={sales}
@@ -87,7 +107,7 @@ const Sales = () => {
                                     title: 'Date of Sale',
                                     dataIndex: 'timestamp',
                                     render: (value) => {
-                                        return moment.unix(value).format("Do MMMM YYYY, h:mm:ss a");
+                                        return moment.unix(value).format("Do MMMM YYYY");
                                     }
                                 },
                                 {
@@ -136,7 +156,7 @@ const Sales = () => {
                                     key: 'edit',
                                     render: (value, record) => {
                                         return (
-                                            <UpdateInventoryButton inventory={record} />
+                                            <UpdateSaleButton sale={record} products={products} />
                                         );
                                     }
                                 },

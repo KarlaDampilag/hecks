@@ -102,6 +102,7 @@ async function salesByUser(parent, args, ctx, info) {
         id
         timestamp
         customer {
+            id
             name
         }
         saleItems {
@@ -110,6 +111,8 @@ async function salesByUser(parent, args, ctx, info) {
             product {
                 id
                 name
+                salePrice
+                costPrice
             }
             salePrice
             costPrice

@@ -350,6 +350,7 @@ async function createSaleAndItems(parent, args, ctx, info) {
         id
         timestamp
         customer {
+            id
             name
         }
         saleItems {
@@ -358,6 +359,8 @@ async function createSaleAndItems(parent, args, ctx, info) {
             product {
                 id
                 name
+                salePrice
+                costPrice
             }
             salePrice
             costPrice
@@ -393,6 +396,116 @@ async function deleteSaleAndItems(parent, args, ctx, info) {
     return await ctx.prisma.deleteSale({ id: args.id });
 }
 
+async function updateSaleAndItems(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const objects = await ctx.prisma.user({ id: ctx.request.userId }).sales({
+        where: { id: args.id }
+    });
+
+    if (!objects || objects.length < 1 || !objects[0]) {
+        throw new Error("Cannot find this sale owned by your user id.");
+    }
+
+    const arguments = { ...args };
+    delete arguments.customerId;
+    delete arguments.saleItems;
+    delete arguments.id;
+    
+    await ctx.prisma.deleteManySaleItems({ sale: { id: args.id } });
+
+    const savedItems = [];
+    await Promise.all(args.saleItems.map(async (saleItem) => {
+        const saveArguments = { ...saleItem };
+        delete saveArguments.product;
+        const savedItem = await ctx.prisma.createSaleItem({
+            sale: {
+                connect: {
+                    id: args.id
+                }
+            },
+            product: {
+                connect: {
+                    id: saleItem.product.id
+                }
+            },
+            salePrice: saleItem.product.salePrice,
+            costPrice: saleItem.product.costPrice,
+            ...saveArguments
+        });
+        savedItems.push(savedItem);
+    }));
+
+    let sale;
+    if (args.customerId) {
+        sale = await ctx.prisma.updateSale({
+            data: {
+                user: {
+                    connect: {
+                        id: ctx.request.userId
+                    }
+                },
+                customer: {
+                    connect: {
+                        id: args.customerId
+                    }
+                },
+                ...arguments
+            },
+            where: {
+                id: args.id
+            }
+        });
+    } else {
+        sale = await ctx.prisma.updateSale({
+            data: {
+                user: {
+                    connect: {
+                        id: ctx.request.userId
+                    }
+                },
+                ...arguments
+            },
+            where: {
+                id: args.id
+            }
+        });
+    }
+
+    const fragment = `
+    fragment SaleWithOthers on User {
+        id
+        timestamp
+        customer {
+            id
+            name
+        }
+        saleItems {
+            id
+            quantity
+            product {
+                id
+                name
+                salePrice
+                costPrice
+            }
+            salePrice
+            costPrice
+        }
+        discountType
+        discountValue
+        taxType
+        taxValue
+        shipping
+        note
+        createdAt
+    }
+    `;
+    return await ctx.prisma.sale({ id: args.id }).$fragment(fragment);
+}
+
 module.exports = {
     signup,
     login,
@@ -409,4 +522,5 @@ module.exports = {
     deleteCustomer,
     createSaleAndItems,
     deleteSaleAndItems,
+    updateSaleAndItems
 }

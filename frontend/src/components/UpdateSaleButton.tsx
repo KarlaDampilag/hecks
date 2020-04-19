@@ -2,7 +2,6 @@ import React from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, Spin, InputNumber, Table } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import * as _ from 'lodash';
 
@@ -10,8 +9,9 @@ import { CUSTOMERS_BY_USER_QUERY } from './Customers';
 import { SALES_BY_USER_QUERY } from './Sales';
 import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
 
-const CREATE_SALE_MUTATION = gql`
-    mutation CREATE_SALE_MUTATION(
+const UPDATE_SALE_MUTATION = gql`
+    mutation UPDATE_SALE_MUTATION(
+        $id: ID!,
         $saleItems: [SaleItemInput!]!,
         $timestamp: Int!,
         $customerId: String,
@@ -22,7 +22,8 @@ const CREATE_SALE_MUTATION = gql`
         $shipping: String,
         $note: String
     ) {
-        createSaleAndItems(
+        updateSaleAndItems(
+            id: $id,
             saleItems: $saleItems,
             timestamp: $timestamp,
             customerId: $customerId,
@@ -36,6 +37,7 @@ const CREATE_SALE_MUTATION = gql`
             id
             timestamp
             customer {
+                id
                 name
             }
             saleItems {
@@ -44,8 +46,6 @@ const CREATE_SALE_MUTATION = gql`
                 product {
                     id
                     name
-                    salePrice
-                    costPrice
                 }
                 salePrice
                 costPrice
@@ -61,8 +61,10 @@ const CREATE_SALE_MUTATION = gql`
     }
 `;
 
+
 interface PropTypes {
-    products: any; // FIXME use graphql types
+    sale: any; // FIXME how to use graphql types in frontend
+    products: any; // FIXME how to use graphql types in frontend
 }
 
 interface SaleItemProps {
@@ -72,24 +74,23 @@ interface SaleItemProps {
     quantity: number;
 }
 
-const AddSaleButton = (props: PropTypes) => {
+const UpdateSaleButton = (props: PropTypes) => {
+    const cleanSaleItems = props.sale.saleItems;
+    _.each(cleanSaleItems, item => {
+        delete item.id;
+        delete item.__typename;
+    });
     const [modalIsVisible, setModalIsVisible] = React.useState<boolean>();
-    const [saleItems, setSaleItems] = React.useState<SaleItemProps[]>([{
-        product: {
-            id: null
-        },
-        salePrice: '0',
-        quantity: 1
-    }]);
-    const [filteredSaleItems, setFilteredSaleItems] = React.useState<SaleItemProps[]>();
-    const [customerId, setCustomerId] = React.useState<string>();
-    const [timestamp, setTimestamp] = React.useState<number>(moment().unix());
-    const [discountType, setDiscountType] = React.useState<string>('FLAT');
-    const [discountValue, setDiscountValue] = React.useState<string | null>();
-    const [taxType, setTaxType] = React.useState<string>('FLAT');
-    const [taxValue, setTaxValue] = React.useState<string | null>();
-    const [shipping, setShipping] = React.useState<string | null>();
-    const [note, setNote] = React.useState<string>();
+    const [saleItems, setSaleItems] = React.useState<SaleItemProps[]>(cleanSaleItems);
+    const [filteredSaleItems, setFilteredSaleItems] = React.useState<SaleItemProps[]>(cleanSaleItems);
+    const [customerId, setCustomerId] = React.useState<string>(props.sale.customer && props.sale.customer.id);
+    const [timestamp, setTimestamp] = React.useState<number>(props.sale.timestamp);
+    const [discountType, setDiscountType] = React.useState<string>(props.sale.discountType);
+    const [discountValue, setDiscountValue] = React.useState<string | null>(props.sale.discountValue);
+    const [taxType, setTaxType] = React.useState<string>(props.sale.taxType);
+    const [taxValue, setTaxValue] = React.useState<string | null>(props.sale.taxValue);
+    const [shipping, setShipping] = React.useState<string | null>(props.sale.shipping);
+    const [note, setNote] = React.useState<string>(props.sale.note);
     const [total, setTotal] = React.useState<number>();
     const [form] = Form.useForm();
 
@@ -102,17 +103,11 @@ const AddSaleButton = (props: PropTypes) => {
             taxValue,
             shipping,
         }));
-
     }, [saleItems, discountType, discountValue, taxType, taxValue, shipping]);
 
-    const [createSaleAndItems, { error: createSaleError, loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
-        variables: { saleItems: filteredSaleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
-        update: (store, response) => {
-            let newData = response.data.createSaleAndItems;
-            let localStoreData: any = store.readQuery({ query: SALES_BY_USER_QUERY });
-            localStoreData = { salesByUser: _.sortBy([...localStoreData.salesByUser, newData], 'createdAt').reverse() };
-            store.writeQuery({ query: SALES_BY_USER_QUERY, data: localStoreData });
-        }
+    const [updateSaleAndItems, { error: updateSaleError, loading: updateSaleLoading }] = useMutation(UPDATE_SALE_MUTATION, {
+        variables: { id: props.sale.id, saleItems: filteredSaleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
+        refetchQueries: ['SALES_BY_USER_QUERY']
     });
 
     const saleItemIds = _.map(saleItems, saleItem => saleItem.product.id);
@@ -144,7 +139,6 @@ const AddSaleButton = (props: PropTypes) => {
         setSaleItems(updatedSaleItems);
     }
 
-
     const layout = {
         labelCol: { span: 5 },
         wrapperCol: { span: 19 }
@@ -153,7 +147,7 @@ const AddSaleButton = (props: PropTypes) => {
     return (
         <>
             <Modal
-                title="Add a Sale Record"
+                title="Update Sale Record"
                 visible={modalIsVisible}
                 onCancel={() => setModalIsVisible(false)}
                 footer={null}
@@ -163,26 +157,26 @@ const AddSaleButton = (props: PropTypes) => {
                     labelAlign='left'
                     onFinish={async () => {
                         if (saleItems.length > 0 && saleItems[0].product.id !== null) {
-                            const createSaleResponse = await createSaleAndItems();
+                            await updateSaleAndItems();
 
-                            if (createSaleError) {
-                                message.error('Error saving sale entry. Please contact SourceCodeXL.');
+                            if (updateSaleError) {
+                                message.error('Error updating sale entry. Please contact SourceCodeXL.');
                             } else {
                                 setModalIsVisible(false);
                                 form.resetFields();
-                                setCustomerId(undefined);
-                                setSaleItems([{
-                                    product: {
-                                        id: null
-                                    },
-                                    salePrice: '0',
-                                    quantity: 1
-                                }]);
-                                setDiscountType('FLAT');
-                                setDiscountValue(undefined);
-                                setTaxType('FLAT');
-                                setTaxValue(undefined);
-                                message.success('Sale record added');
+                                //setCustomerId(undefined);
+                                // setSaleItems([{
+                                //     product: {
+                                //         id: null
+                                //     },
+                                //     salePrice: '0',
+                                //     quantity: 1
+                                // }]);
+                                //setDiscountType('FLAT');
+                                //setDiscountValue(undefined);
+                                //setTaxType('FLAT');
+                                //setTaxValue(undefined);
+                                message.success('Sale record updated');
                             }
                         } else {
                             message.error('Minimum of one product is required to record a sale');
@@ -192,15 +186,15 @@ const AddSaleButton = (props: PropTypes) => {
                     <Form.Item label='Date of Sale' {...layout} rules={[{ required: true, message: 'This field is required' }]}>
                         <DatePicker
                             allowClear={false}
-                            format={'DD-MM-YYYY'}
                             value={moment.unix(timestamp)}
+                            format={'DD-MM-YYYY'}
                             onChange={(date) => setTimestamp(moment(date as any).unix())}
                             style={{ width: '190px' }}
                         />
                     </Form.Item>
                     <Form.Item label='Customer' {...layout}>
                         <Select
-                            value={customerId}
+                            value={customerId ? customerId : undefined}
                             onChange={setCustomerId}
                             style={{ width: '190px' }}
                         >
@@ -224,26 +218,29 @@ const AddSaleButton = (props: PropTypes) => {
                                 width: 300,
                                 title: 'Product',
                                 dataIndex: 'id',
-                                render: (value, record) => (
-                                    <Select
-                                        style={{ width: '100%' }}
-                                        value={record.product.id && JSON.stringify(record.product)}
-                                        onChange={(value) => handleProductChange(record, value)}
-                                        placeholder='Add a product'
-                                    >
-                                        {
-                                            _.map(props.products, product =>
-                                                <Select.Option
-                                                    value={JSON.stringify(product)}
-                                                    disabled={_.includes(saleItemIds, product.id)}
-                                                    key={product.id}
-                                                >
-                                                    {product.name}
-                                                </Select.Option>
-                                            )
-                                        }
-                                    </Select>
-                                )
+                                render: (value, record) => {
+                                    delete record.product.__typename;
+                                    return (
+                                        <Select
+                                            style={{ width: '100%' }}
+                                            value={record.product.id && JSON.stringify(record.product)}
+                                            onChange={(value) => handleProductChange(record, value)}
+                                            placeholder='Add a product'
+                                        >
+                                            {
+                                                _.map(props.products, product =>
+                                                    <Select.Option
+                                                        value={JSON.stringify(product)}
+                                                        disabled={_.includes(saleItemIds, product.id)}
+                                                        key={product.id}
+                                                    >
+                                                        {product.name}
+                                                    </Select.Option>
+                                                )
+                                            }
+                                        </Select>
+                                    );
+                                }
                             },
                             {
                                 title: 'Quantity',
@@ -272,9 +269,9 @@ const AddSaleButton = (props: PropTypes) => {
                             },
                             {
                                 title: 'Subtotal',
-                                dataIndex: 'product',
+                                dataIndex: 'id',
                                 render: (value, record) => (
-                                    value.salePrice && record.quantity && value.salePrice * record.quantity
+                                    record.salePrice && record.quantity && parseFloat(record.salePrice) * record.quantity
                                 )
                             },
                             {
@@ -296,6 +293,8 @@ const AddSaleButton = (props: PropTypes) => {
                                                 return newSaleItem != record
                                             });
                                             setSaleItems(newSaleItems);
+                                            const filteredItems: SaleItemProps[] = _.filter(newSaleItems, item => item.product.id != null);
+                                            setFilteredSaleItems(filteredItems);
                                         }}
                                     >❌</span>
                                 )
@@ -307,7 +306,6 @@ const AddSaleButton = (props: PropTypes) => {
                             let totalQuantity = 0;
                             _.each(pageData, saleItem => totalQuantity += saleItem.quantity);
 
-                            console.log(pageData)
                             return (
                                 <>
                                     <tr>
@@ -407,7 +405,6 @@ const AddSaleButton = (props: PropTypes) => {
 
                     <Form.Item
                         label='Shipping'
-                        name='shipping'
                         {...layout}
                     >
                         <InputNumber
@@ -432,28 +429,20 @@ const AddSaleButton = (props: PropTypes) => {
 
                     <Form.Item
                         label="Notes"
-                        name="notes"
                         {...layout}
                     >
                         <Input value={note} onChange={e => setNote(e.target.value)} />
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" disabled={createSaleLoading} loading={createSaleLoading} style={{ width: '100%' }}>
-                            Add{createSaleLoading ? 'ing' : ' '} Sale Record
+                        <Button type="primary" htmlType="submit" disabled={updateSaleLoading} loading={updateSaleLoading} style={{ width: '100%' }}>
+                            Updat{updateSaleLoading ? 'ing' : 'e '} Sale Record
                                 </Button>
                     </Form.Item>
                 </Form>
             </Modal>
-            <Button
-                onClick={() => setModalIsVisible(true)}
-                size='large'
-                icon={<PlusOutlined />}
-                className='add-button'
-            >
-                Add Sale Record
-            </Button>
+            <Button onClick={() => setModalIsVisible(true)}>Edit</Button>
         </>
     )
 }
-export default AddSaleButton;
+export default UpdateSaleButton;

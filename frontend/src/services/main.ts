@@ -21,7 +21,7 @@ export const calculateProfitBySaleItems: (saleItems: SaleItemProps[]) => number 
 
 export const calculateSubtotalBySaleItems: (saleItems: SaleItemProps[]) => number = (saleItems: SaleItemProps[]) => {
     let total: number = 0;
-    _.map(saleItems, saleItem => {
+    _.each(saleItems, saleItem => {
         const salePrice = saleItem.salePrice ? parseFloat(saleItem.salePrice) : 0;
         total += salePrice * saleItem.quantity;
     });

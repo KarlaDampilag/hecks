@@ -34,6 +34,7 @@ type Mutation {
     deleteCustomer(id: ID!): Customer!
     createSaleAndItems(saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
     deleteSaleAndItems(id: ID!): Sale!
+    updateSaleAndItems(id: ID!, saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
     # requestReset(email: String!): SuccessMessage
     # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
     # updatePermissions(permissions: [Permission], userId: ID!): User
