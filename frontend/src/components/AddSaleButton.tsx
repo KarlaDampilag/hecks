@@ -119,7 +119,7 @@ const AddSaleButton = () => {
         update: (store, response) => {
             let newData = response.data.createSaleAndItems;
             let localStoreData: any = store.readQuery({ query: SALES_BY_USER_QUERY });
-            localStoreData = { salesByUser: [...localStoreData.salesByUser, newData] };
+            localStoreData = { salesByUser: _.sortBy([...localStoreData.salesByUser, newData], 'createdAt').reverse() };
             store.writeQuery({ query: SALES_BY_USER_QUERY, data: localStoreData });
         }
     });
@@ -292,18 +292,18 @@ const AddSaleButton = () => {
                                 )
                             },
                             {
+                                title: 'Subtotal',
+                                dataIndex: 'product',
+                                render: (value, record) => (
+                                    value.salePrice && record.quantity && value.salePrice * record.quantity
+                                )
+                            },
+                            {
                                 title: 'Profit',
                                 dataIndex: 'product',
                                 render: (value, record) => {
                                     return calculateProfitBySaleItems([record]);
                                 }
-                            },
-                            {
-                                title: 'Total',
-                                dataIndex: 'product',
-                                render: (value, record) => (
-                                    value.salePrice && record.quantity && value.salePrice * record.quantity
-                                )
                             },
                             {
                                 title: 'Remove',
@@ -337,8 +337,8 @@ const AddSaleButton = () => {
                                         <th style={{ padding: '16px' }}>{totalQuantity}</th>
                                         <th style={{ padding: '8px' }}></th>
                                         <th style={{ padding: '8px' }}></th>
-                                        <th style={{ padding: '8px' }}>{totalProfit}</th>
                                         <th style={{ padding: '8px' }}>{totalSubtotal}</th>
+                                        <th style={{ padding: '8px' }}>{totalProfit}</th>
                                         <th style={{ padding: '8px' }}></th>
                                     </tr>
                                 </>

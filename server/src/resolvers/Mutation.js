@@ -345,7 +345,34 @@ async function createSaleAndItems(parent, args, ctx, info) {
         savedItems.push(savedItem);
     }));
 
-    return sale;
+    const fragment = `
+    fragment SaleWithOthers on User {
+        id
+        timestamp
+        customer {
+            name
+        }
+        saleItems {
+            id
+            quantity
+            product {
+                id
+                name
+            }
+            salePrice
+            costPrice
+        }
+        discountType
+        discountValue
+        taxType
+        taxValue
+        shipping
+        note
+        createdAt
+    }
+    `;
+
+    return await ctx.prisma.sale({ id: sale.id }).$fragment(fragment);
 }
 
 module.exports = {

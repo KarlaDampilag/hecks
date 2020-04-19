@@ -48,6 +48,6 @@ export const calculateTotalBySale: (sale: any) => number = (sale: any) => {
     } else {
         taxDeduction = total * (taxNumber / 100);
     }
-    total = total - taxDeduction + shippingNumber;
+    total = total + taxDeduction + shippingNumber;
     return total;
 }

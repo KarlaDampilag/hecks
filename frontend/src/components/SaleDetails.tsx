@@ -10,7 +10,6 @@ interface PropTypes {
 }
 
 const SaleDetails = (props: PropTypes) => {
-    const [showViewRecord, setShowViewRecord] = React.useState<boolean>(false);
 
     const renderDiscount = () => {
         if (props.sale.discountType && props.sale.discountValue) {
@@ -56,17 +55,24 @@ const SaleDetails = (props: PropTypes) => {
                             },
                             {
                                 title: 'Price',
-                                dataIndex: 'product',
+                                dataIndex: 'salePrice',
                                 render: (value) => (
-                                    value.salePrice
+                                    value
                                 )
                             },
                             {
                                 title: 'Cost',
-                                dataIndex: 'product',
+                                dataIndex: 'costPrice',
                                 render: (value) => (
-                                    value.costPrice
+                                    value
                                 )
+                            },
+                            {
+                                title: 'Subtotal',
+                                dataIndex: 'id',
+                                render: (value, record) => {
+                                    return calculateSubtotalBySaleItems([record]);
+                                }
                             },
                             {
                                 title: 'Profit',
@@ -74,20 +80,15 @@ const SaleDetails = (props: PropTypes) => {
                                 render: (value, record) => {
                                     return calculateProfitBySaleItems([record]);
                                 }
-                            },
-                            {
-                                title: 'Total',
-                                dataIndex: 'product',
-                                render: (value, record) => (
-                                    value.salePrice && record.quantity && value.salePrice * record.quantity
-                                )
                             }
                         ]}
                         summary={(pageData) => {
                             const totalProfit = calculateProfitBySaleItems(pageData);
                             const totalSubtotal = calculateSubtotalBySaleItems(pageData);
-                            let totalQuantity = 0;
-                            _.each(pageData, saleItem => totalQuantity += saleItem.quantity);
+                            let totalQuantity: number = 0;
+                            _.each(pageData, saleItem => {
+                                totalQuantity += saleItem.quantity;
+                            });
 
                             return (
                                 <>
@@ -96,9 +97,8 @@ const SaleDetails = (props: PropTypes) => {
                                         <th style={{ padding: '8px' }}>{totalQuantity}</th>
                                         <th style={{ padding: '8px' }}></th>
                                         <th style={{ padding: '8px' }}></th>
-                                        <th style={{ padding: '8px' }}>{totalProfit}</th>
                                         <th style={{ padding: '8px' }}>{totalSubtotal}</th>
-                                        <th style={{ padding: '8px' }}></th>
+                                        <th style={{ padding: '8px' }}>{totalProfit}</th>
                                     </tr>
                                 </>
                             )
