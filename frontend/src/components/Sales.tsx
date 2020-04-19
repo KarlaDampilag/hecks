@@ -41,11 +41,10 @@ const SALES_BY_USER_QUERY = gql`
     }
 `;
 
-const DELETE_INVENTORY_MUTATION = gql`
-    mutation DELETE_INVENTORY_MUTATION($id: ID!) {
-        deleteInventory(id: $id) {
+const DELETE_SALE_AND_ITEMS_MUTATION = gql`
+    mutation DELETE_SALE_AND_ITEMS_MUTATION($id: ID!) {
+        deleteSaleAndItems(id: $id) {
             id
-            name
             createdAt
         }
     }
@@ -56,14 +55,13 @@ const Sales = () => {
 
     const { data: salesData, loading } = useQuery(SALES_BY_USER_QUERY);
     const sales = salesData ? salesData.salesByUser : null;
-    console.log(sales)
 
-    const [deleteInventory, { error: deleteInventoryError }] = useMutation(DELETE_INVENTORY_MUTATION, {
+    const [deleteSaleAndItems, { error }] = useMutation(DELETE_SALE_AND_ITEMS_MUTATION, {
         variables: { id: idForDeletion },
         update: (cache: any, payload: any) => {
             const data = cache.readQuery({ query: SALES_BY_USER_QUERY });
-            const filteredItems = _.filter(data.inventoriesByUser, inventory => inventory.id !== payload.data.deleteInventory.id);
-            cache.writeQuery({ query: SALES_BY_USER_QUERY, data: { inventoriesByUser: filteredItems } });
+            const filteredItems = _.filter(data.salesByUser, item => item.id !== payload.data.deleteSaleAndItems.id);
+            cache.writeQuery({ query: SALES_BY_USER_QUERY, data: { salesByUser: filteredItems } });
         }
     });
 
@@ -152,8 +150,8 @@ const Sales = () => {
                                                 onClick={() => setIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     message.info('Please wait...');
-                                                    await deleteInventory();
-                                                    if (deleteInventoryError) {
+                                                    await deleteSaleAndItems();
+                                                    if (error) {
                                                         message.error('Error: cannot delete. Please contact SourceCodeXL.');
                                                     } else {
                                                         message.success('Inventory deleted');

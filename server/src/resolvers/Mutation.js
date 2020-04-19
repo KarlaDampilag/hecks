@@ -375,6 +375,24 @@ async function createSaleAndItems(parent, args, ctx, info) {
     return await ctx.prisma.sale({ id: sale.id }).$fragment(fragment);
 }
 
+async function deleteSaleAndItems(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const objects = await ctx.prisma.user({ id: ctx.request.userId }).sales({
+        where: { id: args.id }
+    });
+
+    if (!objects || objects.length < 1 || !objects[0]) {
+        throw new Error("Cannot find this sale owned by your user id.");
+    }
+
+    await ctx.prisma.deleteManySaleItems({ sale: { id: args.id } });
+
+    return await ctx.prisma.deleteSale({ id: args.id });
+}
+
 module.exports = {
     signup,
     login,
@@ -390,4 +408,5 @@ module.exports = {
     updateCustomer,
     deleteCustomer,
     createSaleAndItems,
+    deleteSaleAndItems,
 }
