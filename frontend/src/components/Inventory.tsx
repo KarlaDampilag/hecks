@@ -5,22 +5,21 @@ import { Table } from 'antd';
 
 import AddInventoryStockButton from './AddInventoryStockButton';
 
-const INVENTORY_ITEMS_BY_USER = gql`
-query INVENTORY_ITEMS_BY_USER($id: ID!) {
-    inventoryItemsByUser(id: $id) {
-        product {
-            id
-            name
-        }
-    }
-}
-`;
-
 const INVENTORY_BY_USER = gql`
 query INVENTORY_BY_USER($id: ID!) {
-    inventoryByUser(id: $id) {
+    inventoryAndItemsByUser(id: $id) {
         id
         name
+        inventoryItems {
+            id
+            product {
+                id
+                name
+                unit
+            }
+            amount
+            createdAt
+        }
     }
 }
 `;
@@ -29,18 +28,19 @@ const Inventory = (props: any) => {
     const query = new URLSearchParams(props.location.search);
     const id = query.get('id');
 
-    const { data: inventoryItemsData, loading } = useQuery(INVENTORY_ITEMS_BY_USER, {
+    const { data: inventoryAndItemsData, loading } = useQuery(INVENTORY_BY_USER, {
         variables: { id }
     });
-    const inventoryItems = inventoryItemsData ? inventoryItemsData.inventoryItemsByUser : null;
-
-    const { data: inventoryData } = useQuery(INVENTORY_BY_USER, {
-        variables: { id }
-    });
-    const inventory = inventoryData ? inventoryData.inventoryByUser : null;
+    const inventory = inventoryAndItemsData ? inventoryAndItemsData.inventoryAndItemsByUser : null;
+    let inventoryItems = [];
+    if (inventory) {
+        inventoryItems = inventory.inventoryItems;
+    }
+    console.log(inventoryItems);
 
     return (
         <>
+            <h2>{inventory && inventory.name}</h2>
             <AddInventoryStockButton inventory={inventory} />
             <Table
                 loading={loading}
@@ -49,7 +49,22 @@ const Inventory = (props: any) => {
                 columns={[
                     {
                         title: 'Product',
-                        dataIndex: 'product.name'
+                        dataIndex: 'product',
+                        render: (value) => (
+                            value && value.name
+                        )
+                    }, {
+                        title: 'Unit',
+                        dataIndex: 'product',
+                        render: (value) => (
+                            value && value.unit
+                        )
+                    }, {
+                        title: 'Quantity',
+                        dataIndex: 'id',
+                        render: (value, record) => (
+                            record.amount
+                        )
                     }
                 ]}
             />

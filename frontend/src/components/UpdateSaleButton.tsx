@@ -137,6 +137,9 @@ const UpdateSaleButton = (props: PropTypes) => {
         const index = _.findIndex(updatedSaleItems, saleItem);
         updatedSaleItems.splice(index, 1, updatedSaleItem);
         setSaleItems(updatedSaleItems);
+
+        const filteredItems: SaleItemProps[] = _.filter(updatedSaleItems, item => item.product.id != null);
+        setFilteredSaleItems(filteredItems);
     }
 
     return (

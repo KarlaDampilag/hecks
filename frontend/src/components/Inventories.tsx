@@ -15,9 +15,15 @@ const INVENTORIES_BY_USER_QUERY = gql`
         inventoriesByUser(orderBy: createdAt_DESC) {
             id
             name
-            createdAt
             inventoryItems {
                 id
+                product {
+                    id
+                    name
+                    unit
+                }
+                amount
+                createdAt
             }
         }
     }
@@ -38,6 +44,7 @@ const Inventories = () => {
 
     const { data: inventoriesData, loading: inventoriesLoading } = useQuery(INVENTORIES_BY_USER_QUERY);
     const inventories = inventoriesData ? inventoriesData.inventoriesByUser : null;
+    console.log(inventories)
 
     const [deleteInventory, { error: deleteInventoryError }] = useMutation(DELETE_INVENTORY_MUTATION, {
         variables: { id: idForDeletion },

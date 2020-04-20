@@ -9,17 +9,23 @@ import { layout } from './AddSaleButton';
 
 const ADD_INVENTORY_STOCK_MUTATION = gql`
 mutation ADD_INVENTORY_STOCK_MUTATION(
-    $id: ID!
+    $id: ID!,
+    $inventoryItems: [InventoryItemInput!]!
 ) {
     addInventoryStock(
-        id: $id
+        id: $id,
+        inventoryItems: $inventoryItems
     ) {
         id
+        name
         inventoryItems {
+            id
             product {
                 id
                 name
             }
+            amount
+            createdAt
         }
     }
 }
@@ -66,13 +72,7 @@ const AddInventoryStockButton = (props: PropTypes) => {
     });
 
     const [addInventoryStock, { loading, error }] = useMutation(ADD_INVENTORY_STOCK_MUTATION, {
-        variables: { id: props.inventory && props.inventory.id },
-        update: (store, response) => {
-            // let newData = response.data.createInventory;
-            // let localStoreData: any = store.readQuery({ query: INVENTORIES_BY_USER_QUERY });
-            // localStoreData = { inventoriesByUser: [...localStoreData.inventoriesByUser, newData] };
-            // store.writeQuery({ query: INVENTORIES_BY_USER_QUERY, data: localStoreData });
-        }
+        variables: { id: props.inventory && props.inventory.id, inventoryItems: filteredInventoryItems },
     });
 
     const handleProductChange = (inventoryItem: InventoryItemProps, value: string) => {
@@ -95,20 +95,23 @@ const AddInventoryStockButton = (props: PropTypes) => {
         const index = _.findIndex(updatedInventoryItems, inventoryItem);
         updatedInventoryItems.splice(index, 1, updatedInventoryItem);
         setInventoryItems(updatedInventoryItems);
+
+        const filteredItems: InventoryItemProps[] = _.filter(updatedInventoryItems, item => item.product.id != null);
+        setFilteredInventoryItems(filteredItems);
     }
 
     return (
         <>
             <Modal title={`Add Stock to ${props.inventory && props.inventory.name}`} visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form form={form} onFinish={async () => {
-                    // await createInventory();
-                    // if (createInventoryError) {
-                    //     message.error('Unable to add stock. Please contact SourceCodeXL');
-                    // } else {
-                    //     setIsShowingModal(false);
-                    //     form.resetFields();
-                    //     message.success('Stock added to inventory');
-                    // }
+                    await addInventoryStock();
+                    if (error) {
+                        message.error('Unable to add stock. Please contact SourceCodeXL');
+                    } else {
+                        setIsShowingModal(false);
+                        form.resetFields();
+                        message.success('Stock added to inventory');
+                    }
                 }}>
                     <Table
                         dataSource={inventoryItems}

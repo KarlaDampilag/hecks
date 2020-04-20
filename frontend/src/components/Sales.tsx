@@ -184,7 +184,7 @@ const Sales = () => {
                                                     if (error) {
                                                         message.error('Error: cannot delete. Please contact SourceCodeXL.');
                                                     } else {
-                                                        message.success('Inventory deleted');
+                                                        message.success('Sale record deleted');
                                                     }
                                                 }}
                                             />

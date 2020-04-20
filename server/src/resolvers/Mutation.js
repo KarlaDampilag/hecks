@@ -393,7 +393,37 @@ async function deleteSaleAndItems(parent, args, ctx, info) {
 
     await ctx.prisma.deleteManySaleItems({ sale: { id: args.id } });
 
-    return await ctx.prisma.deleteSale({ id: args.id });
+    const fragment = `
+    fragment SaleWithOthers on User {
+        id
+        timestamp
+        customer {
+            id
+            name
+        }
+        saleItems {
+            id
+            quantity
+            product {
+                id
+                name
+                salePrice
+                costPrice
+            }
+            salePrice
+            costPrice
+        }
+        discountType
+        discountValue
+        taxType
+        taxValue
+        shipping
+        note
+        createdAt
+    }
+    `;
+
+    return await ctx.prisma.deleteSale({ id: args.id }).$fragment(fragment);
 }
 
 async function updateSaleAndItems(parent, args, ctx, info) {
@@ -413,7 +443,7 @@ async function updateSaleAndItems(parent, args, ctx, info) {
     delete arguments.customerId;
     delete arguments.saleItems;
     delete arguments.id;
-    
+
     await ctx.prisma.deleteManySaleItems({ sale: { id: args.id } });
 
     const savedItems = [];
@@ -507,7 +537,78 @@ async function updateSaleAndItems(parent, args, ctx, info) {
 }
 
 async function addInventoryStock(parent, args, ctx, info) {
-    
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const objects = await ctx.prisma.user({ id: ctx.request.userId }).inventories({
+        where: { id: args.id }
+    });
+
+    if (!objects || objects.length < 1 || !objects[0]) {
+        throw new Error("Cannot find this inventory owned by your user id.");
+    }
+
+    await Promise.all(args.inventoryItems.map(async (item) => {
+        // find an inventory item where this is the product id and inventory id
+        const where = {
+            AND: [
+                { product: { id: item.product.id } },
+                { inventory: { id: args.id } }
+            ]
+        };
+        const inventoryItems = await ctx.prisma.inventoryItems({ where });
+        // if exists, just add amount to current amount
+        if (inventoryItems && inventoryItems.length > 0) {
+            const newAmount = inventoryItems[0].amount + item.quantity;
+            await ctx.prisma.updateInventoryItem({
+                data: {
+                    amount: newAmount
+                },
+                where: {
+                    id: inventoryItems[0].id
+                }
+            });
+        } else { // if not exists, create it, then set amount
+            const newInventoryItem = await ctx.prisma.createInventoryItem({
+                user: {
+                    connect: {
+                        id: ctx.request.userId
+                    }
+                },
+                inventory: {
+                    connect: {
+                        id: args.id
+                    }
+                },
+                product: {
+                    connect: {
+                        id: item.product.id
+                    }
+                },
+                amount: item.quantity
+            })
+        }
+        // TODO create transaction!
+    }));
+
+    const fragment = `
+    fragment InventoryWithOthers on User {
+        id
+        name
+        inventoryItems {
+            id
+            product {
+                id
+                name
+                unit
+            }
+            amount
+            createdAt
+        }
+    }
+    `;
+    return await ctx.prisma.inventory({ id: args.id }).$fragment(fragment);
 }
 
 module.exports = {

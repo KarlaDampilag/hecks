@@ -57,7 +57,24 @@ async function inventoriesByUser(parent, args, ctx, info) {
     if (!ctx.request.userId) {
         throw new Error('You must be logged in to do that.');
     }
-    return await ctx.prisma.user({ id: ctx.request.userId }).inventories();
+
+    const fragment = `
+    fragment InventoryWithOthers on User {
+        id
+        name
+        inventoryItems {
+            id
+            product {
+                id
+                name
+                unit
+            }
+            amount
+            createdAt
+        }
+    }
+    `;
+    return await ctx.prisma.user({ id: ctx.request.userId }).inventories().$fragment(fragment);
 }
 
 async function inventoryByUser(parent, args, ctx, info) {
@@ -73,11 +90,27 @@ async function inventoryByUser(parent, args, ctx, info) {
     return items[0];
 }
 
-async function inventoryItemsByUser(parent, args, ctx, info) {
+async function inventoryAndItemsByUser(parent, args, ctx, info) {
     if (!ctx.request.userId) {
         throw new Error('You must be logged in to do that.');
     }
-    return await ctx.prisma.inventory({ id: args.id }).inventoryItems();
+    const fragment = `
+    fragment InventoryWithOthers on User {
+        id
+        name
+        inventoryItems {
+            id
+            product {
+                id
+                name
+                unit
+            }
+            amount
+            createdAt
+        }
+    }
+    `;
+    return await ctx.prisma.inventory({ id: args.id }).$fragment(fragment);
 }
 
 async function customersByUser(parent, args, ctx, info) {
@@ -134,7 +167,7 @@ module.exports = {
     categoriesByUser,
     inventoriesByUser,
     inventoryByUser,
-    inventoryItemsByUser,
+    inventoryAndItemsByUser,
     customersByUser,
     salesByUser
 }

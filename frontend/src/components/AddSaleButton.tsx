@@ -36,6 +36,7 @@ const CREATE_SALE_MUTATION = gql`
             id
             timestamp
             customer {
+                id
                 name
             }
             saleItems {
@@ -110,7 +111,7 @@ const AddSaleButton = (props: PropTypes) => {
         update: (store, response) => {
             let newData = response.data.createSaleAndItems;
             let localStoreData: any = store.readQuery({ query: SALES_BY_USER_QUERY });
-            localStoreData = { salesByUser: _.sortBy([...localStoreData.salesByUser, newData], 'createdAt').reverse() };
+            localStoreData = { salesByUser: _.sortBy([...localStoreData.salesByUser, newData], 'timestamp').reverse() };
             store.writeQuery({ query: SALES_BY_USER_QUERY, data: localStoreData });
         }
     });
@@ -142,6 +143,9 @@ const AddSaleButton = (props: PropTypes) => {
         const index = _.findIndex(updatedSaleItems, saleItem);
         updatedSaleItems.splice(index, 1, updatedSaleItem);
         setSaleItems(updatedSaleItems);
+
+        const filteredItems: SaleItemProps[] = _.filter(updatedSaleItems, item => item.product.id != null);
+        setFilteredSaleItems(filteredItems);
     }
 
     return (
