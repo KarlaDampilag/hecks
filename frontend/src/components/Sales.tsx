@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import moment from 'moment';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Table, message, Tag, Modal, Divider } from 'antd';
+import { Table, message, Tag, } from 'antd';
+import { RightSquareTwoTone, DownSquareTwoTone } from '@ant-design/icons';
 
 import { userContext } from './App';
 import AddSaleButton from './AddSaleButton';
@@ -105,7 +106,11 @@ const Sales = () => {
                             rowKey='id'
                             rowClassName='clickable-table-row'
                             expandable={{
-                                expandedRowRender: record => <SaleDetails sale={record} />
+                                expandedRowRender: record => <SaleDetails sale={record} />,
+                                expandIcon: ({ expanded, onExpand, record }) => (
+                                    expanded ? <DownSquareTwoTone onClick={e => onExpand(record, e)} style={{ fontSize: '18pt'}} />
+                                    : <RightSquareTwoTone onClick={e => onExpand(record, e)} style={{ fontSize: '18pt'}} />
+                                )
                             }}
                             columns={[
                                 {
