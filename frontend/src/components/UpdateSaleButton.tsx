@@ -6,7 +6,6 @@ import moment from 'moment';
 import * as _ from 'lodash';
 
 import { CUSTOMERS_BY_USER_QUERY } from './Customers';
-import { SALES_BY_USER_QUERY } from './Sales';
 import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
 
 const UPDATE_SALE_MUTATION = gql`
@@ -164,18 +163,6 @@ const UpdateSaleButton = (props: PropTypes) => {
                             } else {
                                 setModalIsVisible(false);
                                 form.resetFields();
-                                //setCustomerId(undefined);
-                                // setSaleItems([{
-                                //     product: {
-                                //         id: null
-                                //     },
-                                //     salePrice: '0',
-                                //     quantity: 1
-                                // }]);
-                                //setDiscountType('FLAT');
-                                //setDiscountValue(undefined);
-                                //setTaxType('FLAT');
-                                //setTaxValue(undefined);
                                 message.success('Sale record updated');
                             }
                         } else {

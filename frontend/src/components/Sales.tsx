@@ -25,7 +25,7 @@ const PRODUCTS_BY_USER_QUERY = gql`
 
 const SALES_BY_USER_QUERY = gql`
     {
-        salesByUser(orderBy: createdAt_DESC) {
+        salesByUser(orderBy: timestamp_DESC) {
             id
             timestamp
             customer {
@@ -68,7 +68,12 @@ const Sales = () => {
     const [idForDeletion, setIdForDeletion] = React.useState<string>();
 
     const { data: salesData, loading } = useQuery(SALES_BY_USER_QUERY);
-    const sales = salesData ? salesData.salesByUser : null;
+    let sales: any;
+    if (salesData) {
+        sales = _.sortBy(salesData.salesByUser, 'timestamp').reverse();
+    } else {
+        sales = null;
+    }
 
     const [deleteSaleAndItems, { error }] = useMutation(DELETE_SALE_AND_ITEMS_MUTATION, {
         variables: { id: idForDeletion },
@@ -115,7 +120,7 @@ const Sales = () => {
                                     dataIndex: 'saleItems',
                                     render: (value) => {
                                         return _.map(value, saleItem => {
-                                            return <Tag key={saleItem.id}>{saleItem.product.name}</Tag>
+                                            return <Tag key={saleItem.product.name}>{saleItem.product.name}</Tag>
                                         })
                                     }
                                 },
