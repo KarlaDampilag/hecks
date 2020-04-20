@@ -506,6 +506,10 @@ async function updateSaleAndItems(parent, args, ctx, info) {
     return await ctx.prisma.sale({ id: args.id }).$fragment(fragment);
 }
 
+async function addInventoryStock(parent, args, ctx, info) {
+    
+}
+
 module.exports = {
     signup,
     login,
@@ -517,6 +521,7 @@ module.exports = {
     createInventory,
     updateInventory,
     deleteInventory,
+    addInventoryStock,
     createCustomer,
     updateCustomer,
     deleteCustomer,

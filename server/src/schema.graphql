@@ -1,7 +1,7 @@
 # import * from './generated/prisma.graphql'
 
 input SaleItemInput {
-  product: ProductInput!
+  product: SaleItemProductInput!
   quantity: Int!
   salePrice: String!
   costPrice: String
@@ -9,11 +9,21 @@ input SaleItemInput {
   discountValue: String
 }
 
-input ProductInput {
+input InventoryItemInput {
+  product: InventoryItemProductInput!
+  quantity: Int!
+}
+
+input SaleItemProductInput {
   id: String!
   name: String!
   salePrice: String!
   costPrice: String
+}
+
+input InventoryItemProductInput {
+  id: String!
+  name: String!
 }
 
 type Mutation {
@@ -35,6 +45,7 @@ type Mutation {
     createSaleAndItems(saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
     deleteSaleAndItems(id: ID!): Sale!
     updateSaleAndItems(id: ID!, saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
+    addInventoryStock(id: ID!, inventoryItems: [InventoryItemInput!]!): [InventoryItem]!
     # requestReset(email: String!): SuccessMessage
     # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
     # updatePermissions(permissions: [Permission], userId: ID!): User
@@ -48,10 +59,9 @@ type Query {
     productByUser(id: ID!): Product
     categories: [Category]!
     categoriesByUser: [Category]!
-    inventoryItemsByProduct(id: ID!): [InventoryItem]!
     inventoriesByUser(orderBy: InventoryOrderByInput): [Inventory]!
-    inventoryItemCount(id: ID!): Int!
-    # inventory(id: ID!): Inventory
+    inventoryItemsByUser(id: ID!): [InventoryItem]!
+    inventoryByUser(id: ID!): Inventory
     customersByUser(orderBy: CustomerOrderByInput): [Customer]!
     # customer(id: ID!): Customer
     salesByUser(orderBy: SaleOrderByInput): [Sale]!

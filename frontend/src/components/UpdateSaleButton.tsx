@@ -1,12 +1,13 @@
 import React from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, Spin, InputNumber, Table } from 'antd';
+import { Modal, Form, Input, Select, Button, message, DatePicker, Divider, InputNumber, Table } from 'antd';
 import moment from 'moment';
 import * as _ from 'lodash';
 
 import { CUSTOMERS_BY_USER_QUERY } from './Customers';
 import { calculateProfitBySaleItems, calculateSubtotalBySaleItems, calculateTotalBySale } from '../services/main';
+import { layout } from './AddSaleButton';
 
 const UPDATE_SALE_MUTATION = gql`
     mutation UPDATE_SALE_MUTATION(
@@ -132,15 +133,10 @@ const UpdateSaleButton = (props: PropTypes) => {
     const handleQuantityChange = (saleItem: SaleItemProps, value: number | undefined) => {
         const updatedSaleItems = [...saleItems];
         const updatedSaleItem: SaleItemProps = { ...saleItem };
-        updatedSaleItem.quantity = value ? value : 0;
+        updatedSaleItem.quantity = value ? value : 1;
         const index = _.findIndex(updatedSaleItems, saleItem);
         updatedSaleItems.splice(index, 1, updatedSaleItem);
         setSaleItems(updatedSaleItems);
-    }
-
-    const layout = {
-        labelCol: { span: 5 },
-        wrapperCol: { span: 19 }
     }
 
     return (

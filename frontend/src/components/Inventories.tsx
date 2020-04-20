@@ -1,8 +1,9 @@
 import React from 'react';
 import * as _ from 'lodash';
 import gql from 'graphql-tag';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Table, message } from 'antd';
+import { Table, message, Button } from 'antd';
 
 import { userContext } from './App';
 import AddInventoryButton from './AddInventoryButton';
@@ -64,6 +65,13 @@ const Inventories = () => {
                                 {
                                     title: 'Name',
                                     dataIndex: 'name'
+                                },
+                                {
+                                    title: 'View Stock',
+                                    dataIndex: 'id',
+                                    render: (value) => {
+                                        return <Link to={`/inventory?id=${value}`}><Button>View Stock</Button></Link>
+                                    }
                                 },
                                 {
                                     title: 'Edit ✏️',

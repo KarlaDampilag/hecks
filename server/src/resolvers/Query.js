@@ -60,29 +60,24 @@ async function inventoriesByUser(parent, args, ctx, info) {
     return await ctx.prisma.user({ id: ctx.request.userId }).inventories();
 }
 
-async function inventoryItemsByProduct(parent, args, ctx, info) {
-    // const products = await ctx.prisma.user({ id: screenTop.request.userId }).products({
-    //     where: { id: args.id }
-    // });
-    // if (!products || products.length < 1 || !products[0]) {
-    //     throw new Error("Cannot find this product owned by your user id.");
-    // }
-    // const product = products[0];
-    // console.log(product);
-    return await ctx.prisma.user({ id: "ck8j4gzqo9bxe0981lgqtvjzl" }).inventoryItems({
-        where: { product: { id: args.id } }
+async function inventoryByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+    const items = await ctx.prisma.user({ id: ctx.request.userId }).inventories({
+        where: { id: args.id }
     });
+    if (!items || items.length < 1 || !items[0]) {
+        throw new Error("Cannot find this inventory owned by your user id.");
+    }
+    return items[0];
 }
 
-async function inventoryItemCount(parent, args, ctx, info) {
-    let count = 0;
-    const inventoryItemsByProduct = await ctx.prisma.user({ id: ctx.request.userId }).inventoryItems({
-        where: { product: { id: args.id } }
-    });
-    if (inventoryItemsByProduct) {
-        count = inventoryItemsByProduct.length;
+async function inventoryItemsByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
     }
-    return count;
+    return await ctx.prisma.inventory({ id: args.id }).inventoryItems();
 }
 
 async function customersByUser(parent, args, ctx, info) {
@@ -138,8 +133,8 @@ module.exports = {
     categories,
     categoriesByUser,
     inventoriesByUser,
-    inventoryItemsByProduct,
-    inventoryItemCount,
+    inventoryByUser,
+    inventoryItemsByUser,
     customersByUser,
     salesByUser
 }

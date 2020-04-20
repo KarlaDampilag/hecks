@@ -8,7 +8,6 @@ import { userContext } from './App';
 import AddProductButton from './AddProductButton';
 import UpdateProductButton from './UpdateProductButton';
 import DeleteButton from './DeleteButton';
-import InventoryItemCount from './InventoryItemCount';
 
 const PRODUCTS_BY_USER_QUERY = gql`
     {
@@ -132,13 +131,6 @@ const Products = () => {
                                         return _.map(value, category => {
                                             return <Tag key={category}>{category}</Tag>
                                         })
-                                    }
-                                },
-                                {
-                                    title: 'Total Stock Count',
-                                    dataIndex: 'id',
-                                    render: (value, record) => {
-                                        return <InventoryItemCount product={record} />
                                     }
                                 },
                                 {
