@@ -12,6 +12,7 @@ import Inventories from './Inventories';
 import Inventory from './Inventory';
 import Customers from './Customers';
 import Sales from './Sales';
+import Expenses from './Expenses';
 
 const CURRENT_USER_QUERY = gql`
   {
@@ -48,6 +49,7 @@ function App() {
               <Route exact path="/inventory" component={Inventory} />
               <Route exact path="/customers" component={Customers} />
               <Route exact path="/sales" component={Sales} />
+              <Route exact path="/expenses" component={Expenses} />
               <Route component={Page404} />
             </Switch>
           </div>

@@ -26,6 +26,7 @@ type User {
   customers: [Customer!]!
   sales: [Sale!]!
   saleItems: [SaleItem!]!
+  expenses: [Expense!]!
 }
 
 type Product {
@@ -131,6 +132,16 @@ type SaleItem {
   quantity: Int!
   discountType: SpecialSaleDeductionType
   discountValue: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Expense {
+  id: ID! @id
+  user: User!
+  name: String!
+  description: String
+  cost: String!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

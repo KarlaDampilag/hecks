@@ -305,7 +305,6 @@ const AddSaleButton = (props: PropTypes) => {
                             let totalQuantity = 0;
                             _.each(pageData, saleItem => totalQuantity += saleItem.quantity);
 
-                            console.log(pageData)
                             return (
                                 <>
                                     <tr>

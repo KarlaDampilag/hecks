@@ -686,6 +686,23 @@ async function removeInventoryStock(parent, args, ctx, info) {
     return await ctx.prisma.inventory({ id: args.id }).$fragment(fragment);
 }
 
+async function createExpense(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const expense = await ctx.prisma.createExpense({
+        ...args,
+        user: {
+            connect: {
+                id: ctx.request.userId
+            }
+        }
+    });
+
+    return expense;
+}
+
 module.exports = {
     signup,
     login,
@@ -704,5 +721,6 @@ module.exports = {
     deleteCustomer,
     createSaleAndItems,
     deleteSaleAndItems,
-    updateSaleAndItems
+    updateSaleAndItems,
+    createExpense
 }

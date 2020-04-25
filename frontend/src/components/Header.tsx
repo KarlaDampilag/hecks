@@ -17,8 +17,9 @@ const Header = (props: PropTypes) => {
                 selectedKeys={[selectedKey]}
                 onClick={(e) => setSelectedKey(e.key)}
             >
-                <Menu.Item key='products'><Link to="/products">Products</Link></Menu.Item>
                 <Menu.Item key='sales'><Link to="/sales">Sales</Link></Menu.Item>
+                <Menu.Item key='expenses'><Link to="/expenses">Expenses</Link></Menu.Item>
+                <Menu.Item key='products'><Link to="/products">Products</Link></Menu.Item>
                 <Menu.Item key='inventories'><Link to="/inventories">Inventories</Link></Menu.Item>
                 <Menu.Item key='customers'><Link to="/customers">Customers</Link></Menu.Item>
                 {props.user && <Menu.Item><LogoutButton /></Menu.Item>}

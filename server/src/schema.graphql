@@ -49,6 +49,7 @@ type Mutation {
     updateSaleAndItems(id: ID!, saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
     addInventoryStock(id: ID!, inventoryItems: [InventoryItemInput!]!): Inventory!
     removeInventoryStock(id: ID!, inventoryItems: [InventoryItemInput!]!): Inventory!
+    createExpense(name: String!, description: String, cost: String!): Expense!
     # requestReset(email: String!): SuccessMessage
     # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
     # updatePermissions(permissions: [Permission], userId: ID!): User
@@ -68,6 +69,7 @@ type Query {
     customersByUser(orderBy: CustomerOrderByInput): [Customer]!
     # customer(id: ID!): Customer
     salesByUser(orderBy: SaleOrderByInput): [Sale]!
+    expensesByUser(orderBy: ExpenseOrderByInput): [Expense]!
     # saleItems(orderBy: SaleItemOrderByInput): [SaleItem]!
 }
 

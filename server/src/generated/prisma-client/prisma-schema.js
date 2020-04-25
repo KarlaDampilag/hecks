@@ -11,6 +11,10 @@ type AggregateCustomer {
   count: Int!
 }
 
+type AggregateExpense {
+  count: Int!
+}
+
 type AggregateInventory {
   count: Int!
 }
@@ -805,6 +809,303 @@ input CustomerWhereUniqueInput {
 
 scalar DateTime
 
+type Expense {
+  id: ID!
+  user: User!
+  name: String!
+  description: String
+  cost: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ExpenseConnection {
+  pageInfo: PageInfo!
+  edges: [ExpenseEdge]!
+  aggregate: AggregateExpense!
+}
+
+input ExpenseCreateInput {
+  id: ID
+  user: UserCreateOneWithoutExpensesInput!
+  name: String!
+  description: String
+  cost: String!
+}
+
+input ExpenseCreateManyWithoutUserInput {
+  create: [ExpenseCreateWithoutUserInput!]
+  connect: [ExpenseWhereUniqueInput!]
+}
+
+input ExpenseCreateWithoutUserInput {
+  id: ID
+  name: String!
+  description: String
+  cost: String!
+}
+
+type ExpenseEdge {
+  node: Expense!
+  cursor: String!
+}
+
+enum ExpenseOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  cost_ASC
+  cost_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ExpensePreviousValues {
+  id: ID!
+  name: String!
+  description: String
+  cost: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ExpenseScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  cost: String
+  cost_not: String
+  cost_in: [String!]
+  cost_not_in: [String!]
+  cost_lt: String
+  cost_lte: String
+  cost_gt: String
+  cost_gte: String
+  cost_contains: String
+  cost_not_contains: String
+  cost_starts_with: String
+  cost_not_starts_with: String
+  cost_ends_with: String
+  cost_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ExpenseScalarWhereInput!]
+  OR: [ExpenseScalarWhereInput!]
+  NOT: [ExpenseScalarWhereInput!]
+}
+
+type ExpenseSubscriptionPayload {
+  mutation: MutationType!
+  node: Expense
+  updatedFields: [String!]
+  previousValues: ExpensePreviousValues
+}
+
+input ExpenseSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ExpenseWhereInput
+  AND: [ExpenseSubscriptionWhereInput!]
+  OR: [ExpenseSubscriptionWhereInput!]
+  NOT: [ExpenseSubscriptionWhereInput!]
+}
+
+input ExpenseUpdateInput {
+  user: UserUpdateOneRequiredWithoutExpensesInput
+  name: String
+  description: String
+  cost: String
+}
+
+input ExpenseUpdateManyDataInput {
+  name: String
+  description: String
+  cost: String
+}
+
+input ExpenseUpdateManyMutationInput {
+  name: String
+  description: String
+  cost: String
+}
+
+input ExpenseUpdateManyWithoutUserInput {
+  create: [ExpenseCreateWithoutUserInput!]
+  delete: [ExpenseWhereUniqueInput!]
+  connect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  updateMany: [ExpenseUpdateManyWithWhereNestedInput!]
+}
+
+input ExpenseUpdateManyWithWhereNestedInput {
+  where: ExpenseScalarWhereInput!
+  data: ExpenseUpdateManyDataInput!
+}
+
+input ExpenseUpdateWithoutUserDataInput {
+  name: String
+  description: String
+  cost: String
+}
+
+input ExpenseUpdateWithWhereUniqueWithoutUserInput {
+  where: ExpenseWhereUniqueInput!
+  data: ExpenseUpdateWithoutUserDataInput!
+}
+
+input ExpenseUpsertWithWhereUniqueWithoutUserInput {
+  where: ExpenseWhereUniqueInput!
+  update: ExpenseUpdateWithoutUserDataInput!
+  create: ExpenseCreateWithoutUserInput!
+}
+
+input ExpenseWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  user: UserWhereInput
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  cost: String
+  cost_not: String
+  cost_in: [String!]
+  cost_not_in: [String!]
+  cost_lt: String
+  cost_lte: String
+  cost_gt: String
+  cost_gte: String
+  cost_contains: String
+  cost_not_contains: String
+  cost_starts_with: String
+  cost_not_starts_with: String
+  cost_ends_with: String
+  cost_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ExpenseWhereInput!]
+  OR: [ExpenseWhereInput!]
+  NOT: [ExpenseWhereInput!]
+}
+
+input ExpenseWhereUniqueInput {
+  id: ID
+}
+
 type Inventory {
   id: ID!
   user: User!
@@ -1551,6 +1852,12 @@ type Mutation {
   upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
+  createExpense(data: ExpenseCreateInput!): Expense!
+  updateExpense(data: ExpenseUpdateInput!, where: ExpenseWhereUniqueInput!): Expense
+  updateManyExpenses(data: ExpenseUpdateManyMutationInput!, where: ExpenseWhereInput): BatchPayload!
+  upsertExpense(where: ExpenseWhereUniqueInput!, create: ExpenseCreateInput!, update: ExpenseUpdateInput!): Expense!
+  deleteExpense(where: ExpenseWhereUniqueInput!): Expense
+  deleteManyExpenses(where: ExpenseWhereInput): BatchPayload!
   createInventory(data: InventoryCreateInput!): Inventory!
   updateInventory(data: InventoryUpdateInput!, where: InventoryWhereUniqueInput!): Inventory
   updateManyInventories(data: InventoryUpdateManyMutationInput!, where: InventoryWhereInput): BatchPayload!
@@ -2201,6 +2508,9 @@ type Query {
   customer(where: CustomerWhereUniqueInput!): Customer
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
   customersConnection(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerConnection!
+  expense(where: ExpenseWhereUniqueInput!): Expense
+  expenses(where: ExpenseWhereInput, orderBy: ExpenseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Expense]!
+  expensesConnection(where: ExpenseWhereInput, orderBy: ExpenseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExpenseConnection!
   inventory(where: InventoryWhereUniqueInput!): Inventory
   inventories(where: InventoryWhereInput, orderBy: InventoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Inventory]!
   inventoriesConnection(where: InventoryWhereInput, orderBy: InventoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryConnection!
@@ -3124,6 +3434,7 @@ enum SpecialSaleDeductionType {
 type Subscription {
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
+  expense(where: ExpenseSubscriptionWhereInput): ExpenseSubscriptionPayload
   inventory(where: InventorySubscriptionWhereInput): InventorySubscriptionPayload
   inventoryItem(where: InventoryItemSubscriptionWhereInput): InventoryItemSubscriptionPayload
   inventoryItemTransaction(where: InventoryItemTransactionSubscriptionWhereInput): InventoryItemTransactionSubscriptionPayload
@@ -3151,6 +3462,7 @@ type User {
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer!]
   sales(where: SaleWhereInput, orderBy: SaleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Sale!]
   saleItems(where: SaleItemWhereInput, orderBy: SaleItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SaleItem!]
+  expenses(where: ExpenseWhereInput, orderBy: ExpenseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Expense!]
 }
 
 type UserConnection {
@@ -3177,6 +3489,7 @@ input UserCreateInput {
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
+  expenses: ExpenseCreateManyWithoutUserInput
 }
 
 input UserCreateOneInput {
@@ -3191,6 +3504,11 @@ input UserCreateOneWithoutCategoriesInput {
 
 input UserCreateOneWithoutCustomersInput {
   create: UserCreateWithoutCustomersInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutExpensesInput {
+  create: UserCreateWithoutExpensesInput
   connect: UserWhereUniqueInput
 }
 
@@ -3235,6 +3553,7 @@ input UserCreateWithoutCategoriesInput {
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
+  expenses: ExpenseCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutCustomersInput {
@@ -3252,6 +3571,27 @@ input UserCreateWithoutCustomersInput {
   categories: CategoryCreateManyWithoutUserInput
   inventories: InventoryCreateManyWithoutUserInput
   inventoryItems: InventoryItemCreateManyWithoutUserInput
+  sales: SaleCreateManyWithoutUserInput
+  saleItems: SaleItemCreateManyInput
+  expenses: ExpenseCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutExpensesInput {
+  id: ID
+  email: String!
+  password: String!
+  role: String!
+  permissions: UserCreatepermissionsInput
+  verified: Boolean!
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductCreateManyWithoutUserInput
+  categories: CategoryCreateManyWithoutUserInput
+  inventories: InventoryCreateManyWithoutUserInput
+  inventoryItems: InventoryItemCreateManyWithoutUserInput
+  customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
 }
@@ -3273,6 +3613,7 @@ input UserCreateWithoutInventoriesInput {
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
+  expenses: ExpenseCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutInventoryItemsInput {
@@ -3292,6 +3633,7 @@ input UserCreateWithoutInventoryItemsInput {
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
+  expenses: ExpenseCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutProductsInput {
@@ -3311,6 +3653,7 @@ input UserCreateWithoutProductsInput {
   customers: CustomerCreateManyWithoutUserInput
   sales: SaleCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
+  expenses: ExpenseCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutSalesInput {
@@ -3330,6 +3673,7 @@ input UserCreateWithoutSalesInput {
   inventoryItems: InventoryItemCreateManyWithoutUserInput
   customers: CustomerCreateManyWithoutUserInput
   saleItems: SaleItemCreateManyInput
+  expenses: ExpenseCreateManyWithoutUserInput
 }
 
 type UserEdge {
@@ -3406,6 +3750,7 @@ input UserUpdateDataInput {
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -3425,6 +3770,7 @@ input UserUpdateInput {
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
@@ -3457,6 +3803,13 @@ input UserUpdateOneRequiredWithoutCustomersInput {
   create: UserCreateWithoutCustomersInput
   update: UserUpdateWithoutCustomersDataInput
   upsert: UserUpsertWithoutCustomersInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutExpensesInput {
+  create: UserCreateWithoutExpensesInput
+  update: UserUpdateWithoutExpensesDataInput
+  upsert: UserUpsertWithoutExpensesInput
   connect: UserWhereUniqueInput
 }
 
@@ -3508,6 +3861,7 @@ input UserUpdateWithoutCategoriesDataInput {
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutCustomersDataInput {
@@ -3524,6 +3878,26 @@ input UserUpdateWithoutCustomersDataInput {
   categories: CategoryUpdateManyWithoutUserInput
   inventories: InventoryUpdateManyWithoutUserInput
   inventoryItems: InventoryItemUpdateManyWithoutUserInput
+  sales: SaleUpdateManyWithoutUserInput
+  saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutExpensesDataInput {
+  email: String
+  password: String
+  role: String
+  permissions: UserUpdatepermissionsInput
+  verified: Boolean
+  name: String
+  confirmEmailToken: String
+  resetToken: String
+  resetTokenExpiry: String
+  products: ProductUpdateManyWithoutUserInput
+  categories: CategoryUpdateManyWithoutUserInput
+  inventories: InventoryUpdateManyWithoutUserInput
+  inventoryItems: InventoryItemUpdateManyWithoutUserInput
+  customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
 }
@@ -3544,6 +3918,7 @@ input UserUpdateWithoutInventoriesDataInput {
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutInventoryItemsDataInput {
@@ -3562,6 +3937,7 @@ input UserUpdateWithoutInventoryItemsDataInput {
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutProductsDataInput {
@@ -3580,6 +3956,7 @@ input UserUpdateWithoutProductsDataInput {
   customers: CustomerUpdateManyWithoutUserInput
   sales: SaleUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutSalesDataInput {
@@ -3598,6 +3975,7 @@ input UserUpdateWithoutSalesDataInput {
   inventoryItems: InventoryItemUpdateManyWithoutUserInput
   customers: CustomerUpdateManyWithoutUserInput
   saleItems: SaleItemUpdateManyInput
+  expenses: ExpenseUpdateManyWithoutUserInput
 }
 
 input UserUpsertNestedInput {
@@ -3613,6 +3991,11 @@ input UserUpsertWithoutCategoriesInput {
 input UserUpsertWithoutCustomersInput {
   update: UserUpdateWithoutCustomersDataInput!
   create: UserCreateWithoutCustomersInput!
+}
+
+input UserUpsertWithoutExpensesInput {
+  update: UserUpdateWithoutExpensesDataInput!
+  create: UserCreateWithoutExpensesInput!
 }
 
 input UserUpsertWithoutInventoriesInput {
@@ -3771,6 +4154,9 @@ input UserWhereInput {
   saleItems_every: SaleItemWhereInput
   saleItems_some: SaleItemWhereInput
   saleItems_none: SaleItemWhereInput
+  expenses_every: ExpenseWhereInput
+  expenses_some: ExpenseWhereInput
+  expenses_none: ExpenseWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

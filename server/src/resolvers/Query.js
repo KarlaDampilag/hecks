@@ -158,6 +158,13 @@ async function salesByUser(parent, args, ctx, info) {
     return await ctx.prisma.user({ id: ctx.request.userId }).sales({ orderBy: args.orderBy }).$fragment(fragment);
 }
 
+async function expensesByUser(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+    return await ctx.prisma.user({ id: ctx.request.userId }).expenses({ orderBy: args.orderBy });
+}
+
 module.exports = {
     me,
     products,
@@ -169,5 +176,6 @@ module.exports = {
     inventoryByUser,
     inventoryAndItemsByUser,
     customersByUser,
-    salesByUser
+    salesByUser,
+    expensesByUser
 }
