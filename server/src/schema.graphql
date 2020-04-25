@@ -11,6 +11,7 @@ input SaleItemInput {
 
 input InventoryItemInput {
   product: InventoryItemProductInput!
+  currentQuantity: Int!
   quantity: Int!
 }
 
@@ -47,6 +48,7 @@ type Mutation {
     deleteSaleAndItems(id: ID!): Sale!
     updateSaleAndItems(id: ID!, saleItems: [SaleItemInput!]!, timestamp: Int!, customerId: String, discountType: SpecialSaleDeductionType, discountValue: String, taxType: SpecialSaleDeductionType, taxValue: String, shipping: String, note: String): Sale!
     addInventoryStock(id: ID!, inventoryItems: [InventoryItemInput!]!): Inventory!
+    removeInventoryStock(id: ID!, inventoryItems: [InventoryItemInput!]!): Inventory!
     # requestReset(email: String!): SuccessMessage
     # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
     # updatePermissions(permissions: [Permission], userId: ID!): User

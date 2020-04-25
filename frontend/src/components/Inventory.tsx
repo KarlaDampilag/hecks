@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { Table } from 'antd';
 
 import AddInventoryStockButton from './AddInventoryStockButton';
+import RemoveInventoryStockButton from './RemoveInventoryStockButton';
 
 const INVENTORY_BY_USER = gql`
 query INVENTORY_BY_USER($id: ID!) {
@@ -41,7 +42,8 @@ const Inventory = (props: any) => {
     return (
         <>
             <h2>{inventory && inventory.name}</h2>
-            <AddInventoryStockButton inventory={inventory} />
+            <AddInventoryStockButton inventory={inventory} currentInventoryItems={inventoryItems} />
+            <RemoveInventoryStockButton inventory={inventory} currentInventoryItems={inventoryItems} />
             <Table
                 loading={loading}
                 dataSource={inventoryItems}

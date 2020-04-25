@@ -3,14 +3,16 @@ import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Modal, Button, Form, message, Table, Select, InputNumber } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { MinusOutlined } from '@ant-design/icons';
 
-const ADD_INVENTORY_STOCK_MUTATION = gql`
-mutation ADD_INVENTORY_STOCK_MUTATION(
+import { PRODUCTS_BY_USER_QUERY } from './AddInventoryStockButton';
+
+const REMOVE_INVENTORY_STOCK_MUTATION = gql`
+mutation REMOVE_INVENTORY_STOCK_MUTATION(
     $id: ID!,
     $inventoryItems: [InventoryItemInput!]!
 ) {
-    addInventoryStock(
+    removeInventoryStock(
         id: $id,
         inventoryItems: $inventoryItems
     ) {
@@ -29,16 +31,6 @@ mutation ADD_INVENTORY_STOCK_MUTATION(
 }
 `;
 
-const PRODUCTS_BY_USER_QUERY = gql`
-    {
-        productsByUser {
-            id
-            name
-            unit
-        }
-    }
-`;
-
 interface PropTypes {
     inventory: any; // FIXME use graphql type
     currentInventoryItems: any; // FIXME use graphql type
@@ -50,7 +42,7 @@ interface InventoryItemProps {
     quantity: number;
 }
 
-const AddInventoryStockButton = (props: PropTypes) => {
+const RemoveInventoryStockButton = (props: PropTypes) => {
     const initialItems: InventoryItemProps[] = [{
         product: {
             id: null
@@ -61,6 +53,7 @@ const AddInventoryStockButton = (props: PropTypes) => {
     const [inventoryItems, setInventoryItems] = React.useState<InventoryItemProps[]>(initialItems);
     const [filteredInventoryItems, setFilteredInventoryItems] = React.useState<InventoryItemProps[]>(initialItems);
     const [isShowingModal, setIsShowingModal] = React.useState<boolean>(false);
+    const [disable, setDisable] = React.useState<boolean>(false);
 
     const inventoryItemIds = _.map(inventoryItems, inventoryItem => inventoryItem.product.id);
     const [form] = Form.useForm();
@@ -71,7 +64,7 @@ const AddInventoryStockButton = (props: PropTypes) => {
         delete product.__typename;
     });
 
-    const [addInventoryStock, { loading, error }] = useMutation(ADD_INVENTORY_STOCK_MUTATION, {
+    const [removeInventoryStock, { loading, error }] = useMutation(REMOVE_INVENTORY_STOCK_MUTATION, {
         variables: { id: props.inventory && props.inventory.id, inventoryItems: filteredInventoryItems },
     });
 
@@ -95,12 +88,18 @@ const AddInventoryStockButton = (props: PropTypes) => {
     }
 
     const handleQuantityChange = (inventoryItem: InventoryItemProps, value: number | undefined) => {
+        const trueValue = value ? value : 1;
         const updatedInventoryItems = [...inventoryItems];
         const updatedInventoryItem: InventoryItemProps = { ...inventoryItem };
-        updatedInventoryItem.quantity = value ? value : 1;
+        updatedInventoryItem.quantity = trueValue;
         const index = _.findIndex(updatedInventoryItems, inventoryItem);
         updatedInventoryItems.splice(index, 1, updatedInventoryItem);
         setInventoryItems(updatedInventoryItems);
+
+        const thisItemInCurrentInventoryItems = _.find(props.currentInventoryItems, thisInventoryItem => inventoryItem.product.id == thisInventoryItem.product.id);
+        if (thisItemInCurrentInventoryItems && updatedInventoryItem.currentQuantity < trueValue) {
+            setDisable(true);
+        }
 
         const filteredItems: InventoryItemProps[] = _.filter(updatedInventoryItems, item => item.product.id != null);
         setFilteredInventoryItems(filteredItems);
@@ -108,9 +107,9 @@ const AddInventoryStockButton = (props: PropTypes) => {
 
     return (
         <>
-            <Modal title={`Add Stock to ${props.inventory && props.inventory.name}`} visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
+            <Modal title={`Remove Stock from ${props.inventory && props.inventory.name}`} visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form form={form} onFinish={async () => {
-                    await addInventoryStock();
+                    await removeInventoryStock();
                     if (error) {
                         message.error('Unable to add stock. Please contact SourceCodeXL');
                     } else {
@@ -159,15 +158,20 @@ const AddInventoryStockButton = (props: PropTypes) => {
                                 title: 'Current Quantity',
                                 dataIndex: 'currentQuantity'
                             }, {
-                                title: 'Add Quantity',
+                                title: 'Remove Quantity',
                                 dataIndex: 'quantity',
-                                render: (value, record) => (
-                                    <InputNumber
-                                        value={value}
-                                        min={1}
-                                        onChange={(value) => handleQuantityChange(record, value)}
-                                    />
-                                )
+                                render: (value, record) => {
+                                    const max = record.currentQuantity;
+                                    
+                                    return (
+                                        <InputNumber
+                                            value={value}
+                                            min={1}
+                                            max={max}
+                                            onChange={(value) => handleQuantityChange(record, value)}
+                                        />
+                                    )
+                                }
                             }
                         ]}
                     />
@@ -189,23 +193,25 @@ const AddInventoryStockButton = (props: PropTypes) => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" disabled={loading} loading={loading} style={{ width: '100%' }}>
-                            Add{loading ? 'ing' : ' '} Stock
+                        <Button type="primary" htmlType="submit" disabled={loading || disable} loading={loading} style={{ width: '100%' }}>
+                            Remov{loading ? 'ing' : 'e '} Stock
                                 </Button>
+                        <div>
+                            {disable && <span>One or more entries are trying to remove an amount that is more than the current amount.</span>}
+                        </div>
                     </Form.Item>
                 </Form>
             </Modal>
             <Button
                 onClick={() => setIsShowingModal(true)}
                 size='large'
-                icon={<PlusOutlined />}
+                icon={<MinusOutlined />}
                 className='add-button'
             >
-                Add Stock
+                Remove Stock
             </Button>
         </>
     );
 }
 
-export default AddInventoryStockButton;
-export { PRODUCTS_BY_USER_QUERY };
+export default RemoveInventoryStockButton;
