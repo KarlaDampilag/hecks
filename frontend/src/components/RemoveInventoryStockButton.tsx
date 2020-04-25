@@ -58,12 +58,6 @@ const RemoveInventoryStockButton = (props: PropTypes) => {
     const inventoryItemIds = _.map(inventoryItems, inventoryItem => inventoryItem.product.id);
     const [form] = Form.useForm();
 
-    const { data: productsByUserData } = useQuery(PRODUCTS_BY_USER_QUERY);
-    const products = productsByUserData ? productsByUserData.productsByUser : [];
-    _.each(products, product => {
-        delete product.__typename;
-    });
-
     const [removeInventoryStock, { loading, error }] = useMutation(REMOVE_INVENTORY_STOCK_MUTATION, {
         variables: { id: props.inventory && props.inventory.id, inventoryItems: filteredInventoryItems },
     });
@@ -135,13 +129,13 @@ const RemoveInventoryStockButton = (props: PropTypes) => {
                                             placeholder='Add a product'
                                         >
                                             {
-                                                _.map(products, product =>
+                                                _.map(props.currentInventoryItems, item =>
                                                     <Select.Option
-                                                        value={JSON.stringify(product)}
-                                                        disabled={_.includes(inventoryItemIds, product.id)}
-                                                        key={product.id}
+                                                        value={JSON.stringify(item.product)}
+                                                        disabled={_.includes(inventoryItemIds, item.product.id)}
+                                                        key={item.product.id}
                                                     >
-                                                        {product.name}
+                                                        {item.product.name}
                                                     </Select.Option>
                                                 )
                                             }
