@@ -8,7 +8,7 @@ import { Table, message, Button } from 'antd';
 
 import { userContext } from './App';
 import AddExpenseButton from './AddExpenseButton';
-import UpdateInventoryButton from './UpdateInventoryButton';
+import UpdateExpenseButton from './UpdateExpenseButton';
 import DeleteButton from './DeleteButton';
 
 const EXPENSES_BY_USER_QUERY = gql`
@@ -88,7 +88,7 @@ const Expenses = () => {
                                     key: 'edit',
                                     render: (value, record) => {
                                         return (
-                                            <UpdateInventoryButton inventory={record} />
+                                            <UpdateExpenseButton expense={record} />
                                         );
                                     }
                                 },
