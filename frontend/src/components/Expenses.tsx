@@ -23,11 +23,13 @@ const EXPENSES_BY_USER_QUERY = gql`
     }
 `;
 
-const DELETE_INVENTORY_MUTATION = gql`
-    mutation DELETE_INVENTORY_MUTATION($id: ID!) {
-        deleteInventory(id: $id) {
+const DELETE_EXPENSE_MUTATION = gql`
+    mutation DELETE_EXPENSE_MUTATION($id: ID!) {
+        deleteExpense(id: $id) {
             id
             name
+            description
+            cost
             createdAt
         }
     }
@@ -38,14 +40,13 @@ const Expenses = () => {
 
     const { data, loading } = useQuery(EXPENSES_BY_USER_QUERY);
     const expenses = data ? data.expensesByUser : null;
-    console.log(data)
 
-    const [deleteInventory, { error: deleteInventoryError }] = useMutation(DELETE_INVENTORY_MUTATION, {
+    const [deleteExpense, { error }] = useMutation(DELETE_EXPENSE_MUTATION, {
         variables: { id: idForDeletion },
         update: (cache: any, payload: any) => {
             const data = cache.readQuery({ query: EXPENSES_BY_USER_QUERY });
-            const filteredItems = _.filter(data.expensesByUser, expense => expense.id !== payload.data.deleteInventory.id);
-            cache.writeQuery({ query: EXPENSES_BY_USER_QUERY, data: { inventoriesByUser: filteredItems } });
+            const filteredItems = _.filter(data.expensesByUser, expense => expense.id !== payload.data.deleteExpense.id);
+            cache.writeQuery({ query: EXPENSES_BY_USER_QUERY, data: { expensesByUser: filteredItems } });
         }
     });
 
@@ -102,11 +103,11 @@ const Expenses = () => {
                                                 onClick={() => setIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     message.info('Please wait...');
-                                                    await deleteInventory();
-                                                    if (deleteInventoryError) {
+                                                    await deleteExpense();
+                                                    if (error) {
                                                         message.error('Error: cannot delete. Please contact SourceCodeXL.');
                                                     } else {
-                                                        message.success('Inventory deleted');
+                                                        message.success('Expense deleted');
                                                     }
                                                 }}
                                             />
@@ -125,6 +126,8 @@ const Expenses = () => {
                                             <th style={{ padding: '8px' }}></th>
                                             <th style={{ padding: '8px' }}></th>
                                             <th style={{ padding: '8px' }}>{totalCost}</th>
+                                            <th></th>
+                                            <th></th>
                                         </tr>
                                     </>
                                 )

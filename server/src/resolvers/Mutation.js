@@ -732,6 +732,21 @@ async function updateExpense(parent, args, ctx, info) {
     });
 }
 
+async function deleteExpense(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+        throw new Error('You must be logged in to do that.');
+    }
+
+    const objects = await ctx.prisma.user({ id: ctx.request.userId }).expenses({
+        where: { id: args.id }
+    });
+
+    if (!objects || objects.length < 1 || !objects[0]) {
+        throw new Error("Cannot find this expense owned by your user id.");
+    }
+    return await ctx.prisma.deleteExpense({ id: args.id });
+}
+
 module.exports = {
     signup,
     login,
@@ -752,5 +767,6 @@ module.exports = {
     deleteSaleAndItems,
     updateSaleAndItems,
     createExpense,
-    updateExpense
+    updateExpense,
+    deleteExpense
 }
