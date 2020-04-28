@@ -1,4 +1,5 @@
 import React from 'react';
+import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { Modal, Button, Input, Form, message, InputNumber } from 'antd';
@@ -40,7 +41,7 @@ const AddInventoryButton = () => {
         update: (store, response) => {
             let newData = response.data.createExpense;
             let localStoreData: any = store.readQuery({ query: EXPENSES_BY_USER_QUERY });
-            localStoreData = { createExpensesByUser: [...localStoreData.createExpensesByUser, newData] };
+            localStoreData = { expensesByUser: _.sortBy([...localStoreData.expensesByUser, newData], 'createdAt').reverse() };
             store.writeQuery({ query: EXPENSES_BY_USER_QUERY, data: localStoreData });
         }
     });
