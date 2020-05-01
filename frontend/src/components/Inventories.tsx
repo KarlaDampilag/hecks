@@ -44,9 +44,8 @@ const Inventories = () => {
 
     const { data: inventoriesData, loading: inventoriesLoading } = useQuery(INVENTORIES_BY_USER_QUERY);
     const inventories = inventoriesData ? inventoriesData.inventoriesByUser : null;
-    console.log(inventories)
 
-    const [deleteInventory, { error: deleteInventoryError }] = useMutation(DELETE_INVENTORY_MUTATION, {
+    const [deleteInventory] = useMutation(DELETE_INVENTORY_MUTATION, {
         variables: { id: idForDeletion },
         update: (cache: any, payload: any) => {
             const data = cache.readQuery({ query: INVENTORIES_BY_USER_QUERY });
@@ -100,12 +99,14 @@ const Inventories = () => {
                                                 onClick={() => setIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     message.info('Please wait...');
-                                                    await deleteInventory();
-                                                    if (deleteInventoryError) {
-                                                        message.error('Error: cannot delete. Please contact SourceCodeXL.');
-                                                    } else {
-                                                        message.success('Inventory deleted');
-                                                    }
+                                                    await deleteInventory()
+                                                        .then(() => {
+                                                            message.success('Inventory deleted');
+                                                        })
+                                                        .catch(res => {
+                                                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                                                            message.error('Error: cannot delete. Please contact SourceCodeXL.');
+                                                        });
                                                 }}
                                             />
                                         );

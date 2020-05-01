@@ -71,7 +71,7 @@ const AddInventoryStockButton = (props: PropTypes) => {
         delete product.__typename;
     });
 
-    const [addInventoryStock, { loading, error }] = useMutation(ADD_INVENTORY_STOCK_MUTATION, {
+    const [addInventoryStock, { loading }] = useMutation(ADD_INVENTORY_STOCK_MUTATION, {
         variables: { id: props.inventory && props.inventory.id, inventoryItems: filteredInventoryItems },
     });
 
@@ -110,14 +110,15 @@ const AddInventoryStockButton = (props: PropTypes) => {
         <>
             <Modal title={`Add Stock to ${props.inventory && props.inventory.name}`} visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form form={form} onFinish={async () => {
-                    await addInventoryStock();
-                    if (error) {
-                        message.error('Unable to add stock. Please contact SourceCodeXL');
-                    } else {
+                    await addInventoryStock()
+                    .then(() => {
                         setIsShowingModal(false);
                         form.resetFields();
                         message.success('Stock added to inventory');
-                    }
+                    })
+                    .catch(res => {
+                        _.forEach(res.graphQLErrors, error => message.error(error.message));
+                    });
                 }}>
                     <Table
                         dataSource={inventoryItems}

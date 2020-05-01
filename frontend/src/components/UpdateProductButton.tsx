@@ -66,7 +66,7 @@ const UpdateProductButton = (props: PropTypes) => {
     options = _.map(props.categories, category => category.name);
   }
 
-  const [updateProduct, { loading: updateProductLoading, error: updateProductError }] = useMutation(UPDATE_PRODUCT_MUTATION, {
+  const [updateProduct, { loading: updateProductLoading }] = useMutation(UPDATE_PRODUCT_MUTATION, {
     variables: { id: props.product.id, name, salePrice, costPrice, unit, notes, image, largeImage, categories }
   });
 
@@ -103,14 +103,23 @@ const UpdateProductButton = (props: PropTypes) => {
         <Form
           {...layout}
           onFinish={async e => {
-            await updateProduct();
             if (newCategories && newCategories.length > 0) {
-              await createCategories();
+              await createCategories()
+                .catch(res => {
+                  _.forEach(res.graphQLErrors, error => message.error(error.message));
+                  message.error('Error: cannot update. Please contact SourceCodeXL.');
+                });
             }
-            if (!updateProductError) {
-              message.success('Product updated');
-              setIsShowingModal(false);
-            }
+            await updateProduct()
+              .then(() => {
+                message.success('Product updated');
+                setIsShowingModal(false);
+              })
+              .catch(res => {
+                _.forEach(res.graphQLErrors, error => message.error(error.message));
+                message.error('Error: cannot update. Please contact SourceCodeXL.');
+              });
+
           }}
         >
           <Form.Item

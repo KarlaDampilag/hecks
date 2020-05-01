@@ -37,7 +37,6 @@ const Inventory = (props: any) => {
     if (inventory) {
         inventoryItems = inventory.inventoryItems;
     }
-    console.log(inventoryItems);
 
     return (
         <>

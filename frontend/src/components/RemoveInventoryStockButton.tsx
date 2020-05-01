@@ -58,7 +58,7 @@ const RemoveInventoryStockButton = (props: PropTypes) => {
     const inventoryItemIds = _.map(inventoryItems, inventoryItem => inventoryItem.product.id);
     const [form] = Form.useForm();
 
-    const [removeInventoryStock, { loading, error }] = useMutation(REMOVE_INVENTORY_STOCK_MUTATION, {
+    const [removeInventoryStock, { loading }] = useMutation(REMOVE_INVENTORY_STOCK_MUTATION, {
         variables: { id: props.inventory && props.inventory.id, inventoryItems: filteredInventoryItems },
     });
 
@@ -103,14 +103,16 @@ const RemoveInventoryStockButton = (props: PropTypes) => {
         <>
             <Modal title={`Remove Stock from ${props.inventory && props.inventory.name}`} visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form form={form} onFinish={async () => {
-                    await removeInventoryStock();
-                    if (error) {
-                        message.error('Unable to add stock. Please contact SourceCodeXL');
-                    } else {
-                        setIsShowingModal(false);
-                        form.resetFields();
-                        message.success('Stock added to inventory');
-                    }
+                    await removeInventoryStock()
+                        .then(() => {
+                            setIsShowingModal(false);
+                            form.resetFields();
+                            message.success('Stock added to inventory');
+                        })
+                        .catch(res => {
+                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                            message.error('Please contact SourceCodeXL');
+                        });
                 }}>
                     <Table
                         dataSource={inventoryItems}
@@ -156,7 +158,7 @@ const RemoveInventoryStockButton = (props: PropTypes) => {
                                 dataIndex: 'quantity',
                                 render: (value, record) => {
                                     const max = record.currentQuantity;
-                                    
+
                                     return (
                                         <InputNumber
                                             value={value}

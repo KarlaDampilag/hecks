@@ -41,7 +41,7 @@ const Expenses = () => {
     const { data, loading } = useQuery(EXPENSES_BY_USER_QUERY);
     const expenses = data ? data.expensesByUser : null;
 
-    const [deleteExpense, { error }] = useMutation(DELETE_EXPENSE_MUTATION, {
+    const [deleteExpense] = useMutation(DELETE_EXPENSE_MUTATION, {
         variables: { id: idForDeletion },
         update: (cache: any, payload: any) => {
             const data = cache.readQuery({ query: EXPENSES_BY_USER_QUERY });
@@ -103,12 +103,14 @@ const Expenses = () => {
                                                 onClick={() => setIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     message.info('Please wait...');
-                                                    await deleteExpense();
-                                                    if (error) {
-                                                        message.error('Error: cannot delete. Please contact SourceCodeXL.');
-                                                    } else {
-                                                        message.success('Expense deleted');
-                                                    }
+                                                    await deleteExpense()
+                                                        .then(() => {
+                                                            message.success('Expense deleted');
+                                                        })
+                                                        .catch(res => {
+                                                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                                                            message.error('Error: cannot delete. Please contact SourceCodeXL.');
+                                                        });
                                                 }}
                                             />
                                         );

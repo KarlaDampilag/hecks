@@ -1,4 +1,5 @@
 import React from 'react';
+import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { Modal, Button, Input, Form, message } from 'antd';
@@ -60,7 +61,7 @@ const AddCustomerButton = () => {
 
     const [form] = Form.useForm();
 
-    const [createCustomer, { loading: createCustomerLoading, error: createCustomerError }] = useMutation(CREATE_CUSTOMER_MUTATION, {
+    const [createCustomer, { loading: createCustomerLoading }] = useMutation(CREATE_CUSTOMER_MUTATION, {
         variables: { name, email, phone, street1, street2, city, state, zipCode, country },
         update: (store, response) => {
             let newData = response.data.createCustomer;
@@ -74,15 +75,15 @@ const AddCustomerButton = () => {
         <>
             <Modal title='Add a Customer' visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form {...layout} form={form} onFinish={async () => {
-                    await createCustomer();
-
-                    if (createCustomerError) {
-                        message.error(createCustomerError.message.replace('GraphQL error: ', ''));
-                    } else {
-                        setIsShowingModal(false);
-                        form.resetFields();
-                        message.success('Customer added');
-                    }
+                    await createCustomer()
+                        .then(() => {
+                            setIsShowingModal(false);
+                            form.resetFields();
+                            message.success('Customer added');
+                        })
+                        .catch(res => {
+                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                        });
                 }}>
                     <Form.Item
                         label="Name"

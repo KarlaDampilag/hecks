@@ -36,7 +36,7 @@ const AddInventoryButton = () => {
 
     const [form] = Form.useForm();
 
-    const [createExpense, { loading, error }] = useMutation(CREATE_EXPENSE_MUTATION, {
+    const [createExpense, { loading }] = useMutation(CREATE_EXPENSE_MUTATION, {
         variables: { name, description, cost },
         update: (store, response) => {
             let newData = response.data.createExpense;
@@ -50,14 +50,15 @@ const AddInventoryButton = () => {
         <>
             <Modal title='Add an Expense' visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form {...layout} form={form} onFinish={async () => {
-                    await createExpense();
-                    if (error) {
-                        message.error('Unable to create an expense. Please contact SourceCodeXL.');
-                    } else {
+                    await createExpense()
+                    .then(() => {
                         setIsShowingModal(false);
                         form.resetFields();
                         message.success('Expense added');
-                    }
+                    })
+                    .catch(res => {
+                        _.forEach(res.graphQLErrors, error => message.error(error.message));
+                    });
                 }}>
                     <Form.Item
                         label="Name"

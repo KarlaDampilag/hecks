@@ -10,7 +10,6 @@ interface PropTypes {
 }
 
 const SaleDetails = (props: PropTypes) => {
-
     const renderDiscount = () => {
         if (props.sale.discountType && props.sale.discountValue) {
             if (props.sale.discountType == 'FLAT') {

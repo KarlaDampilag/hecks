@@ -1,4 +1,5 @@
 import React from 'react';
+import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { Button, Input, Form, Modal, message } from 'antd';
@@ -62,7 +63,7 @@ const UpdateCustomerButton = (props: PropTypes) => {
   const [country, setCountry] = React.useState<string>();
   const [isShowingModal, setIsShowingModal] = React.useState<boolean>(false);
 
-  const [updateCustomer, { loading, error }] = useMutation(UPDATE_CUSTOMER_MUTATION, {
+  const [updateCustomer, { loading }] = useMutation(UPDATE_CUSTOMER_MUTATION, {
     variables: { id: props.customer.id, name, email, phone, street1, street2, city, state, zipCode, country }
   });
 
@@ -72,11 +73,15 @@ const UpdateCustomerButton = (props: PropTypes) => {
         <Form
           {...layout}
           onFinish={async e => {
-            await updateCustomer();
-            if (!error) {
-              message.success('Customer updated');
-              setIsShowingModal(false);
-            }
+            await updateCustomer()
+              .then(() => {
+                message.success('Customer updated');
+                setIsShowingModal(false);
+              })
+              .catch(res => {
+                _.forEach(res.graphQLErrors, error => message.error(error.message));
+                message.error('Error: cannot update. Please contact SourceCodeXL.');
+              });
           }}
         >
           <Form.Item

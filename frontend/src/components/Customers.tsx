@@ -43,7 +43,7 @@ const Customers = () => {
     const { data: customersData, loading: customersLoading } = useQuery(CUSTOMERS_BY_USER_QUERY);
     const customers = customersData ? customersData.customersByUser : null;
 
-    const [deleteCustomer, { error: deleteCustomerError }] = useMutation(DELETE_CUSTOMER_MUTATION, {
+    const [deleteCustomer] = useMutation(DELETE_CUSTOMER_MUTATION, {
         variables: { id: idForDeletion },
         update: (cache: any, payload: any) => {
             const data = cache.readQuery({ query: CUSTOMERS_BY_USER_QUERY });
@@ -83,7 +83,7 @@ const Customers = () => {
                                     dataIndex: 'id',
                                     key: 'address',
                                     render: (value, record) => {
-                                        const allowed = ['street1','street2','city','state','zipCode','country'];
+                                        const allowed = ['street1', 'street2', 'city', 'state', 'zipCode', 'country'];
                                         const filteredObj = _.pick(record, allowed)
                                         return (
                                             _.filter(Object.values(filteredObj), value => value).join(', ')
@@ -110,12 +110,14 @@ const Customers = () => {
                                                 onClick={() => setIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     message.info('Please wait...');
-                                                    await deleteCustomer();
-                                                    if (deleteCustomerError) {
-                                                        message.error('Error: cannot delete. Please contact SourceCodeXL.');
-                                                    } else {
-                                                        message.success('Customer deleted');
-                                                    }
+                                                    await deleteCustomer()
+                                                        .then(() => {
+                                                            message.success('Customer deleted');
+                                                        })
+                                                        .catch(res => {
+                                                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                                                            message.error('Error: cannot delete. Please contact SourceCodeXL.');
+                                                        });
                                                 }}
                                             />
                                         );

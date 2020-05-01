@@ -1,4 +1,5 @@
 import React from 'react';
+import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { Modal, Button, Input, Form, message } from 'antd';
@@ -30,7 +31,7 @@ const AddInventoryButton = () => {
 
     const [form] = Form.useForm();
 
-    const [createInventory, { loading: createIventoryLoading, error: createInventoryError }] = useMutation(CREATE_INVENTORY_MUTATION, {
+    const [createInventory, { loading: createIventoryLoading }] = useMutation(CREATE_INVENTORY_MUTATION, {
         variables: { name },
         update: (store, response) => {
             let newData = response.data.createInventory;
@@ -44,14 +45,15 @@ const AddInventoryButton = () => {
         <>
             <Modal title='Add an Inventory' visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form {...layout} form={form} onFinish={async () => {
-                    await createInventory();
-                    if (createInventoryError) {
-                        message.error(createInventoryError.message.replace('GraphQL error: ', ''));
-                    } else {
-                        setIsShowingModal(false);
-                        form.resetFields();
-                        message.success('Inventory added');
-                    }
+                    await createInventory()
+                        .then(() => {
+                            setIsShowingModal(false);
+                            form.resetFields();
+                            message.success('Inventory added');
+                        })
+                        .catch(res => {
+                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                        });
                 }}>
                     <Form.Item
                         label="Name"

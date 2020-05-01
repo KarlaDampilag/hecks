@@ -1,4 +1,5 @@
 import React from 'react';
+import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { Button, Input, Form, Modal, message, InputNumber } from 'antd';
@@ -36,7 +37,7 @@ const UpdateExpenseButton = (props: PropTypes) => {
   const [cost, setCost] = React.useState<string>();
   const [isShowingModal, setIsShowingModal] = React.useState<boolean>(false);
 
-  const [updateExpense, { loading, error }] = useMutation(UPDATE_EXPENSE_MUTATION, {
+  const [updateExpense, { loading }] = useMutation(UPDATE_EXPENSE_MUTATION, {
     variables: { id: props.expense.id, name, description, cost }
   });
 
@@ -46,11 +47,15 @@ const UpdateExpenseButton = (props: PropTypes) => {
         <Form
           {...layout}
           onFinish={async e => {
-            await updateExpense();
-            if (!error) {
-              message.success('Expense updated');
-              setIsShowingModal(false);
-            }
+            await updateExpense()
+              .then(() => {
+                message.success('Expense updated');
+                setIsShowingModal(false);
+              })
+              .catch(res => {
+                _.forEach(res.graphQLErrors, error => message.error(error.message));
+                message.error('Error: cannot update. Please contact SourceCodeXL.');
+              });
           }}
         >
           <Form.Item

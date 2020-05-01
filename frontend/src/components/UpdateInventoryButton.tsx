@@ -1,4 +1,5 @@
 import React from 'react';
+import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { Button, Input, Form, Modal, message } from 'antd';
@@ -28,7 +29,7 @@ const UpdateInventoryButton = (props: PropTypes) => {
   const [name, setName] = React.useState<string>();
   const [isShowingModal, setIsShowingModal] = React.useState<boolean>(false);
 
-  const [updateInventory, { loading: updateInventoryLoading, error: updateInventoryError }] = useMutation(UPDATE_INVENTORY_MUTATION, {
+  const [updateInventory, { loading: updateInventoryLoading }] = useMutation(UPDATE_INVENTORY_MUTATION, {
     variables: { id: props.inventory.id, name }
   });
 
@@ -38,11 +39,15 @@ const UpdateInventoryButton = (props: PropTypes) => {
         <Form
           {...layout}
           onFinish={async e => {
-            await updateInventory();
-            if (!updateInventoryError) {
-              message.success('Inventory updated');
-              setIsShowingModal(false);
-            }
+            await updateInventory()
+              .then(() => {
+                message.success('Inventory updated');
+                setIsShowingModal(false);
+              })
+              .catch(res => {
+                _.forEach(res.graphQLErrors, error => message.error(error.message));
+                message.error('Error: cannot update. Please contact SourceCodeXL.');
+              });
           }}
         >
           <Form.Item

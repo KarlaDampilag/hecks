@@ -1,4 +1,5 @@
 import React from 'react';
+import * as _ from 'lodash';
 import { Form, Input, Button, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import gql from 'graphql-tag';
@@ -20,7 +21,7 @@ const Login = () => {
     const [email, setEmail] = React.useState<string>();
     const [password, setPassword] = React.useState<string>();
 
-    const [login, { loading, error }] = useMutation(LOGIN_MUTATION, {
+    const [login, { loading }] = useMutation(LOGIN_MUTATION, {
         variables: { email, password },
         refetchQueries: [{ query: CURRENT_USER_QUERY }]
     });
@@ -29,12 +30,13 @@ const Login = () => {
             <Form
                 initialValues={{ remember: true }}
                 onFinish={async () => {
-                    await login();
-                    if (!error) {
-                        history.push('/');
-                    } else {
-                        message.error(error.message.replace('GraphQL error: ', ''));
-                    }
+                    await login()
+                        .then(() => {
+                            history.push('/');
+                        })
+                        .catch(res => {
+                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                        });
                 }}
             >
                 <Form.Item

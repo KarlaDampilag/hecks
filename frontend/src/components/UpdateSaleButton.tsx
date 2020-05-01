@@ -105,7 +105,7 @@ const UpdateSaleButton = (props: PropTypes) => {
         }));
     }, [saleItems, discountType, discountValue, taxType, taxValue, shipping]);
 
-    const [updateSaleAndItems, { error: updateSaleError, loading: updateSaleLoading }] = useMutation(UPDATE_SALE_MUTATION, {
+    const [updateSaleAndItems, { loading: updateSaleLoading }] = useMutation(UPDATE_SALE_MUTATION, {
         variables: { id: props.sale.id, saleItems: filteredSaleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
         refetchQueries: ['SALES_BY_USER_QUERY']
     });
@@ -155,15 +155,16 @@ const UpdateSaleButton = (props: PropTypes) => {
                     labelAlign='left'
                     onFinish={async () => {
                         if (saleItems.length > 0 && saleItems[0].product.id !== null) {
-                            await updateSaleAndItems();
-
-                            if (updateSaleError) {
-                                message.error('Error updating sale entry. Please contact SourceCodeXL.');
-                            } else {
-                                setModalIsVisible(false);
-                                form.resetFields();
-                                message.success('Sale record updated');
-                            }
+                            await updateSaleAndItems()
+                                .then(() => {
+                                    setModalIsVisible(false);
+                                    form.resetFields();
+                                    message.success('Sale record updated');
+                                })
+                                .catch(res => {
+                                    _.forEach(res.graphQLErrors, error => message.error(error.message));
+                                    message.error('Error: cannot update. Please contact SourceCodeXL.');
+                                });
                         } else {
                             message.error('Minimum of one product is required to record a sale');
                         }

@@ -1,11 +1,11 @@
 import React from 'react';
+import * as _ from 'lodash';
 import { Form, Input, Button, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import ErrorMessage from './ErrorMessage';
 import { CURRENT_USER_QUERY } from './App';
 
 const SIGNUP_MUTATION = gql`
@@ -22,7 +22,7 @@ const SignUp = () => {
     const [password, setPassword] = React.useState<string>();
     const [confirmPassword, setConfirmPassword] = React.useState<string>();
 
-    const [signup, { loading, error }] = useMutation(SIGNUP_MUTATION, {
+    const [signup, { loading }] = useMutation(SIGNUP_MUTATION, {
         variables: { email, password, confirmPassword },
         refetchQueries: [{ query: CURRENT_USER_QUERY }]
     });
@@ -34,14 +34,16 @@ const SignUp = () => {
                     if (password != confirmPassword) {
                         message.error('Passwords did not match');
                     } else {
-                        await signup();
-                        if (!error) {
-                            history.push('/');
-                        }
+                        await signup()
+                            .then(() => {
+                                history.push('/');
+                            })
+                            .catch(res => {
+                                _.forEach(res.graphQLErrors, error => message.error(error.message));
+                            });
                     }
                 }}
             >
-                {error && <ErrorMessage error={error} />}
                 <Form.Item
                     name="email"
                     rules={[{ required: true, message: 'Please input your email' }]}

@@ -106,7 +106,7 @@ const AddSaleButton = (props: PropTypes) => {
 
     }, [saleItems, discountType, discountValue, taxType, taxValue, shipping]);
 
-    const [createSaleAndItems, { error: createSaleError, loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
+    const [createSaleAndItems, { loading: createSaleLoading }] = useMutation(CREATE_SALE_MUTATION, {
         variables: { saleItems: filteredSaleItems, customerId, timestamp, discountType, discountValue, taxType, taxValue, shipping, note },
         update: (store, response) => {
             let newData = response.data.createSaleAndItems;
@@ -161,12 +161,9 @@ const AddSaleButton = (props: PropTypes) => {
                     labelAlign='left'
                     onFinish={async () => {
                         if (saleItems.length > 0 && saleItems[0].product.id !== null) {
-                            const createSaleResponse = await createSaleAndItems();
-
-                            if (createSaleError) {
-                                message.error('Error saving sale entry. Please contact SourceCodeXL.');
-                            } else {
-                                setModalIsVisible(false);
+                            await createSaleAndItems()
+                                .then(() => {
+                                    setModalIsVisible(false);
                                 form.resetFields();
                                 setCustomerId(undefined);
                                 setSaleItems([{
@@ -181,7 +178,11 @@ const AddSaleButton = (props: PropTypes) => {
                                 setTaxType('FLAT');
                                 setTaxValue(undefined);
                                 message.success('Sale record added');
-                            }
+                                })
+                                .catch(res => {
+                                    _.forEach(res.graphQLErrors, error => message.error(error.message));
+                                    message.error('Error creating sale entry. Please contact SourceCodeXL.');
+                                });
                         } else {
                             message.error('Minimum of one product is required to record a sale');
                         }

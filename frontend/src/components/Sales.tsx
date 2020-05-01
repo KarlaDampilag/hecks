@@ -76,7 +76,7 @@ const Sales = () => {
         sales = null;
     }
 
-    const [deleteSaleAndItems, { error }] = useMutation(DELETE_SALE_AND_ITEMS_MUTATION, {
+    const [deleteSaleAndItems] = useMutation(DELETE_SALE_AND_ITEMS_MUTATION, {
         variables: { id: idForDeletion },
         update: (cache: any, payload: any) => {
             const data = cache.readQuery({ query: SALES_BY_USER_QUERY });
@@ -108,8 +108,8 @@ const Sales = () => {
                             expandable={{
                                 expandedRowRender: record => <SaleDetails sale={record} />,
                                 expandIcon: ({ expanded, onExpand, record }) => (
-                                    expanded ? <DownSquareTwoTone onClick={e => onExpand(record, e)} style={{ fontSize: '18pt'}} />
-                                    : <RightSquareTwoTone onClick={e => onExpand(record, e)} style={{ fontSize: '18pt'}} />
+                                    expanded ? <DownSquareTwoTone onClick={e => onExpand(record, e)} style={{ fontSize: '18pt' }} />
+                                        : <RightSquareTwoTone onClick={e => onExpand(record, e)} style={{ fontSize: '18pt' }} />
                                 )
                             }}
                             columns={[
@@ -180,12 +180,14 @@ const Sales = () => {
                                                 onClick={() => setIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     message.info('Please wait...');
-                                                    await deleteSaleAndItems();
-                                                    if (error) {
-                                                        message.error('Error: cannot delete. Please contact SourceCodeXL.');
-                                                    } else {
-                                                        message.success('Sale record deleted');
-                                                    }
+                                                    await deleteSaleAndItems()
+                                                        .then(() => {
+                                                            message.success('Sale record deleted');
+                                                        })
+                                                        .catch(res => {
+                                                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                                                            message.error('Error: cannot delete. Please contact SourceCodeXL.');
+                                                        });
                                                 }}
                                             />
                                         );

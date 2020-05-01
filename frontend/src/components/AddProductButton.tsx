@@ -93,7 +93,7 @@ const AddProductButton = (props: PropTypes) => {
         setImageIsLoading(false);
     }
 
-    const [createProduct, { loading: createProductLoading, error: createProductError }] = useMutation(CREATE_PRODUCT_MUTATION, {
+    const [createProduct, { loading: createProductLoading }] = useMutation(CREATE_PRODUCT_MUTATION, {
         variables: { name, salePrice, costPrice, sku, unit, notes, image, largeImage, categories },
         update: (cache, payload) => {
             const data: any = cache.readQuery({ query: PRODUCTS_BY_USER_QUERY });
@@ -102,7 +102,7 @@ const AddProductButton = (props: PropTypes) => {
         }
     });
 
-    const [createCategories, { loading: createCategoriesLoading, error: createCategoriesError }] = useMutation(CREATE_CATEGORIES_MUTATION, {
+    const [createCategories, { loading: createCategoriesLoading }] = useMutation(CREATE_CATEGORIES_MUTATION, {
         variables: { names: newCategories },
         update: (cache, payload) => {
             // Read cache for the categories
@@ -120,25 +120,23 @@ const AddProductButton = (props: PropTypes) => {
         <>
             <Modal title='Add a Product' visible={isShowingModal} onCancel={() => setIsShowingModal(false)} footer={null}>
                 <Form {...layout} form={form} onFinish={async () => {
-                    let response;
-
                     if (newCategories && newCategories.length > 0) {
-                        response = await createCategories();
-                        if (createCategoriesError) {
-                            message.error(createCategoriesError.message.replace('GraphQL error: ', ''));
-                        }
-                        console.log(response)
+                        await createCategories()
+                            .catch(res => {
+                                _.forEach(res.graphQLErrors, error => message.error(error.message));
+                            });
                     }
-                    response = await createProduct();
 
-                    if (createProductError) {
-                        message.error(createProductError.message.replace('GraphQL error: ', ''));
-                    } else {
-                        setIsShowingModal(false);
-                        form.resetFields();
-                        setImage(null);
-                        message.success('Product added');
-                    }
+                    await createProduct()
+                        .then(() => {
+                            setIsShowingModal(false);
+                            form.resetFields();
+                            setImage(null);
+                            message.success('Product added');
+                        })
+                        .catch(res => {
+                            _.forEach(res.graphQLErrors, error => message.error(error.message));
+                        });
                 }}>
                     <Form.Item
                         label="Name"

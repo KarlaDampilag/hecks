@@ -74,7 +74,7 @@ const Products = () => {
     const { data } = useQuery(CATEGORIES_BY_USER_QUERY);
     const categoriesData = data ? data.categoriesByUser : null;
 
-    const [deleteProduct, { error: deleteProductError }] = useMutation(DELETE_PRODUCT_MUTATION, {
+    const [deleteProduct] = useMutation(DELETE_PRODUCT_MUTATION, {
         variables: { id: productIdForDeletion },
         update: (cache: any, payload: any) => {
             // Read cache for the products
@@ -153,12 +153,14 @@ const Products = () => {
                                                 onClick={() => setProductIdForDeletion(value)}
                                                 onDelete={async () => {
                                                     message.info('Please wait...');
-                                                    await deleteProduct();
-                                                    if (deleteProductError) {
-                                                        message.error('Error: cannot delete product. Please contact SourceCodeXL.');
-                                                    } else {
+                                                    await deleteProduct()
+                                                    .then(() => {
                                                         message.success('Product deleted');
-                                                    }
+                                                    })
+                                                    .catch(res => {
+                                                        _.forEach(res.graphQLErrors, error => message.error(error.message));
+                                                        message.error('Error: cannot delete product. Please contact SourceCodeXL.');
+                                                    });
                                                 }}
                                             />
                                         );
