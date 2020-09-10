@@ -158,6 +158,18 @@ async function deleteProduct(parent, args, ctx, info) {
     if (!products || products.length < 1 || !products[0]) {
         throw new Error("Cannot find this product owned by your user id.");
     }
+
+    // add check if product is part of a sale
+    const where = {
+        AND: [
+            { product: { id: products[0].id } }
+        ]
+    };
+    const saleItems = await ctx.prisma.saleItems({ where });
+    
+    if (saleItems.length > 0) {
+        throw new Error(`Cannot delete a product that is part of an existing sale item.`);
+    }
     return await ctx.prisma.deleteProduct({ id: args.id });
 }
 
