@@ -110,6 +110,10 @@ const UpdateProductButton = (props: PropTypes) => {
                   message.error('Error: cannot update. Please contact SourceCodeXL.');
                 });
             }
+            if (!image) {
+              setImage(props.product.image);
+            }
+
             await updateProduct()
               .then(() => {
                 message.success('Product updated');
@@ -178,7 +182,7 @@ const UpdateProductButton = (props: PropTypes) => {
             label="Image"
             name="image"
           >
-            <Input type='file' placeholder='Upload an image' onChange={uploadFile} />
+            <Input type='file' accept='image/png, image/jpeg' placeholder='Upload an image' onChange={uploadFile} />
             {imageIsLoading && <Spin />}
             {image ? <img src={image} width='200' alt='upload preview' />
               : props.product.image && <img src={props.product.image} width='200' alt='current image preview' />}
