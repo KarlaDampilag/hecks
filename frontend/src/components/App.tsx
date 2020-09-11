@@ -9,7 +9,7 @@ import SignUp from './SignUp';
 import Login from './Login';
 import Products from './Products';
 import Inventories from './Inventories';
-import Inventory from './Inventory';
+//import Inventory from './Inventory';
 import Customers from './Customers';
 import Sales from './Sales';
 import Expenses from './Expenses';
@@ -46,7 +46,7 @@ function App() {
               <Route exact path="/login" component={Login} />
               <Route exact path="/products" component={Products} />
               <Route exact path="/inventories" component={Inventories} />
-              <Route exact path="/inventory" component={Inventory} />
+              {/*<Route exact path="/inventory" component={Inventory} />*/}
               <Route exact path="/customers" component={Customers} />
               <Route exact path="/sales" component={Sales} />
               <Route exact path="/expenses" component={Expenses} />
