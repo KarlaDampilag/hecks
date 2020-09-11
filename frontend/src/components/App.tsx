@@ -42,13 +42,13 @@ function App() {
           <Header user={user} />
           <div className='page-wrapper'>
             <Switch>
+            <Route exact path="/" component={Sales} />
               <Route exact path="/signup" component={SignUp} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/products" component={Products} />
               <Route exact path="/inventories" component={Inventories} />
               {/*<Route exact path="/inventory" component={Inventory} />*/}
               <Route exact path="/customers" component={Customers} />
-              <Route exact path="/sales" component={Sales} />
               <Route exact path="/expenses" component={Expenses} />
               <Route component={Page404} />
             </Switch>
