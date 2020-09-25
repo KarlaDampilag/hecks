@@ -13,6 +13,8 @@ import Inventories from './Inventories';
 import Customers from './Customers';
 import Sales from './Sales';
 import Expenses from './Expenses';
+import RequestResetPassword from './RequestResetPassword';
+import ResetPassword from './ResetPassword';
 
 const CURRENT_USER_QUERY = gql`
   {
@@ -50,6 +52,8 @@ function App() {
               {/*<Route exact path="/inventory" component={Inventory} />*/}
               <Route exact path="/customers" component={Customers} />
               <Route exact path="/expenses" component={Expenses} />
+              <Route exact path="/requestResetPassword" component={RequestResetPassword} />
+              <Route exact path="/resetPassword" component={ResetPassword} />
               <Route component={Page404} />
             </Switch>
           </div>

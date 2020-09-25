@@ -52,8 +52,8 @@ type Mutation {
     createExpense(name: String!, description: String, cost: String!): Expense!
     updateExpense(id: ID!, name: String, description: String, cost: String): Expense!
     deleteExpense(id: ID!): Expense!
-    # requestReset(email: String!): SuccessMessage
-    # resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
+    requestReset(email: String!): User!
+    resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
     # updatePermissions(permissions: [Permission], userId: ID!): User
 }
 

@@ -2,7 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
-const { APP_SECRET, getUserId } = require('../utils');
+const { APP_SECRET, FRONTEND_URL } = require('../utils');
+const { transport, makeANiceEmail } = require('../mail');
 
 async function signup(parent, args, ctx, info) {
     // check if the passwords match
@@ -51,12 +52,12 @@ async function signup(parent, args, ctx, info) {
 async function login(parent, args, ctx, info) {
     const user = await ctx.prisma.user({ email: args.email });
     if (!user) {
-        throw new Error('No such email found');
+        throw new Error('Invalid email or password');
     }
 
     const valid = await bcrypt.compare(args.password, user.password);
     if (!valid) {
-        throw new Error('Invalid password');
+        throw new Error('Invalid email or password');
     }
 
     const token = jwt.sign({ userId: user.id }, APP_SECRET);
@@ -166,7 +167,7 @@ async function deleteProduct(parent, args, ctx, info) {
         ]
     };
     const saleItems = await ctx.prisma.saleItems({ where });
-    
+
     if (saleItems.length > 0) {
         throw new Error(`Cannot delete a product that is part of an existing sale item.`);
     }
@@ -759,6 +760,74 @@ async function deleteExpense(parent, args, ctx, info) {
     return await ctx.prisma.deleteExpense({ id: args.id });
 }
 
+async function requestReset(parent, args, ctx, info) {
+    // 1. Check if this is a real user
+    const user = await ctx.prisma.user({ email: args.email });
+    if (!user) {
+        throw new Error(`No such user found for email: ${args.email}`);
+    }
+    // 2. Set a reset token and expiry on that user
+    const randomBytesPromiseified = promisify(randomBytes);
+    const resetToken = (await randomBytesPromiseified(20)).toString('hex');
+    const resetTokenExpiry = (Date.now() + 3600000).toString(); // 1 hour from now
+
+    const res = await ctx.prisma.updateUser({
+        where: { email: args.email },
+        data: { resetToken, resetTokenExpiry }
+    });
+
+    // 3. Email them that reset token
+    const mailResponse = await transport.sendMail({
+        from: 'karla.dmplg@gmail.com', // TODO change this on prod
+        to: user.email,
+        subject: 'Your password reset token',
+        html: makeANiceEmail(
+            `A request to reset the password for this email has been received. Click on the link below to proceed: \n\n
+        <a href="${FRONTEND_URL}/resetPassword?resetToken=${resetToken}">Click here to reset your password</a>`
+        )
+    });
+
+    return user;
+}
+
+async function resetPassword(parent, args, ctx, info) {
+    // 1. check if the passwords match
+    if (args.password !== args.confirmPassword) {
+        throw new Error("Yo Passwords don't match!");
+    }
+    // 2. check if its a legit reset token
+    // 3. Check if its expired
+    const [user] = await ctx.prisma.users({
+        where: {
+            resetToken: args.resetToken,
+            resetTokenExpiry_gte: (Date.now() - 3600000).toString(),
+        },
+    });
+    if (!user) {
+        throw new Error('This password reset token is either invalid or expired!');
+    }
+    // 4. Hash their new password
+    const password = await bcrypt.hash(args.password, 10);
+    // 5. Save the new password to the user and remove old resetToken fields
+    const updatedUser = await ctx.prisma.updateUser({
+        where: { email: user.email },
+        data: {
+            password,
+            resetToken: null,
+            resetTokenExpiry: null,
+        },
+    });
+    // 6. Generate JWT
+    const token = jwt.sign({ userId: updatedUser.id }, APP_SECRET);
+    // 7. Set the JWT cookie
+    ctx.response.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+    });
+    // 8. return the new user
+    return updatedUser;
+}
+
 module.exports = {
     signup,
     login,
@@ -780,5 +849,7 @@ module.exports = {
     updateSaleAndItems,
     createExpense,
     updateExpense,
-    deleteExpense
+    deleteExpense,
+    requestReset,
+    resetPassword
 }
