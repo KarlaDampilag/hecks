@@ -28,7 +28,17 @@ async function signup(parent, args, ctx, info) {
     const randomBytesPromiseified = promisify(randomBytes);
     const confirmEmailToken = (await randomBytesPromiseified(20)).toString('hex');
 
-    // const user = await ctx.prisma.createUser({ ...args, password });
+    // email them that verification token
+    const mailResponse = await transport.sendMail({
+        from: 'karla.dmplg@gmail.com', // TODO change this on prod
+        to: args.email,
+        subject: 'Please confirm your email',
+        html: makeANiceEmail(
+            `You signed up to use Inventory & Sales Management System. Please confirm that you own this email - click on the link to proceed: \n\n
+        <a href="${FRONTEND_URL}/confirmEmail?confirmEmailToken=${confirmEmailToken}">Click here to confirm</a>`
+        )
+    });
+
     // create the user in the database
     const user = await ctx.prisma.createUser({
         email: args.email,
@@ -36,14 +46,6 @@ async function signup(parent, args, ctx, info) {
         role: 'owner',
         verified: false,
         confirmEmailToken
-    });
-
-    const token = jwt.sign({ userId: user.id }, APP_SECRET);
-
-    // We set the jwt as a cookie on the response
-    ctx.response.cookie('token', token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year cookie
     });
 
     return user;
@@ -782,7 +784,7 @@ async function requestReset(parent, args, ctx, info) {
         to: user.email,
         subject: 'Your password reset token',
         html: makeANiceEmail(
-            `A request to reset the password for this email has been received. Click on the link below to proceed: \n\n
+            `A request to reset the password for this email has been received. Click on the link to proceed: \n\n
         <a href="${FRONTEND_URL}/resetPassword?resetToken=${resetToken}">Click here to reset your password</a>`
         )
     });
@@ -828,6 +830,35 @@ async function resetPassword(parent, args, ctx, info) {
     return updatedUser;
 }
 
+async function confirmEmail(parent, args, ctx, info) {
+    // check if its a legit reset token
+    const [user] = await ctx.prisma.users({
+        where: {
+            confirmEmailToken: args.confirmEmailToken,
+        },
+    });
+    if (!user) {
+        throw new Error('This password email confirmation token is invalid!');
+    }
+    // 5. Save the new password to the user and remove old resetToken fields
+    const updatedUser = await ctx.prisma.updateUser({
+        where: { email: user.email },
+        data: {
+            confirmEmailToken: null,
+            verified: true
+        },
+    });
+    // 6. Generate JWT
+    const token = jwt.sign({ userId: updatedUser.id }, APP_SECRET);
+    // 7. Set the JWT cookie
+    ctx.response.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+    });
+    // 8. return the new user
+    return updatedUser;
+}
+
 module.exports = {
     signup,
     login,
@@ -851,5 +882,6 @@ module.exports = {
     updateExpense,
     deleteExpense,
     requestReset,
-    resetPassword
+    resetPassword,
+    confirmEmail
 }

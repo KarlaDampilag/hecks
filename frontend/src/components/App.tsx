@@ -15,6 +15,7 @@ import Sales from './Sales';
 import Expenses from './Expenses';
 import RequestResetPassword from './RequestResetPassword';
 import ResetPassword from './ResetPassword';
+import ConfirmEmail from './ConfirmEmail';
 
 const CURRENT_USER_QUERY = gql`
   {
@@ -54,6 +55,7 @@ function App() {
               <Route exact path="/expenses" component={Expenses} />
               <Route exact path="/requestResetPassword" component={RequestResetPassword} />
               <Route exact path="/resetPassword" component={ResetPassword} />
+              <Route exact path="/confirmEmail" component={ConfirmEmail} />
               <Route component={Page404} />
             </Switch>
           </div>

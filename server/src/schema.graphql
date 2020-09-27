@@ -30,7 +30,6 @@ input InventoryItemProductInput {
 
 type Mutation {
     signup(email: String!, password: String!, confirmPassword: String!): User!
-    confirmEmail(confirmEmailToken: String!, email: String!): User!
     logout: String
     login(email: String!, password: String!): User!
     createProduct(name: String!, salePrice: String!, costPrice: String, sku: String, unit: String, notes: String, image: String, largeImage: String, categories: [String]): Product!
@@ -54,6 +53,7 @@ type Mutation {
     deleteExpense(id: ID!): Expense!
     requestReset(email: String!): User!
     resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
+    confirmEmail(confirmEmailToken: String!): User!
     # updatePermissions(permissions: [Permission], userId: ID!): User
 }
 
