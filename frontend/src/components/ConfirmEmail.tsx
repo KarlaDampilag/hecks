@@ -39,7 +39,7 @@ const ResetPassword = (props: any) => {
                         setResultMessage('Email successfully verified! Redirecting...');
                         setTimeout(() => {
                             history.push('/');
-                        }, 5000);
+                        }, 3000);
                     })
                     .catch(res => {
                         _.forEach(res.graphQLErrors, error => message.error(error.message));
