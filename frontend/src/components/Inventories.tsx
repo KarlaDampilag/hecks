@@ -60,6 +60,9 @@ const Inventories = () => {
                 if (!value) {
                     return <p>You must be logged in to access this page.</p>
                 }
+                if (value && !value.verified) {
+                    return <p>Your email must be verified to access this page.</p>
+                }
                 return (
                     <>
                         <AddInventoryButton />

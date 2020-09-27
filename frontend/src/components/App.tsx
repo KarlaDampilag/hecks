@@ -32,7 +32,12 @@ const Page404 = () => (
   <p>Page not found.</p>
 );
 
-const userContext = React.createContext({ user: {} });
+const userContext = React.createContext({ 
+    id: '',
+    email: '',
+    verified: false,
+    permissions: []
+});
 
 function App() {
   const { data } = useQuery(CURRENT_USER_QUERY);
